@@ -10,6 +10,8 @@ import {
     Button,
     Message
 } from 'semantic-ui-react'
+import {Redirect} from 'react-router-dom'
+
 
 
 class Register extends Component {
@@ -19,8 +21,10 @@ class Register extends Component {
         password: '',
         confirmpassword: '',
         address: '',
+        
         message: '',
-        loading: false
+        loading: false,
+        isregistered: false,
      }
 
 
@@ -44,7 +48,7 @@ class Register extends Component {
             Axios.post(`${APIURL}/users`,userdata)
             .then((res)=>{
                 if(res.data.status){
-                    this.setState({message:'berhasil'})
+                    this.setState({message:'berhasil',isregistered:true})
                 }else{
                     this.setState({message:res.data.message})
                 }
@@ -120,6 +124,11 @@ class Register extends Component {
                     : null
                 }
                 </Grid.Column>
+                {
+                    this.state.isregistered?
+                    <Redirect to='/verification'/>
+                    : null
+                }
             </Grid>
          );
     }
