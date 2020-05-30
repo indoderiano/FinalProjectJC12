@@ -25,7 +25,7 @@ db.connect((err)=>{
     if(err){
         console.log(err)
     }else{
-        console.log('ujian backend database is connected')
+        console.log('db4free is connected')
     }
 })
 
