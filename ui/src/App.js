@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState,useEffect,Fragment} from 'react';
 import './App.css';
 import Home from './pages/Home'
 import { Switch, Route } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { API_URL } from './support/ApiUrl';
 import { connect } from 'react-redux';
 
 
-function App({KeepLogin}) {
+function App({KeepLogin,User}) {
 
   const [Loading,setLoading]=useState(true)
 
@@ -28,7 +28,7 @@ function App({KeepLogin}) {
         KeepLogin(res.data)
       }).catch((err)=>{
         console.log(err)
-        alert(err)
+        // alert(err)
       }).finally(()=>{
         setLoading(false)
       })
@@ -46,12 +46,26 @@ function App({KeepLogin}) {
         <Route path='/' exact component={Home}/>
         <Route path='/login' exact component={Login} />
         <Route path='/register' exact component={Register}/>
-        <Route path='/verification' exact component={Verification}/>
-        <Route path='/verification/:token' exact component={Verification}/>
+        {
+          User.islogin?
+          <Fragment>
+            <Route path='/verification' exact component={Verification}/>
+            <Route path='/verification/:token' exact component={Verification}/>
+          </Fragment>
+          : null
+
+        }
+
       </Switch>
 
     </div>
   );
 }
 
-export default connect(null, {KeepLogin}) (App);
+const MapstatetoProps=(state)=>{
+  return {
+    User: state.Auth
+  }
+}
+
+export default connect(MapstatetoProps, {KeepLogin}) (App);
