@@ -6,7 +6,7 @@ const jwt = require ('jsonwebtoken');
 const data = {id:3}
 const data2 = {id:20,username:'test'}
 const token = jwt.sign(data, "puripuriprisoner", { expiresIn : '12h' })
-const token2 = jwt.sign(data2, "puripuriprisoner", { expiresIn : '5000' })
+const token2 = jwt.sign(data2, "shifu", { expiresIn : '5000' })
 
 console.log(token2)
 
@@ -15,7 +15,7 @@ var tokenid='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImlhdCI6MTU4NzkzMj
 
 setTimeout(()=>{
     
-    jwt.verify(tokenid, "shifu", (error, decoded) => {
+    jwt.verify(token2, "shifu", (error, decoded) => {
         if (error) {
             console.log('verify fail')
             // return res.status(401).json({ message: "User not authorized.", error: "User not authorized." });

@@ -4,8 +4,8 @@ const mysql=require('mysql')
 const db=mysql.createConnection({
     host:'localhost',
     user:'root',
-    password:'abcde12345',
-    database:'finalprojecttim4',
+    password:'maungapain',
+    database:'final_project_jc12',
     port:'3306'
 })
 
@@ -25,7 +25,8 @@ db.connect((err)=>{
     if(err){
         console.log(err)
     }else{
-        console.log('db finalproject is connected')
+        console.log('host: '+db.config.host)
+        console.log('database '+db.config.database+' is connected')
     }
 })
 

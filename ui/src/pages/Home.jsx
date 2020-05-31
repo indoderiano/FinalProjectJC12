@@ -16,6 +16,7 @@ import {
   Visibility,
 } from 'semantic-ui-react'
 import Login from './Login'
+import {Link} from 'react-router-dom'
 
 // Heads up!
 // We using React Static to prerender our docs with server side rendering, this is a quite simple solution.
@@ -30,11 +31,13 @@ const getWidth = () => {
 /* Heads up! HomepageHeading uses inline styling, however it's not the best practice. Use CSS or styled components for
  * such things.
  */
+
+ 
 const HomepageHeading = ({ mobile }) => (
   <Container text>
     <Header
       as='h1'
-      content='Imagine-a-Company'
+      content='Final Project JC 12'
       inverted
       style={{
         fontSize: mobile ? '2em' : '4em',
@@ -108,8 +111,8 @@ class DesktopContainer extends Component {
                 <Menu.Item position='right'>
                   <Button as='a' inverted={!fixed}>
                     Log in
-                  </Button>              
-                  <Button as='a' inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }}>
+                  </Button>
+                  <Button as={Link} to='/register' inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }}>
                     Sign Up
                   </Button>
                 </Menu.Item>

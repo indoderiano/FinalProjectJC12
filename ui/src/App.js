@@ -3,6 +3,8 @@ import './App.css';
 import Home from './pages/Home'
 import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
+import Register from './pages/Register'
+import Verification from './pages/Verification'
 import { KeepLogin } from './redux/actions'
 import Axios from'axios'
 import { API_URL } from './support/ApiUrl';
@@ -39,13 +41,16 @@ function App({KeepLogin}) {
   }
 
   return (
-   <div>
-     <Switch>
+    <div>
+      <Switch>
         <Route path='/' exact component={Home}/>
         <Route path='/login' exact component={Login} />
-          
-     </Switch>
-   </div>
+        <Route path='/register' exact component={Register}/>
+        <Route path='/verification' exact component={Verification}/>
+        <Route path='/verification/:token' exact component={Verification}/>
+      </Switch>
+
+    </div>
   );
 }
 
