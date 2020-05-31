@@ -5,6 +5,8 @@ import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register'
 import Verification from './pages/Verification'
+import ManageProduct from './pages/ManageProduct'
+import AddProduct from './pages/AddProduct'
 import { KeepLogin } from './redux/actions'
 import Axios from'axios'
 import { API_URL } from './support/ApiUrl';
@@ -56,6 +58,9 @@ function App({KeepLogin,User}) {
           : null
 
         }
+
+        <Route path='/seller/product' exact component={ManageProduct}/>
+        <Route path='/seller/product/add' exact component={AddProduct}/>
 
       </Switch>
 
