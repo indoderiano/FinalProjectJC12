@@ -15,6 +15,7 @@ import {
   Sidebar,
   Visibility,
 } from 'semantic-ui-react'
+import Login from './Login'
 import {Link} from 'react-router-dom'
 
 // Heads up!
@@ -30,6 +31,8 @@ const getWidth = () => {
 /* Heads up! HomepageHeading uses inline styling, however it's not the best practice. Use CSS or styled components for
  * such things.
  */
+
+ 
 const HomepageHeading = ({ mobile }) => (
   <Container text>
     <Header
@@ -100,7 +103,7 @@ class DesktopContainer extends Component {
             >
               <Container>
                 <Menu.Item as='a' active>
-                  Home
+                  Home                 
                 </Menu.Item>
                 <Menu.Item as='a'>Work</Menu.Item>
                 <Menu.Item as='a'>Company</Menu.Item>
