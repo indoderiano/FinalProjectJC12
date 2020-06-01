@@ -28,7 +28,6 @@ function App({KeepLogin}) {
         KeepLogin(res.data)
       }).catch((err)=>{
         console.log(err)
-        alert(err)
       }).finally(()=>{
         setLoading(false)
       })
