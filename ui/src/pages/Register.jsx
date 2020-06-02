@@ -10,7 +10,9 @@ import {
     Button,
     Message
 } from 'semantic-ui-react'
+import {LoginUser} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
+import { connect } from 'react-redux'
 
 
 
@@ -48,7 +50,9 @@ class Register extends Component {
             Axios.post(`${APIURL}/users`,userdata)
             .then((res)=>{
                 if(res.data.status){
-                    this.setState({message:'berhasil',isregistered:true})
+                    console.log('register berhasil')
+                    this.props.LoginUser({username,password})
+                    // this.setState({message:'berhasil',isregistered:true})
                 }else{
                     this.setState({message:res.data.message})
                 }
@@ -123,16 +127,31 @@ class Register extends Component {
                     </Message>
                     : null
                 }
-                </Grid.Column>
-                {
+                {/* {
                     this.state.isregistered?
                     <Redirect to='/verification'/>
                     : null
+                } */}
+                {
+                    this.props.User.islogin?
+                    <Message style={{color:'red'}}>
+                        logged in
+                    </Message>
+                    : 
+                    <Message style={{color:'red'}}>
+                        NOT logged in
+                    </Message>
                 }
+                </Grid.Column>
             </Grid>
          );
     }
 }
- 
-export default Register
-;
+
+const MapstatetoProps=(state)=>{
+    return{
+        User: state.Auth
+    }
+}
+
+export default connect(MapstatetoProps,{LoginUser}) (Register);
