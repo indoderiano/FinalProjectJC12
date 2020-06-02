@@ -71,9 +71,13 @@ module.exports={
                 sql=`select iduser,username from users where iduser=${decoded.userid}`
                 db.query(sql,(err,userdata)=>{
                     if(err) return res.status(500).send(err)
-                    var user=userdata[0]
                     
-                    res.status(200).send({status:true,user})
+                    var newtoken=createJWTToken({id:userdata[0].iduser,username:userdata[0].username})
+                    var update={
+                        isverified:userdata[0].isverified,
+                        token:newtoken
+                    }
+                    res.status(200).send({status:true,update})
                 })
             })
         })
@@ -122,12 +126,14 @@ module.exports={
     },
     login:(req,res)=>{
         const {password,username}=req.query
+        console.log(req.query)
         const hashpass=encrypt(password)
-        var sql=`select * from users where username='${username}' and password='${password}'`
+        var sql=`select * from users where username='${username}' and password='${hashpass}'`
         db.query(sql,(err,result)=>{
             if(err){
                 return res.status(500).send(err)
             }
+            console.log(result)
             if(result.length){
                 var obj={
                     lastlogin:new Date()
