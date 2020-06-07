@@ -68,7 +68,7 @@ module.exports={
 
             var item={
                 idproduct: req.body.idproduct,
-                type: []
+                type: null
             }
 
             var sql=`insert into items set ?`
