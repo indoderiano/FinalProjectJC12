@@ -19,7 +19,7 @@ class MainHeader extends Component {
               pointing={!this.props.fixed}
               secondary={!this.props.fixed}
               size={this.props.size}
-              style={{backgroundColor:'rgb(27, 28, 29)',margin:'0',paddingBottom:'14px'}}
+              style={{backgroundColor:'rgb(27, 28, 29)',margin:'0',padding:'14px 0 14px'}}
             >
               <Container>
                 <Menu.Item as='a' active>

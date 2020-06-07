@@ -18,9 +18,12 @@ app.get('/',(req,res)=>{
 })
 
 
-const {UserRouters,ProductRouters}=require('./routers')
+const {UserRouters,ProductRouters,ItemRouters}=require('./routers')
 app.use('/users',UserRouters)
 app.use('/products',ProductRouters)
+app.use('/items',ItemRouters)
+
+app.use(express.static('public')) // access to public folder
 
 
 app.listen(PORT,()=>console.log('API is online at port '+PORT))

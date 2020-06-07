@@ -6,7 +6,7 @@ const fs=require('fs')
 module.exports = {
     uploader(destination, fileNamePrefix){
         let defaultPath = './public';
-    
+
         const storage = multer.diskStorage({
             destination: (req, file, cb) => {
                 const dir = defaultPath + destination;
@@ -19,8 +19,13 @@ module.exports = {
                 }
             },
             filename: (req, file, cb) => {
+                console.log(file)
+                // console.log('req')
+                // console.log(req.body)
                 let originalname = file.originalname;
                 let ext = originalname.split('.');
+                // console.log('ext')
+                // console.log(ext)
                 let filename = fileNamePrefix + Date.now() + '.' + ext[ext.length - 1];
                 cb(null, filename);
             }

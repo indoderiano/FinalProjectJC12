@@ -3,8 +3,13 @@ const {ProductControllers}=require('../controllers')
 
 const Router=express.Router()
 
-// Router.get('/allusers',UserControllers.allusers)
-Router.post('/add',ProductControllers.add)
-Router.put('/edit/:id',ProductControllers.edit)
+
+Router.post('/',ProductControllers.add)
+
+// not being used
+// Router.post('/add',ProductControllers.create)
+
+// not being used
+// Router.put('/edit/:id',ProductControllers.edit)
 
 module.exports=Router

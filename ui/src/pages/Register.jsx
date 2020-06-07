@@ -52,7 +52,7 @@ class Register extends Component {
                 if(res.data.status){
                     console.log('register berhasil')
                     this.props.LoginUser({username,password})
-                    // this.setState({message:'berhasil',isregistered:true})
+                    this.setState({message:'berhasil',isregistered:true})
                 }else{
                     this.setState({message:res.data.message})
                 }
@@ -127,20 +127,10 @@ class Register extends Component {
                     </Message>
                     : null
                 }
-                {/* {
+                {
                     this.state.isregistered?
                     <Redirect to='/verification'/>
                     : null
-                } */}
-                {
-                    this.props.User.islogin?
-                    <Message style={{color:'red'}}>
-                        logged in
-                    </Message>
-                    : 
-                    <Message style={{color:'red'}}>
-                        NOT logged in
-                    </Message>
                 }
                 </Grid.Column>
             </Grid>
