@@ -1,14 +1,16 @@
 import React, {useState,useEffect,Fragment} from 'react';
 import './App.css';
 import Home from './pages/Home'
-import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register'
 import Verification from './pages/Verification'
+import Forgotpass from './pages/Forgotpass'
+import ChangePass from './pages/Changepass'
+import { Switch, Route, Router } from 'react-router-dom';
 import { KeepLogin } from './redux/actions'
-import Axios from'axios'
 import { API_URL } from './support/ApiUrl';
 import { connect } from 'react-redux';
+import Axios from'axios'
 
 
 function App({KeepLogin,User}) {
@@ -45,15 +47,15 @@ function App({KeepLogin,User}) {
         <Route path='/' exact component={Home}/>
         <Route path='/login' exact component={Login} />
         <Route path='/register' exact component={Register}/>
-        {
-          User.islogin?
-          <Fragment>
+        <Route path='/forgotpassword' exact component={Forgotpass}/>
+        <Route path='/forgotpassword/:token' exact component={ChangePass}/>
+   
+        
+        
             <Route path='/verification' exact component={Verification}/>
             <Route path='/verification/:token' exact component={Verification}/>
-          </Fragment>
-          : null
-
-        }
+       
+        
 
       </Switch>
 

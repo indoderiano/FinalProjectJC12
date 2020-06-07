@@ -38,7 +38,7 @@ module.exports={
                     var token=createJWTToken({userid:created.insertId})
                     var VerificationLink=`http://localhost:3000/verification/${token}`
                     var maildata={
-                        from: 'Admin <mde50526@gmail.com>',
+                        from: 'Admin <jamestjahjadi@gmail.com>',
                         to: email,
                         subject: 'E-Commerce Verification Account',
                         html: `Hai ${username}, klik link berikut untuk verifikasi account kamu,link ini kadaluarsa dalam 24 jam
@@ -85,7 +85,7 @@ module.exports={
         var token=createJWTToken({userid:userid})
         var VerificationLink=`http://localhost:3000/verification/${token}`
         var maildata={
-            from: 'Admin <mde50526@gmail.com>',
+            from: 'Admin <jamestjahjadi@gmail.com>',
             to: email,
             subject: 'E-Commerce Verification Account',
             html: `Hai ${username}, klik link berikut untuk verifikasi account kamu,link ini kadaluarsa dalam 24 jam
@@ -100,8 +100,51 @@ module.exports={
         })
     },
 
+    forgotpassverify:(req,res)=>{
+        const {email,username}=req.body
+        var token=createJWTToken({username:username})
+        var recoveryLink=`http://localhost:3000/forgotpassword/${token}`
+        var maildata={
+            from: 'Admin <jamestjahjadi@gmail.com>',
+            to: email,
+            subject: 'E-Commerce Recovery Password',
+            html: `Hi ${username}, Please kindly click the link below before 24 hours to change your password
+            <a href=${recoveryLink}>verify</a>`
+        }
+        transporter.sendMail(maildata,(err,sent)=>{
+            if(err) return res.status(500).send(err)
+            res.status(200).send({Message:'Recovery Email sent'})
+        }) 
+    },
 
-
+    changepassword:(req,res)=>{
+        const {email,password}=req.body
+        console.log(email)
+        var sql=`select * from users where email='${email}'`
+        db.query(sql,(err,result)=>{
+            if(err) res.status(500).send(err)
+            console.log(result[0])
+            
+            if(result.length){
+                var newpass={password:password}
+                console.log('nyampe line 130')
+                
+                var sql1=`update users set ? where iduser=${result[0].iduser}`
+                db.query(sql1,newpass,(err,result1)=>{
+                    console.log(result1)
+                    if(err) res.status(500).send(err)
+                    console.log('LINE 136')
+                    var sql2=`select * from users where iduser=${result[0].iduser}`
+                    db.query(sql2,(err,result2)=>{
+                        if (err) res.status(500).send(err)
+                        res.status(200).send({...result2[0]})
+                    })
+                })
+            }else{
+                res.status(200).send({message:'emai is not available'})
+            }
+        })
+    },
 
     allusers:(req,res)=>{
         console.log('all users data')
@@ -114,6 +157,8 @@ module.exports={
         console.log('ini setelah db')
         // console.log(allusers)
     },
+
+
     empty:(req,res)=>{
         // nothing
         res.status(500).send({data:'empty2'})
@@ -160,3 +205,8 @@ module.exports={
         })
     },
 }
+
+
+// var token=createJWTToken({username:res1.username})
+//                 console.log(token)
+                

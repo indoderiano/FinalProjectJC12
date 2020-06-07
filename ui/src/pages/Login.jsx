@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, Segment } from 'semantic-ui-react'
+import { Form, Segment,Button } from 'semantic-ui-react'
 import {connect} from 'react-redux'
 import {LoginUser} from './../redux/actions'
 import {Redirect} from 'react-router-dom'
@@ -10,6 +10,8 @@ const Login = (props) => {
         username:'',
         password:''
     })
+
+  
 
     const handleChange = (e, { name, value }) => setdata({...data, [name]: value })
 
@@ -36,24 +38,26 @@ const Login = (props) => {
                         <Form.Input
                         placeholder='Username'
                         name='username'
+                        type='text'
                         value={data.username}
                         onChange={handleChange}
                         /> <br/>
                         <Form.Input
                         placeholder='Password'
                         name='password'
+                        type='password'
                         value={data.password}
                         onChange={handleChange}
                         /> <br/>
-                        <Form.Button content='Submit' /> <br/>
-                        <p>Forget Password?</p>
+                         <Form.Button content='Submit' /><br/>
+                         <Form.Button content='Forgot Password?'/>
                     </Form.Group>
                 </Form>
             </Segment>
         </div>
     )
-    
 }
+
 
 const MapstatetoProps=(state)=>{
     return state.Auth            
