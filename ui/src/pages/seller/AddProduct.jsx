@@ -122,7 +122,7 @@ class AddProduct extends Component {
                 .then((newitems)=>{
                     console.log('upload item berhasil')
                     console.log(newitems.data)
-                    this.setState({newidproduct:newproduct.data.insertId})
+                    // this.setState({newidproduct:newproduct.data.insertId})
                 }).catch((err)=>{
                     console.log(err)
                 })
@@ -194,6 +194,15 @@ class AddProduct extends Component {
 
         const combine = (arrone,arrtwo)=>{
             var combined=[]
+
+            // IF ARRAY OF TYPES IS NULL
+            if(!arrtwo.length){
+                return arrone
+            }else if(!arrone.length){
+                return arrtwo
+            }
+
+
             arrone.forEach((one,i)=>{
                 arrtwo.forEach((two,j)=>{
                     // var item=[Array.isArray(one)?...one:one,two]
@@ -203,6 +212,7 @@ class AddProduct extends Component {
                         // dont push
                     }else if(one==null||one==''){
                         console.log('one null')
+                        console.log(arrone)
                         var item=[two]
                         combined.push(item)
                     }else{
@@ -256,17 +266,18 @@ class AddProduct extends Component {
 
             return types.map((val,q)=>{
                 return (
-                    <Input
-                        key={q}
-                        placeholder='Such as small, or red'
-                        style={{marginBottom:'.5em'}}
-                        onChange={(e)=>{
-                            var types=this.state.varietytypes
-                            types[j][q]=e.target.value
-                            console.log(types)
-                            this.setState({varietytypes:types})
-                        }}
-                    />
+                    <div key={q}>
+                        <Input
+                            placeholder='Such as small, or red'
+                            style={{marginBottom:'.5em'}}
+                            onChange={(e)=>{
+                                var types=this.state.varietytypes
+                                types[j][q]=e.target.value
+                                console.log(types)
+                                this.setState({varietytypes:types})
+                            }}
+                        />
+                    </div>
                 )
             })
 
@@ -297,22 +308,32 @@ class AddProduct extends Component {
                             this.setState({varieties:arr,typecount:typecount})
                         }}
                     />
-                    <Header as={'p'} style={{margin:'.5em 0'}}>Types</Header>
-                    {renderTypesInput(index)}
-                    <Button 
-                        
-                        disabled={this.state.typecount[index]==undefined?true:false}
-                        onClick={()=>{
-                            var typecount=this.state.typecount
-                            typecount[index]=this.state.typecount[index]+1
-                            console.log(typecount)
-                            console.log('j')
-                            console.log(index)
-                            this.setState({typecount:typecount})
-                        }}
-                    >
-                        more type
-                    </Button>
+                    {
+                        this.state.typecount[index]?
+                        <>
+                            <Header as={'p'} style={{margin:'.5em 0'}}>Types</Header>
+                            {renderTypesInput(index)}
+                            <Header
+                                as={'span'}
+                                color={'blue'}
+                                // basic
+                                // primary
+                                style={{fontSize:'15px',fontWeight:'700',cursor:'pointer'}}
+                                disabled={this.state.typecount[index]==undefined?true:false}
+                                onClick={()=>{
+                                    var typecount=this.state.typecount
+                                    typecount[index]=this.state.typecount[index]+1
+                                    console.log(typecount)
+                                    console.log('j')
+                                    console.log(index)
+                                    this.setState({typecount:typecount})
+                                }}
+                            >
+                                more type
+                            </Header>
+                        </>
+                        : null
+                    }
                 </Grid.Column>
             )
         })
@@ -545,10 +566,10 @@ class AddProduct extends Component {
                         <Button
                             primary
                             style={{width:'100%',margin:'1em 0'}}
-                            // onClick={this.onSubmit}
                             onClick={this.onSubmit}
+                            // onClick={()=>{console.log(this.createitems())}}
                         >
-                            Submit and Upload Items
+                            Submit and go to the Next Step
                         </Button>
 
                         {
