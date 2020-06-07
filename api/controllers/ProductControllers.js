@@ -8,6 +8,7 @@ module.exports={
         res.status(200).send({product:'test'})
     },
 
+    // CURRENTLY NOT BEING USED
     create:(req,res)=>{
         console.log('create product')
         console.log(req.body)
