@@ -9,6 +9,8 @@ import Verification from './pages/Verification'
 import ManageProduct from './pages/ManageProduct'
 import AddProduct from './pages/seller/AddProduct'
 import ProductItems from './pages/seller/ProductItems'
+import ChangePass from './pages/Changepass'
+import Forgotpass from './pages/Forgotpass'
 import { KeepLogin } from './redux/actions'
 import { API_URL } from './support/ApiUrl';
 import { connect } from 'react-redux';

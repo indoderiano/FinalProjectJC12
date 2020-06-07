@@ -11,6 +11,7 @@ const Login = (props) => {
         password:''
     })
 
+    const [forgot,setforgot]=useState(false)
   
 
     const handleChange = (e, { name, value }) => setdata({...data, [name]: value })
@@ -25,6 +26,12 @@ const Login = (props) => {
 
     if(props.islogin){
         return <Redirect to='/'/>
+    }
+    const isforgot=()=>{
+        setforgot(true)
+        if(forgot){
+          return  <Redirect to='/forgotpassword'/>
+        }
     }
 
     return (
@@ -50,7 +57,7 @@ const Login = (props) => {
                         onChange={handleChange}
                         /> <br/>
                          <Form.Button content='Submit' /><br/>
-                         <Form.Button content='Forgot Password?'/>
+                         <Form.Button content='Forgot Password?' onClick={isforgot}/>
                     </Form.Group>
                 </Form>
             </Segment>

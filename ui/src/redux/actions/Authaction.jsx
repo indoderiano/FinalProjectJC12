@@ -39,6 +39,13 @@ export const KeepLogin=(data)=>{
     }
 }
 
+export const isLogout=()=>{
+    localStorage.removeItem('token')
+    return{
+        type:'ErrorClear',
+    }
+}
+
 
 
     
