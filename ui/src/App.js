@@ -1,12 +1,14 @@
 import React, {useState,useEffect,Fragment} from 'react';
 import './App.css';
 import Home from './pages/Home'
+import { Switch, Route, Redirect } from 'react-router-dom';
+import MainHeader from './pages/Header'
 import Login from './pages/Login';
 import Register from './pages/Register'
 import Verification from './pages/Verification'
-import Forgotpass from './pages/Forgotpass'
-import ChangePass from './pages/Changepass'
-import { Switch, Route, Router } from 'react-router-dom';
+import ManageProduct from './pages/ManageProduct'
+import AddProduct from './pages/seller/AddProduct'
+import ProductItems from './pages/seller/ProductItems'
 import { KeepLogin } from './redux/actions'
 import { API_URL } from './support/ApiUrl';
 import { connect } from 'react-redux';
@@ -16,6 +18,8 @@ import Axios from'axios'
 function App({KeepLogin,User}) {
 
   const [Loading,setLoading]=useState(true)
+
+  const [fixed,setfixed]=useState(false)
 
   useEffect(()=>{
     const token=localStorage.getItem('token')
@@ -43,19 +47,24 @@ function App({KeepLogin,User}) {
 
   return (
     <div>
+      <MainHeader 
+        fixed={fixed ? 'top' : null}
+        inverted={!fixed}
+        pointing={!fixed}
+        secondary={!fixed}
+        size='large'
+      />
       <Switch>
         <Route path='/' exact component={Home}/>
-        <Route path='/login' exact component={Login} />
+        <Route path='/login' exact component={Login}/>
         <Route path='/register' exact component={Register}/>
         <Route path='/forgotpassword' exact component={Forgotpass}/>
         <Route path='/forgotpassword/:token' exact component={ChangePass}/>
-   
-        
-        
-            <Route path='/verification' exact component={Verification}/>
-            <Route path='/verification/:token' exact component={Verification}/>
-       
-        
+        <Route path='/verification' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
+        <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
+        <Route path='/seller/product' exact component={ManageProduct}/>
+        <Route path='/seller/product/add' exact component={AddProduct}/>
+        <Route path='/seller/product/:idproduct' exact component={ProductItems}/>
 
       </Switch>
 
