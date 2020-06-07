@@ -7,8 +7,8 @@ import Login from './pages/Login';
 import Register from './pages/Register'
 import Verification from './pages/Verification'
 import ManageProduct from './pages/ManageProduct'
-import AddProduct from './pages/AddProduct'
-import ProductItems from './pages/ProductItems'
+import AddProduct from './pages/seller/AddProduct'
+import ProductItems from './pages/seller/ProductItems'
 import { KeepLogin } from './redux/actions'
 import Axios from'axios'
 import { API_URL } from './support/ApiUrl';
