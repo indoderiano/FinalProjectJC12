@@ -9,10 +9,12 @@ import Verification from './pages/Verification'
 import ManageProduct from './pages/ManageProduct'
 import AddProduct from './pages/seller/AddProduct'
 import ProductItems from './pages/seller/ProductItems'
+import ChangePass from './pages/Changepass'
+import Forgotpass from './pages/Forgotpass'
 import { KeepLogin } from './redux/actions'
-import Axios from'axios'
 import { API_URL } from './support/ApiUrl';
 import { connect } from 'react-redux';
+import Axios from'axios'
 
 
 function App({KeepLogin,User}) {
@@ -34,7 +36,6 @@ function App({KeepLogin,User}) {
         KeepLogin(res.data)
       }).catch((err)=>{
         console.log(err)
-        // alert(err)
       }).finally(()=>{
         setLoading(false)
       })
@@ -59,11 +60,10 @@ function App({KeepLogin,User}) {
         <Route path='/' exact component={Home}/>
         <Route path='/login' exact component={Login}/>
         <Route path='/register' exact component={Register}/>
-
+        <Route path='/forgotpassword' exact component={Forgotpass}/>
+        <Route path='/forgotpassword/:token' exact component={ChangePass}/>
         <Route path='/verification' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
-
-
         <Route path='/seller/product' exact component={ManageProduct}/>
         <Route path='/seller/product/add' exact component={AddProduct}/>
         <Route path='/seller/product/:idproduct' exact component={ProductItems}/>

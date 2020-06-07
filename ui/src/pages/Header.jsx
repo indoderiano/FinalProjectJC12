@@ -7,7 +7,7 @@ import {
   } from 'semantic-ui-react'
 import { connect } from "react-redux";
 import {Link} from 'react-router-dom'
-
+import {isLogout} from './../redux/actions'
 
 class MainHeader extends Component {
     state = {  }
@@ -36,6 +36,7 @@ class MainHeader extends Component {
                     </span>
                     : null
                   }
+              
                   {
                     !this.props.User.islogin?
                     <>
@@ -46,7 +47,9 @@ class MainHeader extends Component {
                         Sign Up
                       </Button>
                     </>
-                    : null
+                    :  <Button as={Link} to='/' onClick={()=>{this.props.isLogout()}}>
+                    Log out
+                  </Button>
                   }
                 </Menu.Item>
               </Container>
@@ -61,4 +64,4 @@ const MapstatetoProps=(state)=>{
     }
 }
  
-export default connect (MapstatetoProps) (MainHeader);
+export default connect (MapstatetoProps,{isLogout}) (MainHeader);
