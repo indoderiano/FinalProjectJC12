@@ -22,6 +22,7 @@ import {Redirect} from 'react-router-dom'
 
 class ProductItems extends Component {
     state = { 
+        product:{},
         items:[],
         editid:0,
         price:0,
@@ -39,6 +40,15 @@ class ProductItems extends Component {
     }
     
     getItems=()=>{
+
+        Axios.get(`${APIURL}/products/${this.props.match.params.idproduct}`)
+        .then((res)=>{
+            console.log(res.data)
+            this.setState({product:res.data})
+        }).catch((err)=>{
+            console.log(err)
+        })
+
         Axios.get(`${APIURL}/items?idproduct=${this.props.match.params.idproduct}`)
         .then((res)=>{
             console.log(res.data)
@@ -57,7 +67,7 @@ class ProductItems extends Component {
             console.log('add image')
 
             var formdata=new FormData()
-    
+
             for(var image of this.state.image){
                 formdata.append('photo',image)
             }
@@ -386,6 +396,12 @@ class ProductItems extends Component {
     }
 
     render() { 
+        if(this.state.product.imagecover){
+            console.log(this.state.product.imagecover)
+            var coverimages=JSON.parse(this.state.product.imagecover)
+            console.log(coverimages)
+        }
+
         return ( 
             <Container style={{paddingTop:'2em',width:'650px'}}>
 
@@ -396,15 +412,83 @@ class ProductItems extends Component {
                 {this.state.items[0]?this.state.items[0].product_name:'Product Name'}
             </Header>
 
-            {/* <Segment>
+            
+
+            <Segment>
                 <Grid>
                     <Grid.Row>
                         <Grid.Column width={16}>
-                            asdfsdaf
+                            <Header as={'h4'}>{this.state.product.product_name}</Header>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row style={{padding:'0 1rem'}}>
+                        {
+                            coverimages?
+                            coverimages.map((image,index)=>{
+                                console.log(image)
+                                return (
+                                    <Grid.Column key={index} width={4} style={{padding:'.5em 1em .5em 0'}}>
+                                        <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                            <div 
+                                                style={{
+                                                    paddingTop:'80%',
+                                                    backgroundImage:`url('${APIURL+image}')`,
+                                                    backgroundSize:'cover',
+                                                    backgroundPosition:'center',
+                                                    marginBottom:'1em'
+                                                }}
+                                            />
+                                            {/* {
+                                                item.iditem===this.state.deleteimageiditem&&index===this.state.deleteimageindex?
+                                                <Button 
+                                                    basic
+                                                    onClick={()=>{this.onDeletePhoto(item.iditem,index,image)}}
+                                                >
+                                                    Confirm
+                                                </Button>
+                                                :
+                                                <Button 
+                                                    basic
+                                                    onClick={()=>{this.setState({deleteimageiditem:item.iditem,deleteimageindex:index})}}
+                                                >
+                                                    Remove
+                                                </Button>
+
+                                            } */}
+                                        </Segment>
+                                    </Grid.Column>
+                                )
+                            })
+                            : 
+                            <Grid.Column width={4} style={{padding:'.5em 1em .5em 0'}}>
+                                <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                    <div 
+                                        style={{
+                                            paddingTop:'80%',
+                                            backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
+                                            backgroundSize:'cover',
+                                            backgroundPosition:'center',
+                                            marginBottom:'1em'
+                                        }}
+                                    />
+                                    <Button basic disabled>No Images</Button>
+                                </Segment>
+                            </Grid.Column>
+                        }
+                        <Grid.Column 
+                            width={16} 
+                            style={{
+                                paddingTop:'80%',
+                                backgroundImage: `url('${APIURL+this.state.product.imagecover}')`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center'
+                            }}
+                        >
+                            
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
-            </Segment> */}
+            </Segment>
 
             {this.renderItems()}
             

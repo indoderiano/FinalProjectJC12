@@ -47,7 +47,9 @@ class AddProduct extends Component {
 
         message:'',
 
-        newidproduct:0
+        newidproduct:0,
+
+        loading: false
      }
 
     
@@ -72,6 +74,8 @@ class AddProduct extends Component {
         }else if(this.state.fileImage.length>5){
             this.setState({message:'Jumlah image yang diupload tidak bisa lebih dari 5'})
         }else{
+
+            this.setState({loading:true})
 
             console.log('creating product')
 
@@ -122,12 +126,14 @@ class AddProduct extends Component {
                 .then((newitems)=>{
                     console.log('upload item berhasil')
                     console.log(newitems.data)
-                    // this.setState({newidproduct:newproduct.data.insertId})
+                    this.setState({newidproduct:newproduct.data.insertId})
                 }).catch((err)=>{
                     console.log(err)
                 })
             }).catch((err)=>{
                 console.log(err)
+            }).finally(()=>{
+                this.setState({loading:false})
             })
         }
     }
@@ -568,6 +574,8 @@ class AddProduct extends Component {
                             style={{width:'100%',margin:'1em 0'}}
                             onClick={this.onSubmit}
                             // onClick={()=>{console.log(this.createitems())}}
+                            loading={this.state.loading}
+                            disabled={this.state.loading}
                         >
                             Submit and go to the Next Step
                         </Button>

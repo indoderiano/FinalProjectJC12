@@ -5,6 +5,7 @@ const Router=express.Router()
 
 
 Router.post('/',ProductControllers.add)
+Router.get('/:idproduct',ProductControllers.get)
 
 // not being used
 // Router.post('/add',ProductControllers.create)
