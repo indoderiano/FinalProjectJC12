@@ -32,7 +32,11 @@ class MainHeader extends Component {
                   {
                     this.props.User.islogin?
                     <span style={{padding:'0 1em'}}>
-                      Hi, {this.props.User.username}
+                      <Button as={Link} style={{backgroundColor:'#1b1c1d', 
+                    color:'#cfcfcf'}} to='/' onClick={()=>{console.log('hello');
+                    }}>
+                      Hi,{this.props.User.username}
+                    </Button>
                     </span>
                     : null
                   }
@@ -47,7 +51,8 @@ class MainHeader extends Component {
                         Sign Up
                       </Button>
                     </>
-                    :  <Button as={Link} to='/' onClick={()=>{this.props.isLogout()}}>
+                    :  <Button as={Link} style={{backgroundColor:'#1b1c1d', 
+                    color:'#cfcfcf'}} to='/' onClick={()=>{this.props.isLogout()}}>
                     Log out
                   </Button>
                   }

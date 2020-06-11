@@ -210,9 +210,29 @@ module.exports={
             return res.status(200).send({...result[0],token})
         })
     },
+    showProfile:(req,res)=>{
+        const {iduser}=req.query
+        var sql=`select * from users where iduser=${iduser}`
+        console.log(iduser)
+        db.query(sql,(err,result)=>{
+            console.log(result)
+            if(err) res.status(500).send(err)
+            res.status(200).send({...result[0]})
+        })
+    },
+    editProfile:(req,res)=>{
+        const {username,address,iduser}=req.body
+        var obj={
+            username,
+            address
+        }
+        var sql=`update users set ? where iduser=${iduser}`
+        db.query(sql, obj, (err,result)=>{
+            if(err) res.status(500).send(err)
+            res.status(200).send({message:'Profile Updated'})
+        })
+    }
 }
 
 
-// var token=createJWTToken({username:res1.username})
-//                 console.log(token)
-                
+       

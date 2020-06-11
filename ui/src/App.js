@@ -11,6 +11,7 @@ import AddProduct from './pages/seller/AddProduct'
 import ProductItems from './pages/seller/ProductItems'
 import ChangePass from './pages/Changepass'
 import Forgotpass from './pages/Forgotpass'
+import Profile from './pages/Profile'
 import { KeepLogin } from './redux/actions'
 import { API_URL } from './support/ApiUrl';
 import { connect } from 'react-redux';
@@ -62,6 +63,7 @@ function App({KeepLogin,User}) {
         <Route path='/register' exact component={Register}/>
         <Route path='/forgotpassword' exact component={Forgotpass}/>
         <Route path='/forgotpassword/:token' exact component={ChangePass}/>
+        <Route path='/profile' exact component={Profile}/>
         <Route path='/verification' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/seller/product' exact component={ManageProduct}/>
