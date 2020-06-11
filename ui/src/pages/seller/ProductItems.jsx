@@ -22,7 +22,21 @@ import {Redirect} from 'react-router-dom'
 
 class ProductItems extends Component {
     state = { 
-        product:{},
+
+        // Product
+        product:{
+            isdeleted: false
+        },
+        deletecoverimageindex:-1,
+        coverimage:[],
+        editproduct:false,
+        deleteproduct:false,
+        newproductname:'',
+        newdescription:'',
+
+        errorcover:'',
+
+        // Items
         items:[],
         editid:0,
         price:0,
@@ -32,22 +46,31 @@ class ProductItems extends Component {
         deleteimageiditem:-1,
         deleteimageindex:-1,
 
-        errorimage:''
+        errorimage:'',
+
+
+        // Deleted Product
+        permitproduct:false
     }
 
     componentDidMount=()=>{
+        this.getProduct()
         this.getItems()
     }
-    
-    getItems=()=>{
 
-        Axios.get(`${APIURL}/products/${this.props.match.params.idproduct}`)
+    getProduct=()=>{
+        
+        Axios.get(`${APIURL}/products/get/${this.props.match.params.idproduct}`)
         .then((res)=>{
             console.log(res.data)
             this.setState({product:res.data})
         }).catch((err)=>{
             console.log(err)
         })
+
+    }
+    
+    getItems=()=>{
 
         Axios.get(`${APIURL}/items?idproduct=${this.props.match.params.idproduct}`)
         .then((res)=>{
@@ -56,6 +79,98 @@ class ProductItems extends Component {
         }).catch((err)=>{
             console.log(err)
         })
+    }
+
+    onAddCover=()=>{
+        if(this.state.image.length>5){
+            // error message
+            this.setState({errorcover:'Jumlah upload image tidak bisa lebih dari 5'})
+        }else{
+            console.log('add cover image')
+
+            var formdata=new FormData()
+
+            for(var image of this.state.coverimage){
+                formdata.append('photo',image)
+            }
+
+            formdata.append('data',this.state.product.imagecover)
+    
+            Axios.put(`${APIURL}/products/image/${this.state.product.idproduct}`,formdata,{
+                headers:{
+                    'Content-Type': `undefined`
+                }
+            }).then((res)=>{
+                console.log('berhasil update cover image')
+                this.setState({coverimage:[]})
+                document.getElementById('cover').value='' // clear input file image
+                this.getProduct()
+            }).catch((err)=>{
+                console.log(err)
+            })
+        }
+    }
+
+    onDeleteCover=(index,oldcover)=>{
+
+        Axios.put(`${APIURL}/products/image/${this.state.product.idproduct}/${index}`,oldcover)
+        .then((res)=>{
+            console.log('berhasil delete cover')
+            this.getProduct()
+        }).catch((err)=>{
+            console.log(err)
+        })
+
+    }
+
+    onSubmitProduct=()=>{
+
+        var edit={
+            product_name: this.state.newproductname,
+            description: this.state.newdescription
+        }
+
+        Axios.put(`${APIURL}/products/${this.state.product.idproduct}`,edit)
+        .then((res)=>{
+            console.log('berhasil update product')
+            this.getProduct()
+            this.setState({editproduct:false})
+        }).catch((err)=>{
+            console.log(err)
+        })
+
+    }
+
+    onDeleteProduct=()=>{
+        var edit={
+            isdeleted: true
+        }
+
+        Axios.put(`${APIURL}/products/${this.state.product.idproduct}`,edit)
+        .then((res)=>{
+            console.log('berhasil delete product')
+            this.getProduct()
+            this.setState({deleteproduct:false})
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+
+    onUnblockProduct=()=>{
+
+        var edit={
+            isdeleted: false
+        }
+
+        Axios.put(`${APIURL}/products/${this.state.product.idproduct}`,edit)
+        .then((res)=>{
+            console.log('berhasil unblock product')
+            this.getProduct()
+            this.setState({permitproduct:false})
+        }).catch((err)=>{
+            console.log(err)
+        })
+
     }
 
     onAddPhoto=(iditem,oldimage)=>{
@@ -128,26 +243,445 @@ class ProductItems extends Component {
         // })
     }
 
-    renderItems=()=>{
-        const isJson=(data)=>{
-            try{
-                if(data==null||data==''){
-                    return []
-                }
-                return JSON.parse(data)
-            }catch{
-                return data
+    isJson=(data)=>{
+        try{
+            if(data==null||data==''){
+                return []
             }
+            return JSON.parse(data)
+        }catch{
+            return []
         }
+    }
+
+    renderProduct=()=>{
+        if(this.state.product.imagecover){
+            // console.log(this.state.product.imagecover)
+            var coverimages=this.isJson(this.state.product.imagecover)
+            // console.log(coverimages)
+        }
+
+        return (
+            <Segment>
+                <Grid>
+                    <Grid.Row>
+                        <Grid.Column width={16}>
+                            <Header as={'h4'}>Cover Photo</Header>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row style={{padding:'0 1rem'}}>
+                        {
+                            coverimages?
+                            coverimages.map((image,index)=>{
+                                // console.log(image)
+                                return (
+                                    <Grid.Column key={index} width={4} style={{padding:'.5em 1em .5em 0'}}>
+                                        <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                            <div 
+                                                style={{
+                                                    paddingTop:'80%',
+                                                    backgroundImage:`url('${APIURL+image}')`,
+                                                    backgroundSize:'cover',
+                                                    backgroundPosition:'center',
+                                                    marginBottom:'1em'
+                                                }}
+                                            />
+                                            {
+                                                index===this.state.deletecoverimageindex?
+                                                <Button 
+                                                    basic
+                                                    color='red'
+                                                    onClick={()=>{this.onDeleteCover(index,coverimages)}}
+                                                >
+                                                    Confirm
+                                                </Button>
+                                                :
+                                                <Button 
+                                                    basic
+                                                    onClick={()=>{this.setState({deletecoverimageindex:index})}}
+                                                >
+                                                    Remove
+                                                </Button>
+
+                                            }
+                                        </Segment>
+                                    </Grid.Column>
+                                )
+                            })
+                            : 
+                            <Grid.Column width={4} style={{padding:'.5em 1em .5em 0'}}>
+                                <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                    <div 
+                                        style={{
+                                            paddingTop:'80%',
+                                            backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
+                                            backgroundSize:'cover',
+                                            backgroundPosition:'center',
+                                            marginBottom:'1em'
+                                        }}
+                                    />
+                                    <Button basic disabled>No Images</Button>
+                                </Segment>
+                            </Grid.Column>
+                        }
+                        
+                        <Grid.Column width={16} style={{margin:'1em 0',padding:'0'}}>
+                            <Input 
+                                type='file'
+                                id='cover'
+                                multiple
+                                style={{marginRight:'1em'}}
+                                onChange={(e)=>{
+                                    if(e.target.files){
+                                        // console.log(e.target.files)
+                                        this.setState({coverimage:e.target.files})
+                                    }
+                                }}
+                            />
+                            <Button
+                                basic
+                                primary
+                                style={{height:'100%'}}
+                                onClick={()=>{this.onAddCover()}}
+                            >
+                                Add
+                            </Button>
+                        </Grid.Column>
+                        {
+                            this.state.errorcover?
+                            <Grid.Column width={16}>
+                                <span style={{color:'red'}}>{this.state.errorcover}</span>
+                            </Grid.Column>
+                            : null
+                        }
+                    </Grid.Row>
+
+                    <Divider />
+
+                    {
+                        this.state.editproduct?
+                        <Grid.Row>
+                            <Grid.Column width={16} style={{marginBottom:'1em'}}>
+                                <span style={{display:'block'}}>Product Name</span>
+                                <Input
+                                    placeholder='Product Name'
+                                    value={this.state.newproductname}
+                                    onChange={(e)=>{this.setState({newproductname:e.target.value})}}
+                                />
+                            </Grid.Column>
+                            <Grid.Column width={16} style={{marginBottom:'1em'}}>
+                                <span style={{display:'block'}}>Description</span>
+                                <Form>
+                                    <TextArea
+                                        placeholder='Description'
+                                        style={{maxWidth:'500px'}}
+                                        value={this.state.newdescription}
+                                        onChange={(e)=>{this.setState({newdescription:e.target.value})}}
+                                    />
+                                </Form>
+                            </Grid.Column>
+
+                            <Grid.Column width={16} style={{textAlign:'right'}}>
+                                <Button
+                                    primary
+                                    onClick={this.onSubmitProduct}
+                                >
+                                    Submit
+                                </Button>
+                                <Button
+                                    // primary
+                                    onClick={()=>{this.setState({
+                                        editproduct:false
+                                    })}}
+                                >
+                                    Cancel
+                                </Button>
+                            </Grid.Column>
+
+                        </Grid.Row>
+                        :
+                        <Grid.Row>
+                            <Grid.Column width={16} style={{marginBottom:'1em'}}>
+                                <span >Product Name:</span>
+                                <span style={{fontWeight:600,marginLeft:'.5em'}}>{this.state.product.product_name}</span>
+                            </Grid.Column>
+                            <Grid.Column width={16} style={{marginBottom:'1em'}}>
+                                <span>Description:</span>
+                                <p style={{fontWeight:300,marginTop:'.5em'}}>{this.state.product.description}</p>
+                            </Grid.Column>
+
+                            {
+                                this.state.deleteproduct?
+                                <Grid.Column width={16} style={{textAlign:'right'}}>
+                                    <Button
+                                        color='red'
+                                        onClick={this.onDeleteProduct}
+                                    >
+                                        Confirm
+                                    </Button>
+                                    <Button
+                                        // primary
+                                        onClick={()=>{this.setState({
+                                            deleteproduct:false
+                                        })}}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </Grid.Column>
+                                :
+                                <Grid.Column width={16} style={{textAlign:'right'}}>
+                                    <Button
+                                        primary
+                                        onClick={()=>{this.setState({
+                                            editproduct:true,
+                                            newproductname:this.state.product.product_name,
+                                            newdescription:this.state.product.description
+                                        })}}
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button
+                                        color='red'
+                                        onClick={()=>{this.setState({
+                                            deleteproduct:true
+                                        })}}
+                                    >
+                                        Delete
+                                    </Button>
+                                </Grid.Column>
+
+                            }
+
+                        </Grid.Row>
+                    }
+
+                </Grid>
+            </Segment>
+
+        )
+    }
+
+    renderProductIsDeleted=()=>{
+        if(this.state.product.imagecover){
+            // console.log(this.state.product.imagecover)
+            var coverimages=this.isJson(this.state.product.imagecover)
+            // console.log(coverimages)
+        }
+
+        return (
+            <Segment>
+                <Grid>
+                    <Grid.Row>
+                        <Grid.Column width={16}>
+                            <Header as={'h4'}>Cover Photo</Header>
+                        </Grid.Column>
+                        <div style={{
+                            position:'absolute',
+                            top:'0',
+                            left:'0',
+                            width:'100%',
+                            height:'100%',
+                            background:'rgba(255,255,255,.5)'
+                        }}/>
+                    </Grid.Row>
+                    <Grid.Row style={{padding:'0 1rem'}}>
+                        {
+                            coverimages?
+                            coverimages.map((image,index)=>{
+                                // console.log(image)
+                                return (
+                                    <Grid.Column key={index} width={4} style={{padding:'.5em 1em .5em 0'}}>
+                                        <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                            <div 
+                                                style={{
+                                                    paddingTop:'80%',
+                                                    backgroundImage:`url('${APIURL+image}')`,
+                                                    backgroundSize:'cover',
+                                                    backgroundPosition:'center',
+                                                    marginBottom:'1em'
+                                                }}
+                                            />
+                                            {
+                                                index===this.state.deletecoverimageindex?
+                                                <Button 
+                                                    basic
+                                                    color='red'
+                                                    onClick={()=>{this.onDeleteCover(index,coverimages)}}
+                                                >
+                                                    Confirm
+                                                </Button>
+                                                :
+                                                <Button 
+                                                    disabled
+                                                    basic
+                                                    onClick={()=>{this.setState({deletecoverimageindex:index})}}
+                                                >
+                                                    Remove
+                                                </Button>
+
+                                            }
+                                        </Segment>
+                                    </Grid.Column>
+                                )
+                            })
+                            : 
+                            <Grid.Column width={4} style={{padding:'.5em 1em .5em 0'}}>
+                                <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                    <div 
+                                        style={{
+                                            paddingTop:'80%',
+                                            backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
+                                            backgroundSize:'cover',
+                                            backgroundPosition:'center',
+                                            marginBottom:'1em'
+                                        }}
+                                    />
+                                    <Button basic disabled>No Images</Button>
+                                </Segment>
+                            </Grid.Column>
+                        }
+                        
+                        <Grid.Column width={16} style={{margin:'1em 0',padding:'0'}}>
+                            <Input 
+                                disabled
+                                type='file'
+                                id='cover'
+                                multiple
+                                style={{marginRight:'1em'}}
+                                // onChange={(e)=>{
+                                //     if(e.target.files){
+                                //         // console.log(e.target.files)
+                                //         this.setState({coverimage:e.target.files})
+                                //     }
+                                // }}
+                            />
+                            <Button
+                                disabled
+                                basic
+                                primary
+                                style={{height:'100%'}}
+                                onClick={()=>{this.onAddCover()}}
+                            >
+                                Add
+                            </Button>
+                        </Grid.Column>
+                        <div style={{
+                            position:'absolute',
+                            top:'0',
+                            left:'0',
+                            width:'100%',
+                            height:'100%',
+                            background:'rgba(255,255,255,.5)'
+                        }}/>
+                    </Grid.Row>
+
+                    <Divider />
+
+                        
+                    <Grid.Row>
+                        <Grid.Column width={16} style={{marginBottom:'1em'}}>
+                            <span >Product Name:</span>
+                            <span style={{fontWeight:600,marginLeft:'.5em'}}>{this.state.product.product_name}</span>
+                            <div style={{
+                                position:'absolute',
+                                top:'0',
+                                left:'0',
+                                width:'100%',
+                                height:'100%',
+                                background:'rgba(255,255,255,.5)'
+                            }}/>
+                        </Grid.Column>
+                        <Grid.Column width={16} style={{marginBottom:'1em'}}>
+                            <span>Description:</span>
+                            <p style={{fontWeight:300,marginTop:'.5em'}}>{this.state.product.description}</p>
+                            <div style={{
+                                position:'absolute',
+                                top:'0',
+                                left:'0',
+                                width:'100%',
+                                height:'100%',
+                                background:'rgba(255,255,255,.5)'
+                            }}/>
+                        </Grid.Column>
+
+                        {
+                            this.state.permitproduct?
+                            <Grid.Column width={16} style={{textAlign:'right'}}>
+                                <Button
+                                    primary
+                                    onClick={this.onUnblockProduct}
+                                >
+                                    Confirm
+                                </Button>
+                                <Button
+                                    // primary
+                                    onClick={()=>{this.setState({
+                                        permitproduct:false
+                                    })}}
+                                >
+                                    Cancel
+                                </Button>
+                            </Grid.Column>
+                            :
+                            <Grid.Column width={16} style={{textAlign:'right'}}>
+                                <Button
+                                    primary
+                                    onClick={()=>{this.setState({
+                                        permitproduct:true
+                                    })}}
+                                >
+                                    Unblock
+                                </Button>
+                                {/* <Button
+                                    color='red'
+                                    onClick={()=>{this.setState({
+                                        deleteproduct:true
+                                    })}}
+                                >
+                                    Delete
+                                </Button> */}
+                            </Grid.Column>
+
+                        }
+
+                    </Grid.Row>
+                    <div style={{
+                        position:'absolute',
+                        top:'50%',
+                        left:'0',
+                        width:'100%',
+                        // height:'100%',
+                        textAlign:'center'
+                    }}>
+                        <Header as={'p'} style={{fontSize:'40px',color:'rgba(0,0,0,.7)'}}>Deleted</Header>
+                    </div>
+                </Grid>
+
+                
+            </Segment>
+        )
+    }
+
+    renderItems=()=>{
+        // const isJson=(data)=>{
+        //     try{
+        //         if(data==null||data==''){
+        //             return []
+        //         }
+        //         return JSON.parse(data)
+        //     }catch{
+        //         return []
+        //     }
+        // }
         return this.state.items.map((item,index)=>{
 
-            const type=isJson(item.type)
-            const image=isJson(item.image)
+            const type=this.isJson(item.type)
+            const image=this.isJson(item.image)
             // console.log(type)
             return (
                 <Segment key={index} style={{width:'100%'}}>
                     <Grid>
-                    <Grid.Row>
+                        <Grid.Row style={{paddingBottom:'0'}}>
                             <Grid.Column width={16}>
                                 <Header as={'h4'} style={{width:'100%'}}>Type</Header>
                             </Grid.Column>
@@ -165,6 +699,8 @@ class ProductItems extends Component {
                             </Grid.Column>
                         </Grid.Row>
                         
+                        <Divider />
+
                         <Grid.Row style={{paddingBottom:'0'}}>
                             <Grid.Column width={16}>
                                 <Header as={'h4'} style={{width:'100%',marginBottom:'.5em'}}>Images</Header>
@@ -214,6 +750,7 @@ class ProductItems extends Component {
                                                         item.iditem===this.state.deleteimageiditem&&index===this.state.deleteimageindex?
                                                         <Button 
                                                             basic
+                                                            color='red'
                                                             onClick={()=>{this.onDeletePhoto(item.iditem,index,image)}}
                                                         >
                                                             Confirm
@@ -291,7 +828,7 @@ class ProductItems extends Component {
                                     style={{marginRight:'1em'}}
                                     onChange={(e)=>{
                                         if(e.target.files){
-                                            console.log(e.target.files)
+                                            // console.log(e.target.files)
                                             this.setState({image:e.target.files})
                                         }
                                     }}
@@ -396,11 +933,6 @@ class ProductItems extends Component {
     }
 
     render() { 
-        if(this.state.product.imagecover){
-            console.log(this.state.product.imagecover)
-            var coverimages=JSON.parse(this.state.product.imagecover)
-            console.log(coverimages)
-        }
 
         return ( 
             <Container style={{paddingTop:'2em',width:'650px'}}>
@@ -412,85 +944,18 @@ class ProductItems extends Component {
                 {this.state.items[0]?this.state.items[0].product_name:'Product Name'}
             </Header>
 
-            
+            {
+                this.state.product.isdeleted?
+                this.renderProductIsDeleted()
+                :
+                <>
+                {this.renderProduct()}
+                {this.renderItems()}
+                </>
+            }
 
-            <Segment>
-                <Grid>
-                    <Grid.Row>
-                        <Grid.Column width={16}>
-                            <Header as={'h4'}>{this.state.product.product_name}</Header>
-                        </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row style={{padding:'0 1rem'}}>
-                        {
-                            coverimages?
-                            coverimages.map((image,index)=>{
-                                console.log(image)
-                                return (
-                                    <Grid.Column key={index} width={4} style={{padding:'.5em 1em .5em 0'}}>
-                                        <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
-                                            <div 
-                                                style={{
-                                                    paddingTop:'80%',
-                                                    backgroundImage:`url('${APIURL+image}')`,
-                                                    backgroundSize:'cover',
-                                                    backgroundPosition:'center',
-                                                    marginBottom:'1em'
-                                                }}
-                                            />
-                                            {/* {
-                                                item.iditem===this.state.deleteimageiditem&&index===this.state.deleteimageindex?
-                                                <Button 
-                                                    basic
-                                                    onClick={()=>{this.onDeletePhoto(item.iditem,index,image)}}
-                                                >
-                                                    Confirm
-                                                </Button>
-                                                :
-                                                <Button 
-                                                    basic
-                                                    onClick={()=>{this.setState({deleteimageiditem:item.iditem,deleteimageindex:index})}}
-                                                >
-                                                    Remove
-                                                </Button>
 
-                                            } */}
-                                        </Segment>
-                                    </Grid.Column>
-                                )
-                            })
-                            : 
-                            <Grid.Column width={4} style={{padding:'.5em 1em .5em 0'}}>
-                                <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
-                                    <div 
-                                        style={{
-                                            paddingTop:'80%',
-                                            backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
-                                            backgroundSize:'cover',
-                                            backgroundPosition:'center',
-                                            marginBottom:'1em'
-                                        }}
-                                    />
-                                    <Button basic disabled>No Images</Button>
-                                </Segment>
-                            </Grid.Column>
-                        }
-                        <Grid.Column 
-                            width={16} 
-                            style={{
-                                paddingTop:'80%',
-                                backgroundImage: `url('${APIURL+this.state.product.imagecover}')`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center'
-                            }}
-                        >
-                            
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-            </Segment>
 
-            {this.renderItems()}
             
                 
             <Grid style={{marginBottom:'3em'}}>

@@ -190,7 +190,9 @@ module.exports={
         imagePath[index]
 
         // delete image from folder
-        fs.unlinkSync('./public' + imagePath[index]);
+        if(fs.existsSync('./public' + imagePath[index])){   // check if file exists to prevent error
+            fs.unlinkSync('./public' + imagePath[index]);
+        }
 
         // delete path
         imagePath.splice(index,1)
