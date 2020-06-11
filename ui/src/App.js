@@ -9,6 +9,9 @@ import { KeepLogin } from './redux/actions'
 import Axios from'axios'
 import { API_URL } from './support/ApiUrl';
 import { connect } from 'react-redux';
+import HomeSeller from './pages/seller/HomeSeller';
+import MyProducts from './pages/seller/MyProduct';
+import AddProduct from './pages/seller/AddProduct';
 
 
 function App({KeepLogin,User}) {
@@ -41,6 +44,7 @@ function App({KeepLogin,User}) {
 
   return (
     <div>
+      {/* <SidebarSeller/> */}
       <Switch>
         <Route path='/' exact component={Home}/>
         <Route path='/login' exact component={Login} />
@@ -50,6 +54,10 @@ function App({KeepLogin,User}) {
           <Fragment>
             <Route path='/verification' exact component={Verification}/>
             <Route path='/verification/:token' exact component={Verification}/>
+            <Route path='/seller' exact component={HomeSeller}/>
+            <Route path='/seller/myproduct' exact component={MyProducts}/>
+            <Route path='/seller/addproduct' exact component={AddProduct}/>
+
           </Fragment>
           : null
 

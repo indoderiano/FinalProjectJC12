@@ -5,8 +5,20 @@ const fs=require('fs')
 
 module.exports={
     get:(req,res)=>{
-        res.status(200).send({product:'test'})
+        var sql=`select p.*,c.isdeleted, c.name as namecategory
+        from products p join categories c on p.idcategory=c.idcategory
+        where c.isdeleted=0`
+        db.query(sql,(err,product)=>{
+            console.log(product)
+            if (err) res.status(500).send(err)
+            sql=`Select idcategory,name from categories`
+            db.query(sql,(err,category)=>{
+                if (err) res.status(500).send(err)
+                return res.send({product,category})
+            })
+        })
     },
+
     add:(req,res)=>{
         console.log('add product')
         // upload image

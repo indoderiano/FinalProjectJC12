@@ -9,7 +9,6 @@ module.exports={
 
     create:(req,res)=>{
         console.log('creating new user...')
-        console.log(req.body)
         const {username,email,password,address} = req.body
         var userdata={
             username,
@@ -17,6 +16,8 @@ module.exports={
             password: encrypt(password),
             address
         }
+        console.log(req.body)
+        console.log(userdata)
         // var sql=''
         // CHECK AVAILABILITY
         // for developing, duplicate email is let through
@@ -24,13 +25,18 @@ module.exports={
         var sql=`select * from users where username='${username}'`
         db.query(sql,(err,checkuser)=>{
             if(err) return res.status(500).send(err)
+            console.log('selecting user existing passed')
+            console.log(checkuser)
             if(checkuser.length){
                 console.log('username/email sudah terpakai')
                 res.status(200).send({status:false,message:'username atau email sudah terpakai'})
             }else{
                 // CREATE NEW USER
+                console.log('masuk bagian else dari register')
                 sql=`insert into users set ?`
                 db.query(sql,userdata,(err,created)=>{
+                    console.log(created)
+                    console.log(userdata)
                     if(err) return res.status(500).send(err)
                     console.log(`account ${username} berhasil dibuat`)
                     console.log('sending email verification...')
@@ -99,9 +105,6 @@ module.exports={
             res.status(200).send({status:true})
         })
     },
-
-
-
 
     allusers:(req,res)=>{
         console.log('all users data')

@@ -8,7 +8,7 @@ export const LoginUser=({username,password})=>{
         dispatch({type:USER_LOGIN_START})
         if(username===''||password===''){
             console.log('test')
-            dispatch({type:USER_LOGIN_FAILED,payload: 'Datanya lengkapin dulu Babe!!'})
+            dispatch({type:USER_LOGIN_FAILED,payload: 'All Column should be filled!'})
         }else{
             Axios.get(`${API_URL}/users/login`,{
                 params:{
@@ -21,7 +21,7 @@ export const LoginUser=({username,password})=>{
                     localStorage.setItem('token', res.data.token)
                     dispatch({type:USER_LOGIN_SUCCESS,payload:res.data})
                 }else{
-                    dispatch({type:USER_LOGIN_FAILED,payload:'username atau password tidak terdaftar'})
+                    dispatch({type:USER_LOGIN_FAILED,payload:'Account is not recognized!'})
                 }
             }).catch((err)=>{
                 console.log(err)
