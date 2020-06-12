@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
+import MainHeader from './Header'
 import {
   Button,
   Container,
@@ -94,30 +95,14 @@ class DesktopContainer extends Component {
             style={{ minHeight: 700, padding: '1em 0em' }}
             vertical
           >
-            <Menu
+            {/* <MainHeader 
               fixed={fixed ? 'top' : null}
               inverted={!fixed}
               pointing={!fixed}
               secondary={!fixed}
               size='large'
-            >
-              <Container>
-                <Menu.Item as='a' active>
-                  Home                 
-                </Menu.Item>
-                <Menu.Item as='a'>Work</Menu.Item>
-                <Menu.Item as='a'>Company</Menu.Item>
-                <Menu.Item as={Link} to='/seller'>Seller</Menu.Item>
-                <Menu.Item position='right'>
-                  <Button as={Link} to='/login' inverted={!fixed}>
-                    Log in
-                  </Button>
-                  <Button as={Link} to='/register' inverted={!fixed} primary={fixed} style={{ marginLeft: '0.5em' }}>
-                    Sign Up
-                  </Button>
-                </Menu.Item>
-              </Container>
-            </Menu>
+            /> */}
+            
             <HomepageHeading />
           </Segment>
         </Visibility>

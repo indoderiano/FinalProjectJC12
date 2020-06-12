@@ -3,12 +3,15 @@ import {Container,Message,Header,Button} from 'semantic-ui-react'
 import Axios from 'axios'
 import { APIURL } from '../supports/ApiUrl'
 import {connect} from 'react-redux'
+import {KeepLogin} from '../redux/actions'
+import { Redirect } from 'react-router-dom'
 
 
 
 class Verification extends Component {
     state = { 
-        message: 'wait...'
+        message: 'wait...',
+        redirect: false
      }
 
     componentDidMount=()=>{
@@ -22,8 +25,11 @@ class Verification extends Component {
                 if(res.data.status){
                     this.setState({message:'Email is verified, you will be redirected to home page...'})
                     // ACTION KEEPLOGIN
+                    this.props.KeepLogin(res.data.update)
                     // WILL AUTOMATICALLY REDIRECT TO HOMEPAGE
-                    // BECAUSE REACT ROUTER DOM IN APP JS REDIRECT VERIFIED ACC
+                    setTimeout(()=>{
+                        this.setState({redirect:true})
+                    },2000)
                 }else{
                     this.setState({message:res.data.message})
                 }
@@ -53,6 +59,12 @@ class Verification extends Component {
                 <Button primary onClick={this.onResend}>
                     Resend Email
                 </Button>
+
+                {
+                    this.state.redirect?
+                    <Redirect to='/'/>
+                    : null
+                }
             </Container>
 
          );
@@ -65,4 +77,4 @@ const MapstatetoProps=(state)=>{
     }
 }
  
-export default (Verification);
+export default connect(MapstatetoProps,{KeepLogin}) (Verification);

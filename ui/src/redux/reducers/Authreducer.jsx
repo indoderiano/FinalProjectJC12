@@ -1,7 +1,7 @@
 import{
     USER_LOGIN_SUCCESS,
     USER_LOGIN_START,
-    USER_LOGIN_FAILED
+    USER_LOGIN_FAILED,
 } from './../type'
 
 const INITIAL_STATE={
@@ -12,7 +12,9 @@ const INITIAL_STATE={
     message:'',
     token:'',
     password:'',
-    isverified:0
+    isverified:0,
+    email:'',
+    
 }
 
 export default (state= INITIAL_STATE,action)=>{

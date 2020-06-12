@@ -1,6 +1,7 @@
 import {USER_LOGIN_START,USER_LOGIN_SUCCESS,USER_LOGIN_FAILED} from './../type'
 import Axios from 'axios';
 import {API_URL} from './../../support/ApiUrl'
+import { APIURL } from '../../supports/ApiUrl';
 
 
 export const LoginUser=({username,password})=>{
@@ -37,3 +38,14 @@ export const KeepLogin=(data)=>{
         payload:data
     }
 }
+
+export const isLogout=()=>{
+    localStorage.removeItem('token')
+    return{
+        type:'ErrorClear',
+    }
+}
+
+
+
+    
