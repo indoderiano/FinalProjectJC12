@@ -12,6 +12,7 @@ import ProductItems from './pages/seller/ProductItems'
 import ChangePass from './pages/Changepass'
 import Forgotpass from './pages/Forgotpass'
 import Profile from './pages/Profile'
+import Sellerregis from './pages/Sellerregis'
 import { KeepLogin } from './redux/actions'
 import { API_URL } from './support/ApiUrl';
 import { connect } from 'react-redux';
@@ -69,6 +70,7 @@ function App({KeepLogin,User}) {
         <Route path='/seller/product' exact component={ManageProduct}/>
         <Route path='/seller/product/add' exact component={AddProduct}/>
         <Route path='/seller/product/:idproduct' exact component={ProductItems}/>
+        <Route path='/Sellerregister' exact component={Sellerregis }/>
 
       </Switch>
 

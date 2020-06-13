@@ -4,27 +4,30 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {connect} from 'react-redux'
 import { APIURL } from './../supports/ApiUrl'
 import { Button,Input } from 'semantic-ui-react'
-
+import {Redirect} from 'react-router-dom'
 const ProfileEdit=(props)=>{
-    const [data,setdata]=useState({})
+
     const [edit,setedit]=useState(false)
     const [editprofile,setprofile]=useState({username:'',address:'',iduser:`${props.iduser}`})
 
-   const isEdit=()=>{
+   const editSubmit=()=>{
     Axios.put(`${APIURL}/users/editprofile`,editprofile)
     .then((res)=>{
         console.log(res.data)
-        setdata(res.data)
+        console.log('berhasil')
+        setedit(true)
     }).catch((err)=>{
         console.log(err) 
     })
    }
-    
-    const isProfileChange=(e)=>{
-        setprofile({[e.target.name]:e.target.value})
-       
-        
-    }
+
+   const editChange=(e)=>{
+    setprofile({...editprofile,[e.target.name]:e.target.value})  
+}
+  if(edit){
+    return <Redirect to='/'/>
+  }
+
 
     return(
         <div style={{width:'70%',
@@ -34,11 +37,15 @@ const ProfileEdit=(props)=>{
            >
         <table className="table table-borderless" >
   
-  <tbody >
+  <tbody>
     <tr>
       <th scope="row">Username:</th>
         <td class="ui transparent input">
-        <input type="text" placeholder='Username...' name='username'  onChange={isProfileChange} defaultValue={data.username}/>
+        <input type="text" 
+               placeholder='Username...' 
+               name='username'
+               value={editprofile.username}
+               onChange={editChange}/>
         </td>
     </tr>
     <br/>
@@ -52,22 +59,26 @@ const ProfileEdit=(props)=>{
     <tr>
       <th scope="row">Address:</th>
         <td class="ui transparent input">
-        <input type="text" placeholder='Address...' name='address'  onChange={isProfileChange} defaultValue={data.address}/>
+        <input type="text" 
+               placeholder='Address...' 
+               name='address'
+               value={editprofile.address} 
+               onChange={editChange}/>
         </td>
     </tr>
     <br/>
     <tr>
       <th scope="row">Account Status:</th>
-        <td>{data.isseller===true?'seller':'users'}</td>
+        <td>{props.isseller===true?'seller':'users'}</td>
     </tr>
   </tbody>
-        <Button style={{marginLeft:'50%', marginTop:'10%'}} onClick={isEdit()}>
+        <Button style={{marginLeft:'50%', marginTop:'10%'}} onClick={editSubmit} >
             safe profile
         </Button>
 </table>
         </div>
     )
-}
+    }
 const MapstatetoProps=(state)=>{
     return state.Auth            
 }

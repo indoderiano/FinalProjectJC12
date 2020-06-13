@@ -28,22 +28,22 @@ const Profile=(props)=>{
         <table className="table table-borderless" >
   <tbody >
     <tr>
-      <th scope="row">Username:</th>
-        <td>{props.username}</td>
+      <tr scope="row">Username:</tr>
+        <td>{data.username}</td>
     </tr>
     <br/>
     <tr>
-      <th scope="row">Email:</th>
+      <tr scope="row">Email:</tr>
          <td>{data.email}</td>
     </tr>
     <br/>
     <tr>
-      <th scope="row">Address:</th>
+      <tr scope="row">Address:</tr>
         <td colSpan="2">{data.address}</td>
     </tr>
     <br/>
     <tr>
-      <th scope="row">Account Status:</th>
+      <tr scope="row">Account Status:</tr>
         <td>{data.isseller===true?'seller':'users'}</td>
     </tr>
   </tbody>
