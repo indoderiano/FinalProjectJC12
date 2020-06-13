@@ -97,7 +97,10 @@ module.exports={
         
         var sql=`update products set ? where idproduct=${idproduct}`
 
-        db.query(sql,req.body,(err,edited)=>{
+        var edit=req.body
+        edit.updateat=new Date()
+
+        db.query(sql,edit,(err,edited)=>{
             if(err) return res.status(500).send(err)
 
             console.log('product details updated')
@@ -132,7 +135,10 @@ module.exports={
             console.log(newImagePath)
 
             
-            const data={imagecover:JSON.stringify(newImagePath)}
+            const data={
+                imagecover:JSON.stringify(newImagePath),
+                updateat: new Date()
+            }
 
             var sql=`update products set ? where idproduct=${idproduct}`
             db.query(sql,data,(err,updated)=>{

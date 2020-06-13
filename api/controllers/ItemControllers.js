@@ -108,9 +108,12 @@ module.exports={
         console.log(req.params)
         const{iditem}=req.params
 
+        var edit=req.body
+        edit.updateat=new Date()
+
         var sql=`update items set ? where iditem=${iditem}`
 
-        db.query(sql,req.body,(err,updated)=>{
+        db.query(sql,edit,(err,updated)=>{
             if(err) return res.status(500).send(err)
             console.log('update item berhasil')
             res.status(200).send(updated)
@@ -165,7 +168,10 @@ module.exports={
 
             // newImagePath.push(imagePath)
 
-            const data={image:JSON.stringify(newImagePath)}
+            const data={
+                image:JSON.stringify(newImagePath),
+                updateat:new Date()
+            }
 
             var sql=`update items set ? where iditem=${iditem}`
             db.query(sql,data,(err,updated)=>{
@@ -198,7 +204,8 @@ module.exports={
         imagePath.splice(index,1)
 
         var edit={
-            image: JSON.stringify(imagePath)
+            image: JSON.stringify(imagePath),
+            updateat:new Date()
         }
 
         var sql=`update items set ? where iditem=${iditem}`
