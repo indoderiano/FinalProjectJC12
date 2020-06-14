@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 import SubNavigation from './componentseller/subnavigation';
 import _ from 'lodash'
 import Axios from 'axios'
-import { API_URL } from '../../support/ApiUrl';
+import { APIURL } from '../../supports/ApiUrl';
 
 
 class MyProducts extends Component {
@@ -19,7 +19,7 @@ class MyProducts extends Component {
     }
     
     componentDidMount=()=>{
-        Axios.get(`${API_URL}/products/productseller`)
+        Axios.get(`${APIURL}/products/productseller`)
         .then((res)=>{
             this.setState({
                 products:res.data.product,

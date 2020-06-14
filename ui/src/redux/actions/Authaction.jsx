@@ -1,6 +1,5 @@
 import {USER_LOGIN_START,USER_LOGIN_SUCCESS,USER_LOGIN_FAILED} from './../type'
 import Axios from 'axios';
-import {API_URL} from './../../support/ApiUrl'
 import { APIURL } from '../../supports/ApiUrl';
 
 
@@ -11,7 +10,7 @@ export const LoginUser=({username,password})=>{
             console.log('test')
             dispatch({type:USER_LOGIN_FAILED,payload: 'All Column should be filled!'})
         }else{
-            Axios.get(`${API_URL}/users/login`,{
+            Axios.get(`${APIURL}/users/login`,{
                 params:{
                     username:username,
                     password
