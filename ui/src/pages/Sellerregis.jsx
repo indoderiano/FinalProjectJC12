@@ -9,8 +9,8 @@ import {
 } from 'semantic-ui-react'
 import { useState } from 'react'
 import {connect} from 'react-redux'
-
-
+import {APIURL} from '../supports/ApiUrl'
+import Axios from 'axios'
 const Sellerregis = (props) => {
 
   const [data,setdata]=useState({
@@ -20,8 +20,19 @@ const Sellerregis = (props) => {
   })
 
   const testmasuk=()=>{
-    return(console.log(data))
+    return(
+      Axios.post(`${APIURL}/sellers/createseller`,data)
+      .then((res)=>{
+        if(res.data.status){
+          console.log(res.data.message)
+        }
+      }).catch((err)=>{
+        console.log(err)
+        
+      })
+    )
   }
+
   return(
     <Grid textAlign='center' style={{ height: '70vh' }} verticalAlign='middle'>
     <Grid.Column style={{ maxWidth: 450 }}>

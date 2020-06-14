@@ -3,4 +3,6 @@ const {SellerControllers}=require('../controllers')
 
 const Router=express.Router()
 
-Router.get('/createseller',SellerControllers.createSeller)
+Router.post('/createseller',SellerControllers.createSeller)
+
+module.exports=Router

@@ -19,10 +19,10 @@ module.exports={
                 res.status(200).send({message:'You have been registered as a seller'})
                 }else{
                     // INPUT USER AS A SELLER
-                    var sql1=`insers into seller set ?`
+                    var sql1=`insert into seller set ?`
                     db.query(sql,newseller,(err,result1)=>{
                         if(err) res.status(500).send(err,{message:'error in line 23'})
-                        res.status(200).send(result1)
+                        res.status(200).send({message:'Registered as a Seller',status:true})
                     })
                 }
 
