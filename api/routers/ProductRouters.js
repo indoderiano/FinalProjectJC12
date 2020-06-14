@@ -3,12 +3,13 @@ const {ProductControllers}=require('../controllers')
 
 const Router=express.Router()
 
-Router.get('/getproducts',ProductControllers.get)               //get all products for seller page
+Router.get('/productseller',ProductControllers.productseller)               //get all products for seller page
 Router.post('/',ProductControllers.add)
 Router.get('/get/:idproduct',ProductControllers.get)            //???
 Router.put('/image/:idproduct',ProductControllers.addcover)
 Router.put('/image/:idproduct/:index',ProductControllers.deletecover)
 Router.put('/:idproduct',ProductControllers.edit)
+Router.get('/allproducts',ProductControllers.allproducts)
 
 /////////////////////////////////////////////////////////
 // NOTE IMPORTANT

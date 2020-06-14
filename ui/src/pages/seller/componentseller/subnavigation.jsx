@@ -47,15 +47,7 @@ class SubNavigation extends Component {
                         active={activeItem === 'archived'}
                         onClick={this.handleItemClick}
                     />
-                    <Menu.Menu position='right'>
-                        <Menu.Item>
-                        <Input
-                            transparent
-                            icon={{ name: 'search', link: true }}
-                            placeholder='Search users...'
-                        />
-                        </Menu.Item>
-                    </Menu.Menu>
+                    
                 </Menu>
             </div>
          );

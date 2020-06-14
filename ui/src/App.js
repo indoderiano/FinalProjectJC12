@@ -16,8 +16,8 @@ import { API_URL } from './support/ApiUrl';
 import { connect } from 'react-redux';
 import HomeSeller from './pages/seller/HomeSeller';
 import MyProducts from './pages/seller/MyProduct';
-import AddProduct from './pages/seller/AddProduct';
 import Axios from'axios'
+import AllProducts from './pages/AllProducts';
 
 
 function App({KeepLogin,User}) {
@@ -67,6 +67,7 @@ function App({KeepLogin,User}) {
         <Route path='/forgotpassword/:token' exact component={ChangePass}/>
         <Route path='/verification' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
+        <Route path='/allproducts' exact component={AllProducts}/>
         <Route path='/seller/product' exact component={ManageProduct}/>
         <Route path='/seller' exact component={HomeSeller}/>
         <Route path='/seller/product/myproduct' exact component={MyProducts}/>

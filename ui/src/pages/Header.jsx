@@ -27,7 +27,7 @@ class MainHeader extends Component {
                 </Menu.Item>
                 <Menu.Item as='a'>Work</Menu.Item>
                 <Menu.Item as='a'>Company</Menu.Item>
-                <Menu.Item as='a'>Careers</Menu.Item>
+                <Menu.Item as={Link} to='/seller'>Seller</Menu.Item>
                 <Menu.Item position='right'>
                   {
                     this.props.User.islogin?

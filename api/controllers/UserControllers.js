@@ -43,7 +43,7 @@ module.exports={
                     var token=createJWTToken({userid:created.insertId})
                     var VerificationLink=`http://localhost:3000/verification/${token}`
                     var maildata={
-                        from: 'Admin <jamestjahjadi@gmail.com>',
+                        from: 'Admin <mde50526@gmail.com>',
                         to: email,
                         subject: 'E-Commerce Verification Account',
                         html: `Hai ${username}, klik link berikut untuk verifikasi account kamu,link ini kadaluarsa dalam 24 jam
@@ -92,7 +92,7 @@ module.exports={
         var token=createJWTToken({userid:userid})
         var VerificationLink=`http://localhost:3000/verification/${token}`
         var maildata={
-            from: 'Admin <jamestjahjadi@gmail.com>',
+            from: 'Admin <mde50526@gmail.com>',
             to: email,
             subject: 'E-Commerce Verification Account',
             html: `Hai ${username}, klik link berikut untuk verifikasi account kamu,link ini kadaluarsa dalam 24 jam

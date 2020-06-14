@@ -9,7 +9,7 @@ module.exports={
         from products p join categories c on p.idcategory=c.idcategory
         where c.isdeleted=0`
         db.query(sql,(err,product)=>{
-            console.log(product)
+            // console.log(product)
             if (err) res.status(500).send(err)
             sql=`Select idcategory,name from categories`
             db.query(sql,(err,category)=>{
@@ -22,9 +22,6 @@ module.exports={
             var sql=`select * from products where idproduct=${idproduct}`
             db.query(sql,(err,product)=>{
                 if(err) return res.status(500).send(err)
-
-                console.log('succeed')
-                console.log('')
                 res.status(200).send(product[0])
             })
         })
@@ -186,6 +183,41 @@ module.exports={
             res.status(200).send(update)
         })
 
+    },
+                  ////////////// SHOWING ALL PRODUCT TO BUYER //////////////
+    allproducts:(req,res)=>{
+        var sql=`select p.*,c.isdeleted, c.name as namecategory
+        from products p join categories c on p.idcategory=c.idcategory
+        where c.isdeleted=0`
+        db.query(sql,(err,product)=>{
+            // console.log(product)
+            if (err) res.status(500).send(err)
+            sql=`select * from products order by price asc`
+            db.query(sql,(err,priceasc)=>{
+                if (err) res.status(500).send(err)
+                sql=`select * from products order by price desc`
+                db.query(sql,(err,pricedesc)=>{
+                    if (err) res.status(500).send(err)
+                    return res.send({product,priceasc,pricedesc})
+                })
+            })
+        })
+    },
+
+                    ///////////////// GET PRODUCT SELLER /////////////////
+    productseller:(req,res)=>{
+        var sql=`select p.*,c.isdeleted, c.name as namecategory
+        from products p join categories c on p.idcategory=c.idcategory
+        where c.isdeleted=0`
+        db.query(sql,(err,product)=>{
+            // console.log(product)
+            if (err) res.status(500).send(err)
+            sql=`select * from products order by price asc;`
+            db.query(sql,(err,category)=>{
+                if (err) res.status(500).send(err)
+                return res.send({product,category})
+            })
+        })
     },
 
 }
