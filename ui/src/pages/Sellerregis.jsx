@@ -1,64 +1,63 @@
 import React from 'react'
-import { Form, Input, TextArea, Button, Select, Grid } from 'semantic-ui-react'
+import {
+  Grid,
+  Header,
+  Form,
+  Segment,
+  Button,
+  Message
+} from 'semantic-ui-react'
+import { useState } from 'react'
+import {connect} from 'react-redux'
 
-const genderOptions = [
-  { key: 'm', text: 'Male', value: 'male' },
-  { key: 'f', text: 'Female', value: 'female' },
-  { key: 'o', text: 'Other', value: 'other' },
-]
 
-const Sellerregis = () => (
+const Sellerregis = (props) => {
+
+  const [data,setdata]=useState({
+    namatoko:'',
+    alamattoko:'',
+    iduser:props.iduser
+  })
+
+  const testmasuk=()=>{
+    return(console.log(data))
+  }
+  return(
     <Grid textAlign='center' style={{ height: '70vh' }} verticalAlign='middle'>
-        <Grid.Column style={{ maxWidth: 450 }}>
-        <Form>
-    <Form.Group widths='equal'>
-      <Form.Field
-        id='form-input-control-first-name'
-        control={Input}
-        label='First name'
-        placeholder='First name'
-      />
-      <Form.Field
-        id='form-input-control-last-name'
-        control={Input}
-        label='Last name'
-        placeholder='Last name'
-      />
-      <Form.Field
-        control={Select}
-        options={genderOptions}
-        label={{ children: 'Gender', htmlFor: 'form-select-control-gender' }}
-        placeholder='Gender'
-        search
-        searchInput={{ id: 'form-select-control-gender' }}
-      />
-    </Form.Group>
-    <Form.Field
-      id='form-textarea-control-opinion'
-      control={TextArea}
-      label='Opinion'
-      placeholder='Opinion'
-    />
-    <Form.Field
-      id='form-input-control-error-email'
-      control={Input}
-      label='Email'
-      placeholder='joe@schmoe.com'
-      error={{
-        content: 'Please enter a valid email address',
-        pointing: 'below',
-      }}
-    />
-    <Form.Field
-      id='form-button-control-public'
-      control={Button}
-      content='Confirm'
-      label='Label with htmlFor'
-    />
-  </Form>
-        </Grid.Column>
-    </Grid>
- 
-)
-
-export default Sellerregis
+    <Grid.Column style={{ maxWidth: 450 }}>
+    <Header as='h2' color='teal' textAlign='center'>
+      Seller Registration
+    </Header>
+    <Form size='large'>
+        <Segment stacked>
+            <Form.Input 
+                fluid icon='building outline' 
+                iconPosition='left' 
+                placeholder='Insert store name' 
+                onChange={(e)=>{setdata({...data,namatoko:e.target.value})}}
+            />
+            <Form.Input 
+                fluid icon='compass outline' 
+                iconPosition='left' 
+                placeholder='Insert store address' 
+                onChange={(e)=>{setdata({...data,alamattoko:e.target.value})}}
+            />
+            <Form.Input
+                fluid
+                icon='lock'
+                iconPosition='left'
+                placeholder='Insert Store Profile'
+            />
+            <Button color='teal' fluid size='large' onClick={testmasuk}>
+                Register
+            </Button>
+        </Segment>
+    </Form>
+    </Grid.Column>
+</Grid>
+  )
+}
+const MapstatetoProps=(state)=>{
+  return state.Auth            
+}
+export default connect(MapstatetoProps)(Sellerregis)

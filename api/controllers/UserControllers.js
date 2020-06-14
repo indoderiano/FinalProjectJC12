@@ -6,7 +6,7 @@ const jwt=require('jsonwebtoken')
 
 
 module.exports={
-
+                   ////////// CREATE NEW USER ////////////////
     create:(req,res)=>{
         console.log('creating new user...')
         console.log(req.body)
@@ -55,7 +55,7 @@ module.exports={
             }
         })
     },
-
+                   ////////// VERIFICATION NEW USER ////////////////
     verify:(req,res)=>{
         console.log('verifying account...')
         console.log(req.body)
@@ -82,7 +82,7 @@ module.exports={
             })
         })
     },
-
+                   ////////// RESEND VERIFICATION ////////////////
     resendmail:(req,res)=>{
         console.log('resend email verification...')
         const {userid}=req.body
@@ -103,7 +103,7 @@ module.exports={
             res.status(200).send({status:true})
         })
     },
-
+                   ////////// FORGOT PASSWORD VERIFICATION ////////////////
     forgotpassverify:(req,res)=>{
         const {email,username}=req.body
         var token=createJWTToken({username:username})
@@ -120,7 +120,7 @@ module.exports={
             res.status(200).send({Message:'Recovery Email sent'})
         }) 
     },
-
+                   ////////// USER CHANGE PASSWORD ////////////////
     changepassword:(req,res)=>{
         const {email,password}=req.body
         console.log(email)
@@ -149,7 +149,7 @@ module.exports={
             }
         })
     },
-
+                   ////////// GET ALL USER ////////////////
     allusers:(req,res)=>{
         console.log('all users data')
         var sql='select * from users'
@@ -169,6 +169,7 @@ module.exports={
         res.status(200).send({data:'empty'})
 
     },
+                       ////////// LOGIN ENTER ////////////////
     login:(req,res)=>{
         const {password,username}=req.query
         console.log(req.query)
@@ -198,6 +199,8 @@ module.exports={
             }
         })
     },
+
+                       ////////// KEEP LOGIN USER ////////////////
     keeplogin:(req,res)=>{
         console.log(req.user)
         var sql=`select * from users where iduser=${req.user.id}`
@@ -210,6 +213,7 @@ module.exports={
             return res.status(200).send({...result[0],token})
         })
     },
+                       ////////// SHOW PROFILE USER DATA ////////////////
     showProfile:(req,res)=>{
         const {iduser}=req.query
         var sql=`select * from users where iduser=${iduser}`
@@ -220,6 +224,7 @@ module.exports={
             res.status(200).send({...result[0]})
         })
     },
+                       ////////// EDIT USERDATA ////////////////
     editProfile:(req,res)=>{
         const {username,address,iduser}=req.body
         var obj={
