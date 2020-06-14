@@ -18,10 +18,19 @@ app.get('/',(req,res)=>{
 })
 
 
-const {UserRouters,ProductRouters,ItemRouters}=require('./routers')
+const {
+    UserRouters,
+    ProductRouters,
+    ItemRouters,
+    TransactionRouters,
+    TransactionDetailsRouters
+}=require('./routers')
+
 app.use('/users',UserRouters)
 app.use('/products',ProductRouters)
 app.use('/items',ItemRouters)
+app.use('/transactions',TransactionRouters)
+app.use('/transactiondetails',TransactionDetailsRouters)
 
 app.use(express.static('public')) // access to public folder
 

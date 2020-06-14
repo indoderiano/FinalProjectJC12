@@ -88,11 +88,21 @@ class AddProduct extends Component {
                 formdata.append('photo',image)
             }
 
+            var variant=[]
+            for(var i=0;i<this.state.varieties.length;i++){
+                var obj={
+                    name: this.state.varieties[i],
+                    types: this.state.varietytypes[i]
+                }
+                variant.push(obj)
+            }
+            
             
             var product={
                 product_name: this.state.productName,
                 description: this.state.description,
-                variant: JSON.stringify(this.state.varieties),
+                variant: JSON.stringify(variant),
+                // variant: JSON.stringify(this.state.varieties),
                 idseller: 2, // need to update this to sellerid once redux is finished
                 idcategory: 2, // need to update once category table is done
             }

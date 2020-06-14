@@ -1,9 +1,13 @@
 const UserRouters=require('./UserRouters')
 const ProductRouters=require('./ProductRouters')
 const ItemRouters=require('./ItemRouters')
+const TransactionRouters=require('./TransactionRouters')
+const TransactionDetailsRouters=require('./TransactionDetailsRouters')
 
 module.exports={
     UserRouters,
     ProductRouters,
-    ItemRouters
+    ItemRouters,
+    TransactionRouters,
+    TransactionDetailsRouters
 }
