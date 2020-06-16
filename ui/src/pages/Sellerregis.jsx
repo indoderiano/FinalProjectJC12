@@ -5,31 +5,23 @@ import {
   Form,
   Segment,
   Button,
-  Message
 } from 'semantic-ui-react'
 import { useState } from 'react'
 import {connect} from 'react-redux'
 import {APIURL} from '../supports/ApiUrl'
 import Axios from 'axios'
+import {SellerRegister} from './../redux/actions'
 const Sellerregis = (props) => {
 
   const [data,setdata]=useState({
     namatoko:'',
     alamattoko:'',
-    iduser:props.iduser
+    iduser:props.auth.iduser
   })
 
   const testmasuk=()=>{
     return(
-      Axios.post(`${APIURL}/sellers/createseller`,data)
-      .then((res)=>{
-        if(res.data.status){
-          console.log(res.data.message)
-        }
-      }).catch((err)=>{
-        console.log(err)
-        
-      })
+      props.SellerRegister(data)
     )
   }
 
@@ -69,6 +61,9 @@ const Sellerregis = (props) => {
   )
 }
 const MapstatetoProps=(state)=>{
-  return state.Auth            
+  return  {
+    auth:state.Auth,
+    seller:state.Seller
+  }           
 }
-export default connect(MapstatetoProps)(Sellerregis)
+export default connect(MapstatetoProps,{SellerRegister})(Sellerregis)
