@@ -6,6 +6,7 @@ const jwt=require('jsonwebtoken')
 
 
 module.exports={
+                   ////////// CREATE NEW USER ////////////////
     create:(req,res)=>{
         console.log('creating new user...')
         const {username,email,password,address} = req.body
@@ -60,6 +61,7 @@ module.exports={
             }
         })
     },
+                   ////////// VERIFICATION NEW USER ////////////////
     verify:(req,res)=>{
         console.log('verifying account...')
         console.log(req.body)
@@ -86,6 +88,7 @@ module.exports={
             })
         })
     },
+                   ////////// RESEND VERIFICATION ////////////////
     resendmail:(req,res)=>{
         console.log('resend email verification...')
         const {userid}=req.body
@@ -106,6 +109,53 @@ module.exports={
             res.status(200).send({status:true})
         })
     },
+                   ////////// FORGOT PASSWORD VERIFICATION ////////////////
+    forgotpassverify:(req,res)=>{
+        const {email,username}=req.body
+        var token=createJWTToken({username:username})
+        var recoveryLink=`http://localhost:3000/forgotpassword/${token}`
+        var maildata={
+            from: 'Admin <jamestjahjadi@gmail.com>',
+            to: email,
+            subject: 'E-Commerce Recovery Password',
+            html: `Hi ${username}, Please kindly click the link below before 24 hours to change your password
+            <a href=${recoveryLink}>verify</a>`
+        }
+        transporter.sendMail(maildata,(err,sent)=>{
+            if(err) return res.status(500).send(err)
+            res.status(200).send({Message:'Recovery Email sent'})
+        }) 
+    },
+                   ////////// USER CHANGE PASSWORD ////////////////
+    changepassword:(req,res)=>{
+        const {email,password}=req.body
+        console.log(email)
+        var sql=`select * from users where email='${email}'`
+        db.query(sql,(err,result)=>{
+            if(err) res.status(500).send(err)
+            console.log(result[0])
+            
+            if(result.length){
+                var newpass={password:password}
+                console.log('nyampe line 130')
+                
+                var sql1=`update users set ? where iduser=${result[0].iduser}`
+                db.query(sql1,newpass,(err,result1)=>{
+                    console.log(result1)
+                    if(err) res.status(500).send(err)
+                    console.log('LINE 136')
+                    var sql2=`select * from users where iduser=${result[0].iduser}`
+                    db.query(sql2,(err,result2)=>{
+                        if (err) res.status(500).send(err)
+                        res.status(200).send({...result2[0]})
+                    })
+                })
+            }else{
+                res.status(200).send({message:'emai is not available'})
+            }
+        })
+    },
+                   ////////// GET ALL USER ////////////////
     allusers:(req,res)=>{
         console.log('all users data')
         var sql='select * from users'
@@ -117,11 +167,20 @@ module.exports={
         console.log('ini setelah db')
         // console.log(allusers)
     },
+
+
+    empty:(req,res)=>{
+        // nothing
+        res.status(500).send({data:'empty2'})
+        res.status(200).send({data:'empty'})
+
+    },
+                       ////////// LOGIN ENTER ////////////////
     login:(req,res)=>{
         const {password,username}=req.query
         console.log(req.query)
         const hashpass=encrypt(password)
-        var sql=`select * from users where username='${username}' and password='${hashpass}'`
+        var sql=`select * from users where username='${username}'`
         db.query(sql,(err,result)=>{
             if(err){
                 return res.status(500).send(err)
@@ -146,6 +205,8 @@ module.exports={
             }
         })
     },
+
+                       ////////// KEEP LOGIN USER ////////////////
     keeplogin:(req,res)=>{
         console.log(req.user)
         var sql=`select * from users where iduser=${req.user.id}`
@@ -202,4 +263,33 @@ module.exports={
             }
         })
     },
+        ////////// SHOW PROFILE USER DATA ////////////////
+        showProfile:(req,res)=>{
+            const {iduser}=req.query
+            var sql=`select * from users where iduser=${iduser}`
+            console.log(iduser)
+            db.query(sql,(err,result)=>{
+                console.log(result)
+                if(err) res.status(500).send(err)
+                res.status(200).send({...result[0]})
+            })
+        },
+                           ////////// EDIT USERDATA ////////////////
+        editProfile:(req,res)=>{
+            const {username,address,iduser}=req.body
+            var obj={
+                username,
+                address
+            }
+            var sql=`update users set ? where iduser=${iduser}`
+            db.query(sql, obj, (err,result)=>{
+                if(err) res.status(500).send(err)
+                res.status(200).send({message:'Profile Updated'})
+            })
+        }
 }
+                   
+
+
+
+       

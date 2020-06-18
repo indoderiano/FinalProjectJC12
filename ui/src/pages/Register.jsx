@@ -4,7 +4,6 @@ import {APIURL} from '../supports/ApiUrl'
 import {
     Grid,
     Header,
-    Image,
     Form,
     Segment,
     Button,

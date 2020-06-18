@@ -8,7 +8,7 @@ import {
 import { connect } from "react-redux";
 import {Link} from 'react-router-dom'
 import {isLogout} from './../redux/actions'
-
+import {Redirect} from 'react-router-dom'
 class MainHeader extends Component {
     state = {  }
     render() { 
@@ -32,7 +32,10 @@ class MainHeader extends Component {
                   {
                     this.props.User.islogin?
                     <span style={{padding:'0 1em'}}>
-                      Hi, {this.props.User.username}
+                      <Button as={Link} style={{backgroundColor:'#1b1c1d', 
+                    color:'#cfcfcf'}} to='/profile'>
+                      Hi,{this.props.User.username}
+                    </Button>
                     </span>
                     : null
                   }
@@ -47,7 +50,8 @@ class MainHeader extends Component {
                         Sign Up
                       </Button>
                     </>
-                    :  <Button as={Link} to='/' onClick={()=>{this.props.isLogout()}}>
+                    :  <Button as={Link} style={{backgroundColor:'#1b1c1d', 
+                    color:'#cfcfcf'}} to='/' onClick={()=>{this.props.isLogout()}}>
                     Log out
                   </Button>
                   }

@@ -23,7 +23,9 @@ const {
     ProductRouters,
     ItemRouters,
     TransactionRouters,
-    TransactionDetailsRouters
+    TransactionDetailsRouters,
+    SellerRouters, 
+    AdminRouters
 }=require('./routers')
 
 app.use('/users',UserRouters)
@@ -31,6 +33,10 @@ app.use('/products',ProductRouters)
 app.use('/items',ItemRouters)
 app.use('/transactions',TransactionRouters)
 app.use('/transactiondetails',TransactionDetailsRouters)
+app.use('/sellers', SellerRouters)
+app.use('/admin',AdminRouters)
+
+
 
 app.use(express.static('public')) // access to public folder
 

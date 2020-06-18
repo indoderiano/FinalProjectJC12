@@ -12,7 +12,10 @@ import ProductItems from './pages/seller/ProductItems'
 import Product from './pages/Product'
 import ChangePass from './pages/Changepass'
 import Forgotpass from './pages/Forgotpass'
-import { KeepLogin } from './redux/actions'
+import Profile from './pages/Profile'
+import Sellerregis from './pages/Sellerregis'
+import Admintable from './pages/Admin'
+import { KeepLogin,KeepSeller } from './redux/actions'
 import { API_URL } from './support/ApiUrl';
 import { connect } from 'react-redux';
 import HomeSeller from './pages/seller/HomeSeller';
@@ -21,7 +24,7 @@ import Axios from'axios'
 import AllProducts from './pages/AllProducts';
 
 
-function App({KeepLogin,User}) {
+function App({KeepLogin,User,KeepSeller}) {
 
   const [Loading,setLoading]=useState(true)
 
@@ -36,8 +39,12 @@ function App({KeepLogin,User}) {
           'Authorization':`Bearer ${token}`
         }
       })
-      .then (res=>{
+      .then(res=>{
         KeepLogin(res.data)
+        if(res.data.isseller){
+          console.log('line 40')
+          KeepSeller(res.data.iduser)
+        }
       }).catch((err)=>{
         console.log(err)
       }).finally(()=>{
@@ -66,6 +73,7 @@ function App({KeepLogin,User}) {
         <Route path='/register' exact component={Register}/>
         <Route path='/forgotpassword' exact component={Forgotpass}/>
         <Route path='/forgotpassword/:token' exact component={ChangePass}/>
+        <Route path='/profile' exact component={Profile}/>
         <Route path='/verification' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/allproducts' exact component={AllProducts}/>
@@ -75,6 +83,8 @@ function App({KeepLogin,User}) {
         <Route path='/seller/product/add' exact component={AddProduct}/>
         <Route path='/seller/product/:idproduct' exact component={ProductItems}/>
         <Route path='/product/:idproduct' exact component={Product}/>
+        <Route path='/Sellerregister' exact component={Sellerregis }/>
+        <Route path='/admin' exact component={Admintable}/>
 
       </Switch>
 
@@ -88,4 +98,4 @@ const MapstatetoProps=(state)=>{
   }
 }
 
-export default connect(MapstatetoProps, {KeepLogin}) (App);
+export default connect(MapstatetoProps, {KeepLogin,KeepSeller}) (App);

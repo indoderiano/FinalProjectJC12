@@ -14,6 +14,8 @@ const INITIAL_STATE={
     password:'',
     isverified:0,
     email:'',
+    address:'',
+    isseller:''
     
 }
 
