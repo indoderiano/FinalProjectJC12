@@ -22,8 +22,11 @@ const Sellerregis = (props) => {
   const testmasuk=()=>{
     return(
       props.SellerRegister(data)
+      
     )
   }
+  
+console.log(props.seller.namatoko)
 
   return(
     <Grid textAlign='center' style={{ height: '70vh' }} verticalAlign='middle'>

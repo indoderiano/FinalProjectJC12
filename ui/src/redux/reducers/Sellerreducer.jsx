@@ -16,7 +16,7 @@ export default (state= INITIAL_STATE,action)=>{
         case SELLER_REGISTER_CHECK:
             return{...state,loading:true}
         case SELLER_REGISTER_SUCCESS:
-            return{...state,state:action.payload}
+            return{...state, ...action.payload}
         case SELLER_REGISTER_FAILED:
             return{...state,loading:false,errormes:action.payload}
         case 'ClearState':

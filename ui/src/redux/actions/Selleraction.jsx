@@ -16,13 +16,25 @@ export const SellerRegister=(dataseller)=>{
         }else{
             Axios.post(`${APIURL}/sellers/createseller`,dataseller)
             .then((res)=>{
-              if(res.data.status){
                 console.log(res.data.message)
-              }
+                dispatch({type: SELLER_REGISTER_SUCCESS, payload:res.data})
             }).catch((err)=>{
               console.log(err)
-              
             })
         }
     }
+}
+export const KeepSeller=(iduser)=>{
+  console.log('line 29 seller action')
+  return(dispatch)=>{
+    console.log('line 30 seller action')
+    Axios.get(`${APIURL}/sellers/getseller?iduser=${iduser}`)
+    .then((res)=>{
+      console.log(res.data[0])
+      dispatch({type: SELLER_REGISTER_SUCCESS,payload:res.data[0]})
+      console.log('line 35 seller action')
+    }).catch((err)=>{
+      console.log('error in line 33')
+    })
+  }
 }

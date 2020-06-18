@@ -8,9 +8,9 @@ module.exports={
             namatoko,
             alamattoko,
             iduser,
-            isverified:true
+            isverified:false
         }
-        var sql=`select s.*, u.username,u.email from seller s 
+        var sql=`select s.*,u.isseller from seller s 
                  join users u on s.iduser = u.iduser
                  where s.iduser=${iduser};`
                 
@@ -26,12 +26,27 @@ module.exports={
                     db.query(sql1,newseller,(err,result1)=>{
                         if(err) res.status(500).send(err,{message:'error in line 23'})
                         console.log('line 28');
-                           res.status(200).send({message:'Registered as a Seller',status:true})
-    
+                    
+                        var sql2=`update users set ? where iduser=${iduser}`
+                        db.query(sql2,{isseller:1},(err,result2)=>{
+                            if(err) res.status(500).send(err,{message:'error in line 32'})
+                            var sql3=`select * from seller where idseller=${result1.insertId}`
+                            db.query(sql3,(err,result3)=>{
+                                if(err)res.status(500).send(err,{message:'error in line 31'})
+                                res.status(200).send({...result3[0],message:'Registered as a Seller'})
+                            })
+                        })
                     })
                 }
-
+        }) 
+    },
+    /////////////////// GET SELLER //////////////
+    getSeller:(req,res)=>{
+        const {iduser}=req.query
+        var sql=`select * from seller where iduser=${iduser}`
+        db.query(sql,(err,result)=>{
+            if(err) res.status(500).send(err)
+            res.status(200).send(result)
         })
-        
     }
 }

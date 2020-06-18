@@ -29,11 +29,12 @@ const Login = (props) => {
     }
     const isforgot=()=>{
         setforgot(true)
-        if(forgot){
-          return  <Redirect to='/forgotpassword'/>
-        }
     }
 
+    if(forgot){
+        return  <Redirect to='/forgotpassword'/>
+      }
+      
     return (
         <div
         style={{height:'80vh', width:'100%', justifyContent:'center', alignItems:'center', textAlign:'center', display:'flex'}}>
