@@ -16,7 +16,7 @@ import Profile from './pages/Profile'
 import Sellerregis from './pages/Sellerregis'
 import Admintable from './pages/Admin'
 import { KeepLogin,KeepSeller } from './redux/actions'
-import { API_URL } from './support/ApiUrl';
+import { APIURL } from './supports/ApiUrl';
 import { connect } from 'react-redux';
 import HomeSeller from './pages/seller/HomeSeller';
 import MyProducts from './pages/seller/MyProduct';
@@ -33,7 +33,7 @@ function App({KeepLogin,User,KeepSeller}) {
   useEffect(()=>{
     const token=localStorage.getItem('token')
     if(token){
-      Axios.get (`${API_URL}/users/keeplogin`,{
+      Axios.get (`${APIURL}/users/keeplogin`,{
         headers:
         {
           'Authorization':`Bearer ${token}`

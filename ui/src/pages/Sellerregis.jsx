@@ -8,8 +8,6 @@ import {
 } from 'semantic-ui-react'
 import { useState } from 'react'
 import {connect} from 'react-redux'
-import {APIURL} from '../supports/ApiUrl'
-import Axios from 'axios'
 import {SellerRegister} from './../redux/actions'
 const Sellerregis = (props) => {
 
