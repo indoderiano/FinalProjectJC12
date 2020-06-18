@@ -32,10 +32,10 @@ class MainHeader extends Component {
                 <Menu.Item as={Link} to='/' style={style.menu} active>
                   Home                 
                 </Menu.Item>
-                <Menu.Item as='a'>Work</Menu.Item>
-                <Menu.Item as='a'>Company</Menu.Item>
-                <Menu.Item as='a'>Careers</Menu.Item>
-
+                <Menu.Item as='a' style={style.menu}>Work</Menu.Item>
+                <Menu.Item as='a' style={style.menu}>Company</Menu.Item>
+                <Menu.Item as='a' style={style.menu}>Careers</Menu.Item>
+                
 
                 <Menu.Item 
                   style={{float:'right'}}
