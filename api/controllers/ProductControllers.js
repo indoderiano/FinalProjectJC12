@@ -193,12 +193,17 @@ module.exports={
                   ////////////// SHOWING ALL PRODUCT TO USER //////////////
     allproducts:(req,res)=>{
         console.log('All Product User')
-        var {page}=req.query
+        var {page, orderby, directionby}=req.query
+        // var orderby=orderby
         var limit=5
         var offset=(page*limit)-limit
         var sql=`select p.*,c.isdeleted, c.name as namecategory
         from products p join categories c on p.idcategory=c.idcategory
-        where c.isdeleted=0`
+        where c.isdeleted=0 
+        ${orderby===''?null:'order by'} ${orderby}                  
+        ${orderby !== '' && directionby !==''? directionby:null}
+        ${page? 'limit':null} ${offset}  ${page? ',':null} ${limit} `
+
         db.query(sql,(err,allproduct)=>{
             if (err) res.status(500).send(err)
             sql=`select p.*,c.isdeleted, c.name as namecategory

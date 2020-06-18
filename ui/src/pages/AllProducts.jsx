@@ -12,6 +12,8 @@ class AllProducts extends Component {
         searchproducts:[],
         filterKeyword:'all',
         currentPage:1,
+        orderBy:'',
+        directionBy:'',
         allproduct:[],
         activePage:0,
         prodpriceasc:[],
@@ -26,7 +28,9 @@ class AllProducts extends Component {
     console.log(this.state.currentPage,'dididi')
         Axios.get(`${APIURL}/products/allproducts`, {
             params:{
-                page:this.state.currentPage
+                page:this.state.currentPage,
+                orderby:this.state.orderBy,
+                directionby:this.state.directionBy
         }})
         .then((res)=>{ 
             console.log(this.state.currentPage,'welehweleh')

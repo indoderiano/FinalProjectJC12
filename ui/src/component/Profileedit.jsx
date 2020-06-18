@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from 'react'
 import Axios from 'axios'
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import {connect} from 'react-redux'
 import { APIURL } from './../supports/ApiUrl'
 import { Button,Input } from 'semantic-ui-react'
@@ -28,7 +28,7 @@ const ProfileEdit=(props)=>{
     return <Redirect to='/'/>
   }
 
-
+  
     return(
         <div style={{width:'70%',
             marginLeft:'22%', 
