@@ -145,6 +145,7 @@ class ManageProduct extends Component {
                                 <Button color='red'>Delete</Button>
                             </Grid.Column>
                         </Grid.Row>
+                        
                     }
 
 

@@ -10,6 +10,7 @@ Router.put('/image/:idproduct',ProductControllers.addcover)
 Router.put('/image/:idproduct/:index',ProductControllers.deletecover)
 Router.put('/:idproduct',ProductControllers.edit)
 Router.get('/allproducts',ProductControllers.allproducts)
+Router.get('/searchproduct',ProductControllers.searchrpoduct)
 
 /////////////////////////////////////////////////////////
 // NOTE IMPORTANT

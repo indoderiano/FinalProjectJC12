@@ -12,9 +12,11 @@ import {
     Container,
     Input,
     TextArea,
-    Checkbox
+    Checkbox,
+    Sidebar
 } from 'semantic-ui-react'
 import {Redirect} from 'react-router-dom'
+import SidebarSeller from './componentseller/sidebar'
 
 
 
@@ -68,8 +70,11 @@ class AddProduct extends Component {
 
 
     onSubmit=()=>{
+
+        // NEED TO ADD PROTECTION
+        // ONLY SELLER CAN SUBMIT
         
-        if(!this.state.productName || !this.state.description || !this.state.category || !this.state.fileImage){
+        if(!this.state.productName || !this.state.description || !this.state.category || !this.state.fileImage.length){
             this.setState({message:'Masih ada kolom yang harus diisi'})
         }else if(this.state.fileImage.length>5){
             this.setState({message:'Jumlah image yang diupload tidak bisa lebih dari 5'})
@@ -103,8 +108,9 @@ class AddProduct extends Component {
                 description: this.state.description,
                 variant: JSON.stringify(variant),
                 // variant: JSON.stringify(this.state.varieties),
-                idseller: 2, // need to update this to sellerid once redux is finished
-                idcategory: 2, // need to update once category table is done
+                // DONT FORGET TO ADD IDSELLER
+                idseller: 1, // need to update this to sellerid once redux is finished
+                category: this.state.category,
             }
 
             formdata.append('data',JSON.stringify(product))
@@ -360,253 +366,259 @@ class AddProduct extends Component {
 
     render() { 
         return ( 
-            <Container style={{paddingTop:'2em',width:'650px'}}>
-
-                <Header as={'h1'}>Add Product</Header>
-                
-                <Grid style={{marginBottom:'3em'}}>
-                    <Grid.Row>
+            <div  style={{display:'flex', paddingTop:50}}>
+                <div style={{marginRight: 20,}}>
+                    <SidebarSeller/>
+                </div>
+                <div>
+                    <Container>
+                        <Header as={'h1'}>Add Product</Header>
                         
-                        <Segment style={{width:'100%'}}>
-                            <Header as={'h3'}>Category</Header>
-                            <Input 
-                                placeholder='Category'
-                                value={this.state.category}
-                                onChange={(e)=>{this.setState({category:e.target.value})}}
-                            />
-                        </Segment>
-                        <Segment style={{width:'100%'}}>
-                            <Header as={'h3'}>Cover Photo</Header>
-                            <Input 
-                                type='file'
-                                // id={item.iditem}
-                                multiple
-                                style={{marginRight:'1em'}}
-                                onChange={(e)=>{
-                                    if(e.target.files){
-                                        // console.log(e.target.files)
-                                        this.setState({fileImage:e.target.files})
-                                    }
-                                }}
-                            />
-                        </Segment>
-                        <Segment style={{width:'100%'}}>
-                            <Header as={'h3'}>Product Name</Header>
-                            <Input 
-                                placeholder='Product Name'
-                                value={this.state.productName}
-                                onChange={(e)=>{this.setState({productName:e.target.value})}}
-                            />
-                        </Segment>
-                        <Segment style={{width:'100%'}}>
-                            <Header as={'h3'}>Description</Header>
-                            <Form>
-                                <TextArea
-                                    placeholder='Description'
-                                    style={{maxWidth:'500px'}}
-                                    value={this.state.description}
-                                    onChange={(e)=>{this.setState({description:e.target.value})}}
+                        <Grid style={{marginBottom:'3em',width:'800px'}}>
+                            <Grid.Row>
+                                
+                                <Segment style={{width:'100%'}}>
+                                    <Header as={'h3'}>Category</Header>
+                                    <Input 
+                                        placeholder='Category'
+                                        value={this.state.category}
+                                        onChange={(e)=>{this.setState({category:e.target.value})}}
+                                    />
+                                </Segment>
+                                <Segment style={{width:'100%'}}>
+                                    <Header as={'h3'}>Cover Photo</Header>
+                                    <Input 
+                                        type='file'
+                                        // id={item.iditem}
+                                        multiple
+                                        style={{marginRight:'1em'}}
+                                        onChange={(e)=>{
+                                            if(e.target.files){
+                                                // console.log(e.target.files)
+                                                this.setState({fileImage:e.target.files})
+                                            }
+                                        }}
+                                    />
+                                </Segment>
+                                <Segment style={{width:'100%'}}>
+                                    <Header as={'h3'}>Product Name</Header>
+                                    <Input 
+                                        placeholder='Product Name'
+                                        value={this.state.productName}
+                                        onChange={(e)=>{this.setState({productName:e.target.value})}}
+                                    />
+                                </Segment>
+                                <Segment style={{width:'100%'}}>
+                                    <Header as={'h3'}>Description</Header>
+                                    <Form>
+                                        <TextArea
+                                            placeholder='Description'
+                                            style={{maxWidth:'500px'}}
+                                            value={this.state.description}
+                                            onChange={(e)=>{this.setState({description:e.target.value})}}
+                                        />
+                                    </Form>
+                                </Segment>
+
+                                <Checkbox 
+                                    toggle 
+                                    // checked={this.state.isvariety}
+                                    onClick={(e,data)=>{this.setState({isvariety:data.checked})}}
+                                    style={{margin:'1em 1em 1em 0'}}
                                 />
-                            </Form>
-                        </Segment>
+                                <span style={{margin:'1em 0'}}>Does this product have varieties such as size or color?</span>
+                                {/* {this.state.isvariety?<p>true</p>:<p>false</p>} */}
 
-                        <Checkbox 
-                            toggle 
-                            // checked={this.state.isvariety}
-                            onClick={(e,data)=>{this.setState({isvariety:data.checked})}}
-                            style={{margin:'1em 1em 1em 0'}}
-                        />
-                        <span style={{margin:'1em 0'}}>Does this product have varieties such as size or color?</span>
-                        {/* {this.state.isvariety?<p>true</p>:<p>false</p>} */}
-
-                        {
-                            !this.state.isvariety?
-                            // WITHOUT VARIETY
-                            //////////////////
-                            null
-                            // <>
-                            // <Segment style={{width:'100%'}}>
-                            //     <Header as={'h3'}>Upload Image</Header>
-                            //     <Input 
-                            //         type='file'
-                            //         multiple
-                            //         // name='gambar'
-                            //         // label={this.state.imageAdd.name}
-                            //         style={{marginBottom:'1em'}}
-                            //         onChange={(e)=>{
-                            //             if(e.target.files){
-                            //                 // var edited=this.state.fileImageAdd
-                            //                 // edited=e.target.files
-                            //                 // this.setState({fileImageAdd:edited})
-                            //                 console.log(e.target.files)
-                            //                 this.setState({fileImageAdd:e.target.files})
-                            //             }
-                            //         }}
-                            //     />
-                            //     <Container style={{textAlign:'center',position:'relative',width:'100%'}}>
-                            //         <Container style={{width:'100%'}}>
-                            //             <Image
-                            //                 src={
-                            //                         false?
-                            //                         this.state.imageAdd
-                            //                         :'https://react.semantic-ui.com/images/wireframe/image.png'
-                            //                     }
-                            //                 style={{width:'100%',display:'inline'}}
-                            //             />
-                            //         </Container>
-                            //     </Container>
-                            // </Segment>
-                            // <Segment style={{width:'100%'}}>
-                            //     <Header as={'h3'}>Price</Header>
-                            //     Rp 
-                            //     <Input
-                            //         placeholder='Price'
-                            //         // value={this.state.priceAdd}
-                            //         onChange={(e)=>{this.setState({priceAdd:e.target.value})}}
-                            //         style={{marginLeft:'.5em'}}
-                            //     />,00
-                            // </Segment>
-                            // <Segment style={{width:'100%'}}>
-                            //     <Header as={'h3'}>Stock</Header>
-                            //     <Input
-                            //         placeholder='Stock'
-                            //         // value={this.state.stockAdd}
-                            //         onChange={(e)=>{this.setState({stockAdd:e.target.value})}}
-                            //         style={{marginLeft:'.5em'}}
-                            //     />
-                            // </Segment>
-                            // </>
-                            :
-                            // WITH VARIETIES
-                            /////////////////
-                            <>
-                            <Segment style={{width:'100%'}}>
-                                <Header as={'h3'}>Variety</Header>
-                                <Grid style={{marginBottom:'1em'}}>
-                                    <Grid.Row>
-                                        {this.renderVarietyCount()}
-                                    </Grid.Row>
-                                </Grid>
-                                <Button 
-                                    primary
-                                    onClick={()=>{
-                                        // var count=this.state.varietiesCount+1
-                                        // CONSTRUCT STATE VARIETIES
-                                        var arr=this.state.varieties
-                                        arr[this.state.varietiesCount]=''
-                                        console.log(arr)
-                                        // CONSTRUCT STATE VARIETYTYPES
-                                        var arrtypes=this.state.varietytypes
-                                        arrtypes[this.state.varietiesCount]=[]
-                                        console.log(arrtypes)
-                                        //
-                                        var typecount=this.state.typecount
-                                        typecount[this.state.varietiesCount]=0
-                                        console.log(this.state.typecount)
-
-
-                                        this.setState({
-                                            varieties:arr,
-                                            varietiesCount:this.state.varietiesCount+1,
-                                            varietytypes:arrtypes,
-                                            typecount:typecount
-                                        })
-
-                                    }}
-                                >
-                                    More Variety
-                                </Button>
-                                {/* <Input 
-                                    placeholder='Variety Name'
-                                    style={{marginRight:'1em'}}
-                                    value={this.state.varietyone}
-                                    onChange={(e)=>{
-                                        var arr=[e.target.value,this.state.varietytwo]
-                                        this.setState({
-                                            varietyone:e.target.value,
-                                            varieties:arr
-                                        }
-                                    )}}
-                                />
-                                <Input 
-                                    placeholder='Variety Name'
-                                    value={this.state.varietytwo}
-                                    onChange={(e)=>{
-                                        var arr=[this.state.varietyone,e.target.value]
-                                        this.setState({
-                                            varietytwo:e.target.value,
-                                            varieties:arr
-                                        }
-                                    )}}
-                                /> */}
-                            </Segment>
-
-                            {/* <Segment style={{width:'100%'}}>
-                                <Header as={'h3'}>Items</Header>
-
-                                <span>1.</span>
                                 {
-                                    this.state.varieties.map((val,index)=>{
-                                        if(val){
-                                            return (
-                                                <Input
-                                                    key={index}
-                                                    placeholder={`Type of ${val}`}
-                                                    // value={this.state.stockAdd}
-                                                    onChange={(e)=>{this.setState({stockAdd:e.target.value})}}
-                                                    style={{margin:'.5em'}}
-                                                />
-                                            )
+                                    !this.state.isvariety?
+                                    // WITHOUT VARIETY
+                                    //////////////////
+                                    null
+                                    // <>
+                                    // <Segment style={{width:'100%'}}>
+                                    //     <Header as={'h3'}>Upload Image</Header>
+                                    //     <Input 
+                                    //         type='file'
+                                    //         multiple
+                                    //         // name='gambar'
+                                    //         // label={this.state.imageAdd.name}
+                                    //         style={{marginBottom:'1em'}}
+                                    //         onChange={(e)=>{
+                                    //             if(e.target.files){
+                                    //                 // var edited=this.state.fileImageAdd
+                                    //                 // edited=e.target.files
+                                    //                 // this.setState({fileImageAdd:edited})
+                                    //                 console.log(e.target.files)
+                                    //                 this.setState({fileImageAdd:e.target.files})
+                                    //             }
+                                    //         }}
+                                    //     />
+                                    //     <Container style={{textAlign:'center',position:'relative',width:'100%'}}>
+                                    //         <Container style={{width:'100%'}}>
+                                    //             <Image
+                                    //                 src={
+                                    //                         false?
+                                    //                         this.state.imageAdd
+                                    //                         :'https://react.semantic-ui.com/images/wireframe/image.png'
+                                    //                     }
+                                    //                 style={{width:'100%',display:'inline'}}
+                                    //             />
+                                    //         </Container>
+                                    //     </Container>
+                                    // </Segment>
+                                    // <Segment style={{width:'100%'}}>
+                                    //     <Header as={'h3'}>Price</Header>
+                                    //     Rp 
+                                    //     <Input
+                                    //         placeholder='Price'
+                                    //         // value={this.state.priceAdd}
+                                    //         onChange={(e)=>{this.setState({priceAdd:e.target.value})}}
+                                    //         style={{marginLeft:'.5em'}}
+                                    //     />,00
+                                    // </Segment>
+                                    // <Segment style={{width:'100%'}}>
+                                    //     <Header as={'h3'}>Stock</Header>
+                                    //     <Input
+                                    //         placeholder='Stock'
+                                    //         // value={this.state.stockAdd}
+                                    //         onChange={(e)=>{this.setState({stockAdd:e.target.value})}}
+                                    //         style={{marginLeft:'.5em'}}
+                                    //     />
+                                    // </Segment>
+                                    // </>
+                                    :
+                                    // WITH VARIETIES
+                                    /////////////////
+                                    <>
+                                    <Segment style={{width:'100%'}}>
+                                        <Header as={'h3'}>Variety</Header>
+                                        <Grid style={{marginBottom:'1em'}}>
+                                            <Grid.Row>
+                                                {this.renderVarietyCount()}
+                                            </Grid.Row>
+                                        </Grid>
+                                        <Button 
+                                            primary
+                                            onClick={()=>{
+                                                // var count=this.state.varietiesCount+1
+                                                // CONSTRUCT STATE VARIETIES
+                                                var arr=this.state.varieties
+                                                arr[this.state.varietiesCount]=''
+                                                console.log(arr)
+                                                // CONSTRUCT STATE VARIETYTYPES
+                                                var arrtypes=this.state.varietytypes
+                                                arrtypes[this.state.varietiesCount]=[]
+                                                console.log(arrtypes)
+                                                //
+                                                var typecount=this.state.typecount
+                                                typecount[this.state.varietiesCount]=0
+                                                console.log(this.state.typecount)
+
+
+                                                this.setState({
+                                                    varieties:arr,
+                                                    varietiesCount:this.state.varietiesCount+1,
+                                                    varietytypes:arrtypes,
+                                                    typecount:typecount
+                                                })
+
+                                            }}
+                                        >
+                                            More Variety
+                                        </Button>
+                                        {/* <Input 
+                                            placeholder='Variety Name'
+                                            style={{marginRight:'1em'}}
+                                            value={this.state.varietyone}
+                                            onChange={(e)=>{
+                                                var arr=[e.target.value,this.state.varietytwo]
+                                                this.setState({
+                                                    varietyone:e.target.value,
+                                                    varieties:arr
+                                                }
+                                            )}}
+                                        />
+                                        <Input 
+                                            placeholder='Variety Name'
+                                            value={this.state.varietytwo}
+                                            onChange={(e)=>{
+                                                var arr=[this.state.varietyone,e.target.value]
+                                                this.setState({
+                                                    varietytwo:e.target.value,
+                                                    varieties:arr
+                                                }
+                                            )}}
+                                        /> */}
+                                    </Segment>
+
+                                    {/* <Segment style={{width:'100%'}}>
+                                        <Header as={'h3'}>Items</Header>
+
+                                        <span>1.</span>
+                                        {
+                                            this.state.varieties.map((val,index)=>{
+                                                if(val){
+                                                    return (
+                                                        <Input
+                                                            key={index}
+                                                            placeholder={`Type of ${val}`}
+                                                            // value={this.state.stockAdd}
+                                                            onChange={(e)=>{this.setState({stockAdd:e.target.value})}}
+                                                            style={{margin:'.5em'}}
+                                                        />
+                                                    )
+                                                }
+                                            })
                                         }
-                                    })
+                                        <Input
+                                            placeholder='Price'
+                                            // value={this.state.stockAdd}
+                                            // onChange={(e)=>{this.setState({stockAdd:e.target.value})}}
+                                            style={{margin:'0 .5em .5em 0'}}
+                                        />
+                                        <Input
+                                            placeholder='Stock'
+                                            // value={this.state.stockAdd}
+                                            // onChange={(e)=>{this.setState({stockAdd:e.target.value})}}
+                                            style={{margin:'0 .5em .5em 0'}}
+                                        />
+
+                                    </Segment> */}
+                                    </>
+
                                 }
-                                <Input
-                                    placeholder='Price'
-                                    // value={this.state.stockAdd}
-                                    // onChange={(e)=>{this.setState({stockAdd:e.target.value})}}
-                                    style={{margin:'0 .5em .5em 0'}}
-                                />
-                                <Input
-                                    placeholder='Stock'
-                                    // value={this.state.stockAdd}
-                                    // onChange={(e)=>{this.setState({stockAdd:e.target.value})}}
-                                    style={{margin:'0 .5em .5em 0'}}
-                                />
-
-                            </Segment> */}
-                            </>
-
-                        }
 
 
-                        <Button
-                            primary
-                            style={{width:'100%',margin:'1em 0'}}
-                            onClick={this.onSubmit}
-                            // onClick={()=>{console.log(this.createitems())}}
-                            loading={this.state.loading}
-                            disabled={this.state.loading}
-                        >
-                            Submit and go to the Next Step
-                        </Button>
+                                <Button
+                                    primary
+                                    style={{width:'100%',margin:'1em 0'}}
+                                    onClick={this.onSubmit}
+                                    // onClick={()=>{console.log(this.createitems())}}
+                                    loading={this.state.loading}
+                                    disabled={this.state.loading}
+                                >
+                                    Submit and go to the Next Step
+                                </Button>
 
+                                {
+                                    this.state.message?
+                                    <Message style={{color:'red'}}>
+                                        {this.state.message}
+                                    </Message>
+                                    : null
+                                }
+                            </Grid.Row>
+
+
+                        </Grid>
                         {
-                            this.state.message?
-                            <Message style={{color:'red'}}>
-                                {this.state.message}
-                            </Message>
+                            this.state.newidproduct?
+                            <Redirect to={`/seller/product/${this.state.newidproduct}`}/>
                             : null
                         }
-                    </Grid.Row>
-
-
-                </Grid>
-                {
-                    this.state.newidproduct?
-                    <Redirect to={`/seller/product/${this.state.newidproduct}`}/>
-                    : null
-                }
-            </Container>
+                    </Container>
+                </div>
+            </div>
          );
     }
 }
