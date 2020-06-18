@@ -682,33 +682,39 @@ class ProductItems extends Component {
             return (
                 <Segment key={index} style={{width:'100%'}}>
                     <Grid>
-                        <Grid.Row style={{paddingBottom:'0'}}>
-                            <Grid.Column width={16}>
-                                <Header as={'h4'} style={{width:'100%'}}>Type</Header>
-                            </Grid.Column>
-                            <Grid.Column width={4}>
-                                {
-                                    type.length?
-                                    type.map((itemtype,index)=>{
-                                        return (
-                                            <span key={index} style={{margin:'0 .5em 0 0',padding:'0'}}>{itemtype?itemtype:'no type'}</span>
-                                        )
-                                    })
-                                    :
-                                    <span key={index} style={{margin:'0 .5em 0 0',padding:'0'}}>no type</span>
-                                }
-                            </Grid.Column>
-                        </Grid.Row>
+                        {
+                            type.length?
+                            <>
+                            <Grid.Row style={{paddingBottom:'0'}}>
+                                <Grid.Column width={16}>
+                                    <Header as={'h4'} style={{width:'100%'}}>Type</Header>
+                                </Grid.Column>
+                                <Grid.Column width={4}>
+                                    {
+                                        type.length?
+                                        type.map((itemtype,index)=>{
+                                            return (
+                                                <span key={index} style={{margin:'0 .5em 0 0',padding:'0'}}>{itemtype?itemtype:'no type'}</span>
+                                            )
+                                        })
+                                        :
+                                        <span key={index} style={{margin:'0 .5em 0 0',padding:'0'}}>no type</span>
+                                    }
+                                </Grid.Column>
+                            </Grid.Row>
+                            <Divider />
+                            <Grid.Row style={{paddingBottom:'0'}}>
+                                <Grid.Column width={16}>
+                                    <Header as={'h4'} style={{width:'100%',marginBottom:'.5em'}}>Images</Header>
+                                </Grid.Column>
+                            </Grid.Row>
+                            </>
+                            : null
+                        }
                         
-                        <Divider />
 
-                        <Grid.Row style={{paddingBottom:'0'}}>
-                            <Grid.Column width={16}>
-                                <Header as={'h4'} style={{width:'100%',marginBottom:'.5em'}}>Images</Header>
-                            </Grid.Column>
-                        </Grid.Row>
                           
-                        <Grid.Row style={{padding:'0 1rem'}}>
+                        <Grid.Row style={{padding:'0 1rem',display:type.length?'flex':'none'}}>
                             {/* <Grid.Column 
                                 width={16} 
                                 style={{
@@ -852,7 +858,7 @@ class ProductItems extends Component {
                             }
                         </Grid.Row>
 
-                        <Divider />
+                        <Divider style={{display:type.length?'block':'none'}}/>
                             
                             {
                                 item.iditem===this.state.editid?
@@ -933,6 +939,20 @@ class ProductItems extends Component {
         })
     }
 
+    renderAfterAdd=()=>{
+        var isnew=true
+        this.state.items.forEach((item)=>{
+            if(item.price){
+                isnew=false
+            }
+        })
+        if(isnew){
+            return (
+                <Message>Set Up Your Product's Price And Stock</Message>
+            )
+        }
+    }
+
     render() { 
 
         return ( 
@@ -944,6 +964,8 @@ class ProductItems extends Component {
             >
                 {this.state.items[0]?this.state.items[0].product_name:'Product Name'}
             </Header>
+
+            {this.renderAfterAdd()}
 
             {
                 this.state.product.isdeleted?

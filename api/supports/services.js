@@ -1,5 +1,5 @@
 
-export const titleConstruct=(string)=>{
+const titleConstruct=(string)=>{
     string=string.split(' ')
 
     var newstring = string.map((val,index)=>{
@@ -15,3 +15,20 @@ export const titleConstruct=(string)=>{
 }
 
 // titleConstruct('hello kitty')
+
+
+// const number=Math.ceil(2.4)
+
+// console.log(number)
+
+
+Date.prototype.addHours = function(h) {
+    this.setTime(this.getTime() + (h*60*60*1000));
+    return this;
+}
+
+var time=new Date().addHours(4)
+
+
+console.log(new Date())
+console.log(time)

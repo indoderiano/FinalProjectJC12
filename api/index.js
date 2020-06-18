@@ -25,6 +25,7 @@ const {
     TransactionRouters,
     TransactionDetailsRouters
 }=require('./routers')
+const { db } = require('./connections/mysql')
 
 app.use('/users',UserRouters)
 app.use('/products',ProductRouters)
@@ -33,6 +34,29 @@ app.use('/transactions',TransactionRouters)
 app.use('/transactiondetails',TransactionDetailsRouters)
 
 app.use(express.static('public')) // access to public folder
+
+
+// GET DELIVERY OPTIONS
+app.get('/delivery',(req,res)=>{
+    console.log('get delivery options')
+    var sql=`select * from delivery`
+    db.query(sql,(err,delivery)=>{
+        if(err) return res.status(500).send(err)
+
+        res.status(200).send(delivery)
+    })
+})
+
+// GET PAYMENT OPTIONS
+app.get('/payment',(req,res)=>{
+    console.log('get payment options')
+    var sql=`select * from payment`
+    db.query(sql,(err,payment)=>{
+        if(err) return res.status(500).send(err)
+
+        res.status(200).send(payment)
+    })
+})
 
 
 app.listen(PORT,()=>console.log('API is online at port '+PORT))

@@ -68,8 +68,11 @@ class AddProduct extends Component {
 
 
     onSubmit=()=>{
+
+        // NEED TO ADD PROTECTION
+        // ONLY SELLER CAN SUBMIT
         
-        if(!this.state.productName || !this.state.description || !this.state.category || !this.state.fileImage){
+        if(!this.state.productName || !this.state.description || !this.state.category || !this.state.fileImage.length){
             this.setState({message:'Masih ada kolom yang harus diisi'})
         }else if(this.state.fileImage.length>5){
             this.setState({message:'Jumlah image yang diupload tidak bisa lebih dari 5'})
@@ -103,8 +106,9 @@ class AddProduct extends Component {
                 description: this.state.description,
                 variant: JSON.stringify(variant),
                 // variant: JSON.stringify(this.state.varieties),
-                idseller: 2, // need to update this to sellerid once redux is finished
-                idcategory: 2, // need to update once category table is done
+                // DONT FORGET TO ADD IDSELLER
+                idseller: 1, // need to update this to sellerid once redux is finished
+                category: this.state.category,
             }
 
             formdata.append('data',JSON.stringify(product))
