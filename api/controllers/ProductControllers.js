@@ -190,23 +190,38 @@ module.exports={
         })
 
     },
-                  ////////////// SHOWING ALL PRODUCT TO BUYER //////////////
+                  ////////////// SHOWING ALL PRODUCT TO USER //////////////
     allproducts:(req,res)=>{
+        console.log('All Product User')
+        var {page}=req.query
+        var limit=5
+        var offset=(page*limit)-limit
         var sql=`select p.*,c.isdeleted, c.name as namecategory
         from products p join categories c on p.idcategory=c.idcategory
         where c.isdeleted=0`
-        db.query(sql,(err,product)=>{
-            // console.log(product)
+        db.query(sql,(err,allproduct)=>{
             if (err) res.status(500).send(err)
-            sql=`select * from products order by price asc`
-            db.query(sql,(err,priceasc)=>{
+            sql=`select p.*,c.isdeleted, c.name as namecategory
+            from products p join categories c on p.idcategory=c.idcategory
+            where c.isdeleted=0 limit ${offset},${limit}`
+            db.query(sql,(err,product)=>{
+                console.log(product)
                 if (err) res.status(500).send(err)
-                sql=`select * from products order by price desc`
-                db.query(sql,(err,pricedesc)=>{
+                sql=`select p.*,c.isdeleted, c.name as namecategory
+                from products p join categories c on p.idcategory=c.idcategory
+                where c.isdeleted=0 order by p.price asc limit ${offset},${limit}`
+                db.query(sql,(err,priceasc)=>{
                     if (err) res.status(500).send(err)
-                    return res.send({product,priceasc,pricedesc})
+                    sql=`select p.*,c.isdeleted, c.name as namecategory
+                    from products p join categories c on p.idcategory=c.idcategory
+                    where c.isdeleted=0 order by p.price desc limit ${offset},${limit}`
+                    db.query(sql,(err,pricedesc)=>{
+                        if (err) res.status(500).send(err)
+                        return res.send({allproduct,product,priceasc,pricedesc})
+                    })
                 })
             })
+
         })
     },
 
@@ -225,5 +240,36 @@ module.exports={
             })
         })
     },
+                    ///////////////// GET PRODUCT BY SEARCH KEYWORD /////////////////
+    searchrpoduct:(req,res)=>{
+        var {prod,page,cat}=req.query
+        var offset=(page*3)-3
+        if(!page){
+            offset=0
+        }
+        if(!prod){
+            prod=''
+        }
+        var sql=`select p.*,c.isdeleted, c.name as namecategory
+        from products p join categories c on p.idcategory=c.idcategory
+        where c.isdeleted=0 and p.product_name like '%${prod}%' and p.isdeleted=0 limit ${offset},3`
+        if(cat!=0){
+            sql=`select p.*,c.isdeleted, c.name as namecategory
+            from products p join categories c on p.idcategory=c.idcategory 
+            where p.product_name like '%${prod}%' and p.idcategory=${cat} and p.isdeleted=0 limit ${offset},3`
+        }
+        db.query(sql,(err,pagination)=>{
+            if(err) return res.status(500).send({message:err})
+            sql=`select count(*) as total from products where product_name like '%${prod}%' and isdeleted=0`
+            if(cat!=0){
+                sql=`select count(*) as total from products where product_name like '%${prod}%' and p.idcategory=${cat} and isdeleted=0`
+            }
+            db.query(sql,(err,page)=>{
+                if(err) return res.status(500).send({message:err})
+                return res.status(200).send({pagination,page})
+            })
+        }) 
+
+    }
 
 }

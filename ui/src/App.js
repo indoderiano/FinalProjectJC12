@@ -8,6 +8,7 @@ import Register from './pages/Register'
 import Verification from './pages/Verification'
 import ManageProduct from './pages/ManageProduct'
 import AddProduct from './pages/seller/AddProduct'
+import AllProducts from './pages/AllProducts'
 import ProductItems from './pages/seller/ProductItems'
 import Product from './pages/Product'
 import ChangePass from './pages/Changepass'
@@ -17,11 +18,13 @@ import Sellerregis from './pages/Sellerregis'
 import Admintable from './pages/Admin'
 import { KeepLogin,KeepSeller } from './redux/actions'
 import { API_URL } from './support/ApiUrl';
+import { APIURL } from './supports/ApiUrl';
 import { connect } from 'react-redux';
 import HomeSeller from './pages/seller/HomeSeller';
 import MyProducts from './pages/seller/MyProduct';
+import MyOrders from './pages/seller/MyOrder';
 import Axios from'axios'
-import AllProducts from './pages/AllProducts';
+import StoreProfile from './pages/seller/StoreProfile';
 
 
 function App({KeepLogin,User,KeepSeller}) {
@@ -33,7 +36,7 @@ function App({KeepLogin,User,KeepSeller}) {
   useEffect(()=>{
     const token=localStorage.getItem('token')
     if(token){
-      Axios.get (`${API_URL}/users/keeplogin`,{
+      Axios.get (`${APIURL}/users/keeplogin`,{
         headers:
         {
           'Authorization':`Bearer ${token}`
@@ -85,6 +88,8 @@ function App({KeepLogin,User,KeepSeller}) {
         <Route path='/product/:idproduct' exact component={Product}/>
         <Route path='/Sellerregister' exact component={Sellerregis }/>
         <Route path='/admin' exact component={Admintable}/>
+        <Route path='/seller/myorder' exact component={MyOrders}/>
+        <Route path='/seller/profile' exact component={StoreProfile}/>
 
       </Switch>
 
