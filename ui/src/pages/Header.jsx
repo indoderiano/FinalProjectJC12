@@ -10,14 +10,11 @@ import {
 import { connect } from "react-redux";
 import {Link} from 'react-router-dom'
 import {isLogout} from './../redux/actions'
-import {Redirect} from 'react-router-dom'
+
 class MainHeader extends Component {
     state = {  }
-
-    render() {
-        return (
-
-          
+    render() { 
+        return ( 
             <Menu
               fixed={this.props.fixed ? 'top' : null}
               inverted={!this.props.fixed}
@@ -26,9 +23,7 @@ class MainHeader extends Component {
               size={this.props.size}
               style={{backgroundColor:'rgb(27, 28, 29)',margin:'0',padding:'14px 0 14px'}}
             >
-
               <Container style={{display:'block'}}>
-
                 <Menu.Item as={Link} to='/' style={style.menu} active>
                   Home                 
                 </Menu.Item>
@@ -37,22 +32,7 @@ class MainHeader extends Component {
                 <Menu.Item as='a' style={style.menu}>Careers</Menu.Item>
                 
 
-                <Menu.Item 
-                  style={{float:'right'}}
-                  // position='right'
-                >
-                  {/* {
-                    this.props.User.islogin?
-                    <span style={{padding:'0 1em'}}>
-                      <Button as={Link} style={{backgroundColor:'#1b1c1d', 
-                    color:'#cfcfcf'}} to='/profile'>
-                      Hi,{this.props.User.username}
-                    </Button>
-                    </span>
-                    : null
-                  } */}
-              
-                
+                <Menu.Item style={{float:'right'}}>
                   
                   {
                     !this.props.User.islogin?
@@ -64,10 +44,10 @@ class MainHeader extends Component {
                         Sign Up
                       </Button>
                     </>
-                    :  <Button as={Link} style={{backgroundColor:'#1b1c1d', 
-                    color:'#cfcfcf'}} to='/' onClick={()=>{this.props.isLogout()}}>
-                    Log out
-                  </Button>
+                    :  
+                    <Button as={Link} to='/' inverted onClick={()=>{this.props.isLogout()}}>
+                      Log out
+                    </Button>
                   }
                 </Menu.Item>
                 
@@ -128,10 +108,7 @@ class MainHeader extends Component {
 
                 
               </Container>
-              
             </Menu>
-
-
          );
     }
 }
