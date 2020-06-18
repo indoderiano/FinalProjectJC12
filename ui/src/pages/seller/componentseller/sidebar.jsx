@@ -11,7 +11,7 @@ class SidebarSeller extends Component {
     const { activeItem } = this.state
 
     return (
-        <div style={{paddingLeft:'20px', width:'20%'}}>
+        <div style={{paddingLeft:'20px', width:'20%', paddingRight:'5px'}}>
             <Menu vertical>
                 <Menu.Item > 
                     <Menu.Header>Products</Menu.Header>
@@ -31,7 +31,7 @@ class SidebarSeller extends Component {
                     <Menu.Header>Order</Menu.Header>
                     <Menu.Menu>
                         <Menu.Item>
-                            <NavLink to='/seller/order' exact style={{color:'black'}} activeStyle={{color:'red'}}> My Order </NavLink>
+                            <NavLink to='/seller/myorder' exact style={{color:'black'}} activeStyle={{color:'red'}}> My Order </NavLink>
                         </Menu.Item>
                         <Menu.Item>
                             <NavLink to='/seller/cancelled' style={{color:'black'}} activeStyle={{color:'red'}}> Cancelled Order </NavLink>
@@ -42,7 +42,7 @@ class SidebarSeller extends Component {
                 <Menu.Header>Store Profile</Menu.Header>
                     <Menu.Menu>
                         <Menu.Item>
-                            <NavLink to='/seller/storeprofile' exact style={{color:'black'}} activeStyle={{color:'red'}}> Store Profile </NavLink>
+                            <NavLink to='/seller/profile' exact style={{color:'black'}} activeStyle={{color:'red'}}> Store Profile </NavLink>
                         </Menu.Item>
                         <Menu.Item>
                             <NavLink to='/seller/rating' style={{color:'black'}} activeStyle={{color:'red'}}> Rating </NavLink>

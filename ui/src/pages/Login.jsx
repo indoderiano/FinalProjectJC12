@@ -55,8 +55,8 @@ const Login = (props) => {
                         value={data.password}
                         onChange={handleChange}
                         /> <br/>
-                         <Form.Button content='Submit' /><br/>
-                         <Form.Button content='Forgot Password?' onClick={isforgot}/>
+                        <Form.Button content='Submit'/><br/>
+                        <Form.Button content='Forgot Password?' onClick={isforgot}/>
                     </Form.Group>
                 </Form>
                 {
