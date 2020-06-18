@@ -1,6 +1,7 @@
 import {USER_LOGIN_START,USER_LOGIN_SUCCESS,USER_LOGIN_FAILED} from './../type'
 import Axios from 'axios';
 import { APIURL } from '../../supports/ApiUrl';
+import {LoadCart} from '../actions'
 
 
 export const LoginUser=({username,password})=>{
@@ -20,6 +21,9 @@ export const LoginUser=({username,password})=>{
                     console.log(res.data)
                     localStorage.setItem('token', res.data.token)
                     dispatch({type:USER_LOGIN_SUCCESS,payload:res.data})
+
+                    // ALL INITIAL REDUX FUNCTION
+                    dispatch(LoadCart(res.data.iduser))
                 }else{
                     dispatch({type:USER_LOGIN_FAILED,payload:'Account is not recognized!'})
                 }
