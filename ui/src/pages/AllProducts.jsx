@@ -223,7 +223,7 @@ class AllProducts extends Component {
                 <div>
                     <center> 
                         {/* <a href={`${url}?page=${currentPage}`} > */}
-                        <NavLink to={`/allproducts?page=${activePage}`}>
+                        <NavLink to={`/allproducts?page=${currentPage}`}>
                             <Pagination
                                 activePage={currentPage}
                                 ellipsisItem={{ content: <Icon name='ellipsis horizontal' />, icon: true }}
