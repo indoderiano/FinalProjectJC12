@@ -18,6 +18,7 @@ import {
 } from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
 import {titleConstruct} from '../supports/services'
+import {LoadCart} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -42,18 +43,25 @@ class Product extends Component {
 
         typeselect:[],
         itemselect:{},
-        qty:0,
+        qty:1,
         message:'',
 
         // MESSAGES
         err:'',
         buy:false,
 
+        // timeout
+        timeout:''
+
      }
 
      componentDidMount=()=>{
         this.getProduct()
         this.getItems()
+    }
+
+    componentWillUnmount=()=>{
+        clearTimeout(this.state.timeout)
     }
 
     getProduct=()=>{
@@ -111,41 +119,79 @@ class Product extends Component {
 
         }else{
 
-            var tr={
-                iduser: this.props.User.iduser
+            // NEW STRUCTURE
+            // ADDING ITEM TO CART, WILL NOT CREATE TRANSACTION, ONLY CREATE TRANSACTION DETAIL
+            // STATUS WILL BE IN TRANSACTION DETAIL COLUMN, NOT IN TRANSACTION
+
+            var td={
+                // idtransaction: res.data.idtransaction,
+                iduser: this.props.User.iduser,
+                iditem: this.state.itemselect.iditem,
+                qty: this.state.qty,
+                message: this.state.message,
             }
-            Axios.post(`${APIURL}/transactions`,tr)
+            Axios.post(`${APIURL}/transactiondetails`,td)
             .then((res)=>{
-                console.log('create transaction successful')
-                console.log(res.data)
-                // CREATE TRANSACTION DETAILS
-                var td={
-                    idtransaction: res.data.idtransaction,
-                    iditem: this.state.itemselect.iditem,
-                    qty: this.state.qty,
-                    message: this.state.message,
+                if(res.data.status){
+                    console.log('item added to cart')
+                    this.props.LoadCart(this.props.User.iduser)
+                    this.setState({buy:true})
+
+                    var delay = setTimeout(()=>{
+                        this.setState({buy:false})
+                    },2000)
+
+                    this.setState({timeout:delay})
+                    
+                }else{
+                    console.log(res.data.message)
+                    this.setState({err:res.data.message})
                 }
-
-                Axios.post(`${APIURL}/transactiondetails`,td)
-                .then((res)=>{
-                    if(res.data.status){
-                        console.log('transaction details updated')
-                        this.setState({buy:true})
-                        setTimeout(()=>{
-                            this.setState({buy:false})
-                        },3000)
-                        
-                    }else{
-                        console.log(res.data.message)
-                        this.setState({err:res.data.message})
-                    }
-                }).catch((err)=>{
-                    console.log(err)
-                })
-
             }).catch((err)=>{
                 console.log(err)
             })
+
+
+
+            // PREVIOUS STRUCTURE
+
+            // var tr={
+            //     iduser: this.props.User.iduser
+            // }
+            // Axios.post(`${APIURL}/transactions`,tr)
+            // .then((res)=>{
+            //     console.log('create transaction successful')
+            //     console.log(res.data)
+            //     // CREATE TRANSACTION DETAILS
+            //     var td={
+            //         idtransaction: res.data.idtransaction,
+            //         iditem: this.state.itemselect.iditem,
+            //         qty: this.state.qty,
+            //         message: this.state.message,
+            //     }
+
+            //     Axios.post(`${APIURL}/transactiondetails`,td)
+            //     .then((res)=>{
+            //         if(res.data.status){
+            //             console.log('transaction details updated')
+            //             this.props.LoadCart(this.props.User.iduser)
+            //             this.setState({buy:true})
+
+            //             setTimeout(()=>{
+            //                 this.setState({buy:false})
+            //             },3000)
+                        
+            //         }else{
+            //             console.log(res.data.message)
+            //             this.setState({err:res.data.message})
+            //         }
+            //     }).catch((err)=>{
+            //         console.log(err)
+            //     })
+
+            // }).catch((err)=>{
+            //     console.log(err)
+            // })
 
         }
 
@@ -609,4 +655,4 @@ const MapstatetoProps=(state)=>{
 }
 
  
-export default connect(MapstatetoProps) (Product);
+export default connect(MapstatetoProps,{LoadCart}) (Product);

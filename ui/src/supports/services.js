@@ -20,3 +20,16 @@ export const titleConstruct=(string)=>{
 }
 
 // titleConstruct('hello kitty')
+
+
+export const isJson=(data)=>{
+    try{
+        if(data==null||data==''||data==""||data=="''"||data==`""`){
+            return []
+        }
+        return JSON.parse(data)
+    }catch{
+        return []
+    }
+    
+}
