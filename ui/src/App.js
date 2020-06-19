@@ -47,7 +47,6 @@ function App({KeepLogin,LoadCart,LoadPayment,User,KeepSeller}) {
       .then(res=>{
         KeepLogin(res.data)
         if(res.data.isseller){
-          console.log('line 40')
           KeepSeller(res.data.iduser)
         }
         LoadCart(res.data.iduser)

@@ -8,6 +8,7 @@ import { APIURL } from '../supports/ApiUrl'
 
 const AdminTable = () => {
     const [seller,setseller]=useState([])
+   
 
     useEffect(()=>{
         Axios.get(`${APIURL}/admin/allseller`)
@@ -18,8 +19,29 @@ const AdminTable = () => {
         })
     },[])
 
+    const blockseller=(idseller)=>{    
+        Axios.put(`${APIURL}/admin/blocked/${idseller}`)
+        .then((res)=>{
+            console.log(res)
+            
+        }).catch((err)=>{
+            console.log(err)
+            
+        })
+    }
+    const unblockseller=(idseller)=>{    
+        Axios.put(`${APIURL}/admin/unblocked/${idseller}`)
+        .then((res)=>{
+            console.log(res)
+            
+        }).catch((err)=>{
+            console.log(err)
+            
+        })
+    }
    
 
+    
     console.log(seller);
     const renderseller=()=>{
         return seller.map((val,index)=>{
@@ -36,8 +58,12 @@ const AdminTable = () => {
                     val.isverified === 1 ? 'verified' 
                     : 'not verified'
                 }
-            </Table.Cell>
-            <Button negative>Block</Button>
+            </Table.Cell>   
+            {
+                val.isblocked === 1?<Button onClick={()=>unblockseller(val.idseller)}>unblock</Button>:
+                <Button negative onClick={()=>blockseller(val.idseller)}>Block</Button>
+
+            }
       </Table.Row>
             )
         })
