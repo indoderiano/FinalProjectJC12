@@ -4,28 +4,8 @@ const fs=require('fs')
 
 
 module.exports={
-    get:(req,res)=>{
-        var sql=`select p.*,c.isdeleted, c.name as namecategory
-        from products p join categories c on p.idcategory=c.idcategory
-        where c.isdeleted=0`
-        db.query(sql,(err,product)=>{
-            // console.log(product)
-            if (err) res.status(500).send(err)
-            sql=`Select idcategory,name from categories`
-            db.query(sql,(err,category)=>{
-                if (err) res.status(500).send(err)
-                return res.send({product,category})
-            })
-            console.log('getting product...')
-            console.log(req.params)
-            const {idproduct}=req.params
-            var sql=`select * from products where idproduct=${idproduct}`
-            db.query(sql,(err,product)=>{
-                if(err) return res.status(500).send(err)
-                res.status(200).send(product[0])
-            })
-        })
-    },
+    
+    
 
     // CURRENTLY NOT BEING USED
     // create:(req,res)=>{
