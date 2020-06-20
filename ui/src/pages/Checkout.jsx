@@ -51,9 +51,7 @@ class Checkout extends Component {
         })
     }
 
-    onClickPayment=()=>{
-        console.log(this.props.Cart)
-    }
+    
 
     renderDeliveryList=(index)=>{
         const list=this.state.delivery.map((del,index)=>{
@@ -335,6 +333,7 @@ class Checkout extends Component {
                                                 disabled={this.props.Cart.ischeckout?false:true}
                                                 onClick={()=>{
                                                     this.props.CountTotalCharge()
+                                                    console.log(this.props.Cart)
                                                     // this.props.CountTotalPayment()
                                                 }}
                                             >

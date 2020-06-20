@@ -20,7 +20,7 @@ import {
 } from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
 import {titleConstruct,isJson} from '../supports/services'
-import {LoadCart,UpdateCheckout,CountTotalPayment} from '../redux/actions'
+import {LoadCart,UpdateCheckout,CountTotalPayment,LoadPayment} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -32,21 +32,122 @@ class Payment extends Component {
         isfinish:false
      }
 
-    submitPayment=()=>{
 
+    submitPayment=()=>{
+        console.log(this.props.Cart)
         // NEED TO CREATE PROTECTION
         /////////////////////////////////
         // CHECK ITEM STOCK FOR AVAILIBILTY
+        this.checkStock()
+
         // CHECK ITEM ISSELECTED
         // CHECK PROMO AVAILIBILITY
         // CHECK POPCOIN CREDIT?
+        // CHECK SAME TRANSACTION ALREADY DONE IN ANOTHER TAB
 
         /////////////////////////////////
 
         // DONT FORGET TO SUB ITEM STOCK AFTER CHECKOUT
+    }
+    
+
+    undoStock=()=>{
+        this.props.Cart.checkout.forEach((seller,checkoutindex)=>{
+            seller.itemlist.forEach((order,sellerindex)=>{
+                // iditem
+                // qty
+
+                Axios.put(`${APIURL}/items/undostock/${order.iditem}`,{qty:order.qty})
+                .then((newstock)=>{
+                    console.log(`item id ${order.iditem} new stock is ${newstock.data.stock}`)
+
+                    // LAST CYCLE
+                    // AFTER ALL STOCK IS CHECKED
+                    if(this.props.Cart.checkout.length-1==checkoutindex&&seller.itemlist.length-1==sellerindex){
+
+                        console.log('all stock is undo')
+                    }
+
+                }).catch((err)=>{
+
+                })
+            })
+        })
+    }
+
+    checkStock=()=>{
+
+        // CHECK ITEM STOCK
+        // STEP 1
+        // SUBTRACT ITEM STOCK BY QTY
+        // STEP 2
+        // IF NEW STOCK VALUE LESS THAN ZERO, THEN UNDO ALL SUBTRACTION
+
+        var stock=true
+        var id=0
+
+        this.props.Cart.checkout.forEach((seller,checkoutindex)=>{
+            seller.itemlist.forEach((order,sellerindex)=>{
+                // iditem
+                // qty
+
+                Axios.put(`${APIURL}/items/stock/${order.iditem}`,{qty:order.qty})
+                .then((newstock)=>{
+                    console.log(`item id ${order.iditem} newstock is ${newstock.data.stock}`)
+                    if(newstock.data.stock<0){
+                        stock=false
+                        id=order.iditem
+                    }
+
+                    // LAST CYCLE
+                    // AFTER ALL STOCK IS CHECKED
+                    if(this.props.Cart.checkout.length-1==checkoutindex&&seller.itemlist.length-1==sellerindex){
+
+                        if(stock){
+                            // STOCK IS GOOD
+                            console.log('item stock are available')
+                            this.createTransactions()
+                        }else{
+                            // UNDO SUBTRACTION
+                            console.log('stock is not enough')
+                            console.log(`item id ${id}`)
+                            this.undoStock()
+
+                        }
+                    }
+
+                }).catch((err)=>{
+
+                })
+            })
+        })
+    }
+
+
+    createTransactions=()=>{
+        // console.log(this.props.Cart)
+        var transactiondata={
+            ...this.props.Cart,
+            iduser: this.props.User.iduser,
+            idpayment: this.state.idpayment
+        }
+        
+        console.log('request create transaction')
+        Axios.post(`${APIURL}/transactions/secured`,transactiondata)
+        .then((paymentcreated)=>{
+            this.props.LoadCart(this.props.User.iduser)
+            this.props.LoadPayment(this.props.User.iduser)
+            this.setState({isfinish:true})
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+
+    createTransactionByFrontEnd=()=>{
 
 
 
+        return 1
 
 
 
@@ -63,15 +164,18 @@ class Payment extends Component {
         Axios.post(`${APIURL}/transactions`,transactiondata)
         .then(async(created)=>{
             // create seller transaction
+
             // NOTE, THIS FOR LOOP, DOES NOT WORK PROPERLY HERE, 
+            // -----> for(var seller of this.props.Cart.checkout){  <------
             // VALUE OF THE FIRST CYCLE GETS REPLACE BY THE VALUE FROM THE LAST CYCLE
-            // for(var seller of this.props.Cart.checkout){ 
+
             this.props.Cart.checkout.forEach(async(seller)=>{
                 // console.log('seller loop'+seller.namatoko)
                 const{
                     idseller,
                     iddelivery,
                     totalqty,
+                    totalweight,
                     seller_delivery_cost,
                     seller_items_price
                 }=seller
@@ -80,6 +184,7 @@ class Payment extends Component {
                     idseller,
                     iddelivery,
                     totalqty,
+                    totalweight,
                     seller_delivery_cost,
                     seller_items_price
                 }
@@ -92,11 +197,16 @@ class Payment extends Component {
 
                         // DONT FORGET TO SUBTRACT ITEM STOCK
 
+                        // CASE STUDY
+                        // IF SAME PAGE IS OPEN IN ANOTHER TAB
+                        // 
+
                         // for(var item of seller.itemlist){
                         var update={
                             idtransaction:created.data.insertId,
                             idtransactionseller:transactionseller.data.insertId,
-                            idorderstatus:2
+                            idorderstatus:2,
+                            checkout_price:item.price
                         }
                         console.log(`update order id ${item.idtransactiondetail}`)
                         
@@ -105,6 +215,8 @@ class Payment extends Component {
                             console.log(`order id ${item.idtransactiondetail} proccessed`)
 
                             this.props.LoadCart(this.props.User.iduser)
+                            this.props.LoadPayment(this.props.User.iduser)
+                            this.setState({isfinish:true})
                         }catch(err){
                             console.log(err)
                         }
@@ -115,13 +227,9 @@ class Payment extends Component {
                     console.log(err)
                 }
 
-
             })
         }).catch((err)=>{
             console.log(err)
-        }).finally(()=>{
-            console.log('finally')
-            this.setState({isfinish:true})
         })
 
 
@@ -320,4 +428,4 @@ const MapstatetoProps=(state)=>{
 }
 
  
-export default connect(MapstatetoProps,{CountTotalPayment,LoadCart}) (Payment);
+export default connect(MapstatetoProps,{CountTotalPayment,LoadCart,LoadPayment}) (Payment);

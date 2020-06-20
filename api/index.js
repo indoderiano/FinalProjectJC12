@@ -23,7 +23,8 @@ const {
     ProductRouters,
     ItemRouters,
     TransactionRouters,
-    TransactionDetailsRouters
+    TransactionDetailsRouters,
+    TransactionSellerRouters
 }=require('./routers')
 const { db } = require('./connections/mysql')
 
@@ -32,6 +33,7 @@ app.use('/products',ProductRouters)
 app.use('/items',ItemRouters)
 app.use('/transactions',TransactionRouters)
 app.use('/transactiondetails',TransactionDetailsRouters)
+app.use('/transactionstores',TransactionSellerRouters)
 
 app.use(express.static('public')) // access to public folder
 

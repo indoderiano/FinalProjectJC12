@@ -12,4 +12,5 @@ Router.put('/verify',UserControllers.verify)
 Router.post('/resendmail',UserControllers.resendmail)
 Router.post('/forgotpassword',UserControllers.forgotpassverify)
 Router.put('/changepassword',UserControllers.changepassword)
+Router.get('/seller',UserControllers.getSeller) // supposed to be in seller router
 module.exports=Router

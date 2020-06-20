@@ -1,6 +1,6 @@
 import React ,{Component} from 'react'
 import Axios from 'axios'
-import {APIURL} from '../supports/ApiUrl'
+import {APIURL} from '../../supports/ApiUrl'
 import {
     Grid,
     Header,
@@ -20,12 +20,14 @@ import {
     Menu,
     Label
 } from 'semantic-ui-react'
-import PaymentList from './PaymentList'
-import TransactionHistory from './TransactionHistory'
-import OnTheWay from './TransactionOnDelivery'
+import PaymentVerify from './PaymentVerify'
+import Orders from '../seller/Orders'
+import PaymentList from '../PaymentList'
+import TransactionHistory from '../TransactionHistory'
+import OnTheWay from '../TransactionOnDelivery'
 import {Link} from 'react-router-dom'
-import {titleConstruct,isJson} from '../supports/services'
-import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../redux/actions'
+import {titleConstruct,isJson} from '../../supports/services'
+import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -47,7 +49,7 @@ class Transactions extends Component {
             {
                 menuItem: (
                   <Menu.Item key='payment'>
-                    Payment Due
+                    Admin Payment Verification
                     {
                         this.props.Payment.total?
                         <Label color='blue'>{this.props.Payment.total}</Label>
@@ -55,11 +57,22 @@ class Transactions extends Component {
                     }
                   </Menu.Item>
                 ),
-                render: () => <Tab.Pane><PaymentList/></Tab.Pane>,
+                render: () => <Tab.Pane><PaymentVerify/></Tab.Pane>,
             },
             {
-              menuItem: { key: 'history', icon: 'list ul', content: 'History Transactions' },
-              render: () => <Tab.Pane><TransactionHistory/></Tab.Pane>,
+                menuItem: (
+                    <Menu.Item key='second'>
+                        Store Orders
+                        {
+                            this.props.Store.total?
+                            <Label color='blue'>
+                                {this.props.Store.total}
+                            </Label>
+                            : null
+                        }
+                    </Menu.Item>
+                ),
+                render: () => <Tab.Pane><Orders/></Tab.Pane>,
             },
             {
                 menuItem: { key: 'delivery', icon: 'shipping fast', content: 'Items On Delivery' },
@@ -81,7 +94,8 @@ const MapstatetoProps=(state)=>{
     return {
         User: state.Auth,
         Cart: state.Cart,
-        Payment: state.Payment
+        Payment: state.Payment,
+        Store: state.Store
     }
 }
 

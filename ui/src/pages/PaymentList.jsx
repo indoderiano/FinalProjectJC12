@@ -35,7 +35,8 @@ class PaymentList extends Component {
         clock:undefined,
         uploadid:0,
         filepaymentproof:undefined,
-        errormessage:''
+        errormessage:'',
+        iddelete:0,
      }
 
     componentDidMount=()=>{
@@ -65,9 +66,6 @@ class PaymentList extends Component {
 
             formdata.append('image',this.state.filepaymentproof)
 
-            // DONT FORGET TO CREATE PROTECTION
-            // SO THAT AFTER EXPIRES, UNABLE TO UPLOAD/UPDATE STATUS
-
 
             Axios.post(`${APIURL}/transactions/paymentproof/${this.state.uploadid}`,formdata,Headers)
             .then((uploaded)=>{
@@ -81,14 +79,43 @@ class PaymentList extends Component {
         }
     }
 
-    CancelTransaction=(idtransaction)=>{
-        Axios.put(`${APIURL}/transactions/${idtransaction}`,{idstatus:4})
+    CancelTransaction=(idtransaction,transaction)=>{
+        Axios.put(`${APIURL}/transactions/${idtransaction}`,{idstatus:5})
         .then((cancelled)=>{
             console.log('transaction '+idtransaction+' cancelled')
+            
             this.props.LoadPayment(this.props.User.iduser)
-            // DONT FORGET TO ADD ITEM BACK TO CART, AND RESTOCK ITEM
         }).catch((err)=>{
             console.log(err)
+        })
+
+        // RESTOCK ITEMS
+        Axios.put(`${APIURL}/items/transaction/cancel?idtransaction=${idtransaction}`)
+        .then((restock)=>{
+            console.log('all items restocked')
+        }).catch((err)=>{
+            console.log(err)
+        })
+
+        // RE-ADD ITEMS BACK TO CART
+        console.log('transaction',transaction)
+        transaction.sellerlist.forEach((seller)=>{
+            seller.itemlist.forEach((item)=>{
+                // 
+                var td={
+                    iduser: this.props.User.iduser,
+                    iditem: item.iditem,
+                    qty: item.qty,
+                    message: item.message,
+                }
+                Axios.post(`${APIURL}/transactiondetails`,td)
+                .then((res)=>{
+                    //
+                    
+                }).catch((err)=>{
+                    console.log(err)
+                })
+            })
         })
     }
 
@@ -248,7 +275,7 @@ class PaymentList extends Component {
             var isexpired=seconds<=0
 
             if(isexpired){
-                this.CancelTransaction(transaction.idtransaction)
+                this.CancelTransaction(transaction.idtransaction,transaction)
             }
 
 
@@ -303,7 +330,7 @@ class PaymentList extends Component {
                                                 }
                                             }}
                                         />
-                                        <Button primary style={{height:'100%'}} onClick={this.onUpload}>Upload</Button>
+                                        <Button primary style={{height:'100%'}} onClick={this.onUpload}><Icon name='upload'/>Upload</Button>
                                         {
                                             this.state.errormessage?
                                             <Label 
@@ -335,6 +362,30 @@ class PaymentList extends Component {
                             <Divider style={{width:'100%'}}/>
                         </Grid.Row>
                         {this.renderByTransactionSeller(transaction.sellerlist)}
+                        <Grid.Row>
+                            <Grid.Column width={16} style={{marginTop:'1em',textAlign:'center'}}>
+                                {
+                                    transaction.idtransaction==this.state.iddelete?
+                                    <Button 
+                                        color='red'
+                                        disabled={isexpired}
+                                        style={{width:'100%'}}
+                                        onClick={()=>{this.CancelTransaction(transaction.idtransaction,transaction)}}
+                                    >
+                                        Confirm
+                                    </Button>
+                                    :
+                                    <Button 
+                                        // color='red'
+                                        disabled={isexpired}
+                                        style={{width:'100%'}}
+                                        onClick={()=>{this.setState({iddelete:transaction.idtransaction})}}
+                                    >
+                                        Cancel Transaction
+                                    </Button>
+                                }
+                            </Grid.Column>
+                        </Grid.Row>
                     </Grid>
                 </Segment>
             )

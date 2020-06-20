@@ -13,15 +13,16 @@ import Product from './pages/Product'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import Transactions from './pages/Transactions'
+import ManageTransactions from './pages/admin/ManageTransactions'
 import ChangePass from './pages/Changepass'
 import Forgotpass from './pages/Forgotpass'
-import { KeepLogin, LoadCart, LoadPayment } from './redux/actions'
-import { API_URL } from './support/ApiUrl';
+import { KeepLogin , LoadCart, LoadPayment, LoadInvoices, LoadOrders } from './redux/actions'
+import { APIURL } from './supports/ApiUrl';
 import { connect } from 'react-redux';
 import Axios from'axios'
 
 
-function App({KeepLogin,LoadCart,LoadPayment,User}) {
+function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSeller}) {
 
   const [Loading,setLoading]=useState(true)
 
@@ -30,16 +31,21 @@ function App({KeepLogin,LoadCart,LoadPayment,User}) {
   useEffect(()=>{
     const token=localStorage.getItem('token')
     if(token){
-      Axios.get (`${API_URL}/users/keeplogin`,{
+      Axios.get (`${APIURL}/users/keeplogin`,{
         headers:
         {
           'Authorization':`Bearer ${token}`
         }
       })
-      .then (res=>{
+      .then(res=>{
+        console.log('token data',res.data)
         KeepLogin(res.data)
         LoadCart(res.data.iduser)
         LoadPayment(res.data.iduser)
+        LoadInvoices(res.data.iduser)
+        if(res.data.isseller){
+          LoadOrders(res.data.iduser)
+        }
       }).catch((err)=>{
         console.log(err)
       }).finally(()=>{
@@ -55,7 +61,6 @@ function App({KeepLogin,LoadCart,LoadPayment,User}) {
   const memberAccess=!Loading&&User.islogin
   const sellerAccess=!Loading&&User.isseller
   
-
 
   if(Loading){
     return <div><center><h3>Loading...</h3><img width="400px" src="https://static.boredpanda.com/blog/wp-content/uploads/2016/07/totoro-exercising-100-days-of-gifs-cl-terryart-2-578f80ec7f328__605.gif"/></center></div>
@@ -79,16 +84,23 @@ function App({KeepLogin,LoadCart,LoadPayment,User}) {
         <Route path='/forgotpassword/:token' exact component={ChangePass}/>
         <Route path='/verification' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
+        
 
-        <Route path='/product/:idproduct' exact component={Product}/>
-        <Route path='/cart' exact component={visitorAccess?()=><Redirect to='/'/>:Cart}/>
-        <Route path='/checkout' exact component={visitorAccess?()=><Redirect to='/'/>:Checkout}/>
-        <Route path='/transactions' exact component={visitorAccess?()=><Redirect to='/'/>:Transactions}/>
 
 
         <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:()=><Redirect to='/'/>}/>
         <Route path='/seller/product/add' exact component={sellerAccess?AddProduct:Loading?Home:()=><Redirect to='/'/>}/>
         <Route path='/seller/product/:idproduct' exact component={sellerAccess?ProductItems:Loading?Home:()=><Redirect to='/'/>}/>
+        <Route path='/product/:idproduct' exact component={Product}/>
+        <Route path='/cart' exact component={visitorAccess?()=><Redirect to='/'/>:Cart}/>
+        <Route path='/checkout' exact component={visitorAccess?()=><Redirect to='/'/>:Checkout}/>
+        <Route path='/transactions' exact component={visitorAccess?()=><Redirect to='/'/>:Transactions}/>
+
+        <Route path='/managetransactions' exact component={ManageTransactions}/>
+        
+
+
+
 
       </Switch>
 
@@ -102,4 +114,4 @@ const MapstatetoProps=(state)=>{
   }
 }
 
-export default connect(MapstatetoProps, {KeepLogin,LoadCart,LoadPayment}) (App);
+export default connect(MapstatetoProps, {KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders}) (App);
