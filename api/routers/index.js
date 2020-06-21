@@ -5,6 +5,7 @@ const TransactionRouters=require('./TransactionRouters')
 const TransactionDetailsRouters=require('./TransactionDetailsRouters')
 const SellerRouters=require('./SellerRouters')
 const AdminRouters=require('./AdminRouters')
+const WishlistRouters=require('./WishlistRouters')
 module.exports={
     UserRouters,
     ProductRouters,
@@ -12,5 +13,6 @@ module.exports={
     TransactionRouters,
     TransactionDetailsRouters,
     SellerRouters,
-    AdminRouters
+    AdminRouters,
+    WishlistRouters
 }

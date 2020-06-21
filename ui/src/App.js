@@ -16,9 +16,11 @@ import Checkout from './pages/Checkout'
 import Transactions from './pages/Transactions'
 import ChangePass from './pages/Changepass'
 import Forgotpass from './pages/Forgotpass'
+import VerifyTable from './pages/Adminverify'
 import Profile from './pages/Profile'
 import Sellerregis from './pages/Sellerregis'
 import Admintable from './pages/Admin'
+import Testimage from './pages/aaaaa'
 import { KeepLogin,KeepSeller, LoadCart, LoadPayment } from './redux/actions'
 import { APIURL } from './supports/ApiUrl';
 import { connect } from 'react-redux';
@@ -86,9 +88,6 @@ function App({KeepLogin,LoadCart,LoadPayment,User,KeepSeller}) {
         <Route path='/' exact component={Home}/>
         <Route path='/login' exact component={Login}/>
         <Route path='/register' exact component={Register}/>
-        <Route path='/forgotpassword' exact component={Forgotpass}/>
-        <Route path='/forgotpassword/:token' exact component={ChangePass}/>
-        <Route path='/profile' exact component={Profile}/>
         <Route path='/verification' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         
@@ -104,6 +103,11 @@ function App({KeepLogin,LoadCart,LoadPayment,User,KeepSeller}) {
         {/* JAMES */}
         <Route path='/Sellerregister' exact component={Sellerregis }/>
         <Route path='/admin' exact component={Admintable}/>
+        <Route path='/forgotpassword' exact component={Forgotpass}/>
+        <Route path='/forgotpassword/:token' exact component={ChangePass}/>
+        <Route path='/profile' exact component={Profile}/>
+        <Route path='/verifyseller' exact component={VerifyTable}/>
+        <Route path='/testimage' exact component={Testimage}/>
         {/*  */}
         
         

@@ -62,4 +62,35 @@ module.exports={
                 })
             })
     },
+    ////// SELLER VERIFICATION ////////////
+    VerifySeller:(req,res)=>{
+        const {idseller}=req.params
+        console.log(idseller)
+        var verified={
+            isverified:true
+        }
+        var sql=`update seller set ? where idseller=${idseller}`
+            db.query(sql, verified , (err,result)=>{
+                if(err) res.status(500).send('error line 23')
+                
+                var maildata={
+                    from: 'Admin <mde50526@gmail.com>',
+                    to: 'jamestjahjadi@gmail.com',
+                    subject: 'Seller Account verification',
+                    html: `Hello, we're gladly to inform you that your Seller Account has been verified Happy Selling :)`
+                }
+                transporter.sendMail(maildata,(err,sent)=>{
+                    if(err) return res.status(500).send(err)
+                    res.status(200).send({message:`Account verified`})
+                })
+            })
+    },
+    ///// SHOW UNVERIFIED SELLER //////
+    GetUnverified:(req,res)=>{
+        var sql=`select s.*, u.username,u.email,u.lastlogin from seller s join users u on s.iduser = u.iduser where s.isverified=false;`
+        db.query(sql,(err,result)=>{
+            if(err) res.status(500).send(err)
+            res.status(200).send(result)
+        })
+    }
 }

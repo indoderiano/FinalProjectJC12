@@ -1,17 +1,17 @@
 import React from 'react'
-import { Table,Button,Checkbox } from 'semantic-ui-react'
+import { Table,Button } from 'semantic-ui-react'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import Axios from 'axios'
 import { APIURL } from '../supports/ApiUrl'
 
 
-const AdminTable = () => {
+const VerifyTable = () => {
     const [seller,setseller]=useState([])
- 
-    ///// GET DATA SELLER /////
+   
+
     useEffect(()=>{
-        Axios.get(`${APIURL}/admin/allseller`)
+        Axios.get(`${APIURL}/admin/unverified`)
         .then((res)=>{
             setseller(res.data)
         }).catch((err)=>{
@@ -20,17 +20,7 @@ const AdminTable = () => {
     },[])
 
     const blockseller=(idseller)=>{    
-        Axios.put(`${APIURL}/admin/blocked/${idseller}`)
-        .then((res)=>{
-            console.log(res)
-            
-        }).catch((err)=>{
-            console.log(err)
-            
-        })
-    }
-    const unblockseller=(idseller)=>{    
-        Axios.put(`${APIURL}/admin/unblocked/${idseller}`)
+        Axios.put(`${APIURL}/admin/verifyseller/${idseller}`)
         .then((res)=>{
             console.log(res)
             
@@ -40,15 +30,14 @@ const AdminTable = () => {
         })
     }
 
-    
-
+   
 
     
     console.log(seller);
     const renderseller=()=>{
         return seller.map((val,index)=>{
             return (
-                <Table.Row key={index}>
+            <Table.Row key={index}>
         <Table.Cell>{val.email}</Table.Cell>
             <Table.Cell>{val.username}</Table.Cell>
             <Table.Cell>{val.namatoko}</Table.Cell>
@@ -61,26 +50,14 @@ const AdminTable = () => {
                     : 'not verified'
                 }
             </Table.Cell>   
-            {
-                val.isblocked === 1 ?<Button onClick={()=>unblockseller(val.idseller)}>unblock</Button>:
-                <Button negative onClick={()=>blockseller(val.idseller)}>Block</Button>
-
-            }
+            <Button negative onClick={()=>blockseller(val.idseller)}>verify</Button>
       </Table.Row>
             )
         })
     }
     return (
-      
-     <div>
-         <div style={{display:'flex',marginLeft:'5%',marginTop:'2%'}}>   
-         <a href="http://localhost:3000/verifyseller">click here to verify seller</a>
-         </div>
   <Table singleLine>
     <Table.Header>
-        <h1>
-            List Seller
-        </h1>
       <Table.Row>
         <Table.HeaderCell>E-mail</Table.HeaderCell>
         <Table.HeaderCell>Username</Table.HeaderCell>
@@ -100,8 +77,7 @@ const AdminTable = () => {
         
     </Table.Body>
   </Table>
-     </div>
     )
 }
 
-export default AdminTable
+export default VerifyTable
