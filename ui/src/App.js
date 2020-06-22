@@ -94,14 +94,15 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/' exact component={Home}/>
         <Route path='/login' exact component={Login}/>
         <Route path='/register' exact component={Register}/>
-        <Route path='/forgotpassword' exact component={Forgotpass}/>
-        <Route path='/forgotpassword/:token' exact component={ChangePass}/>
+        {/* <Route path='/forgotpassword' exact component={Forgotpass}/>
+        <Route path='/forgotpassword/:token' exact component={ChangePass}/> */}
         <Route path='/profile' exact component={Profile}/>
         <Route path='/Sellerregister' exact component={Sellerregis }/>
         <Route path='/admin' exact component={Admintable}/>
+        <Route path='/forgotpassword' exact component={memberAccess?Forgotpass:Loading?Home:()=><Redirect to='/'/>}/>
+        <Route path='/forgotpassword/:token' exact component={memberAccess?ChangePass:Loading?Home:()=><Redirect to='/'/>}/>
         
         
-
         {/* SELY */}
         <Route path='/allproducts' exact component={AllProducts}/>
         <Route path='/seller' exact component={HomeSeller}/>
@@ -119,10 +120,6 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
 
         {/* INDO */}
         <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:()=><Redirect to='/'/>}/>
-        <Route path='/seller/product/add' exact component={sellerAccess?AddProduct:Loading?Home:()=><Redirect to='/'/>}/>
-        <Route path='/seller/product/:idproduct' exact component={sellerAccess?ProductItems:Loading?Home:()=><Redirect to='/'/>}/>
-        <Route path='/forgotpassword' exact component={memberAccess?Forgotpass:Loading?Home:()=><Redirect to='/'/>}/>
-        <Route path='/forgotpassword/:token' exact component={memberAccess?ChangePass:Loading?Home:()=><Redirect to='/'/>}/>
         <Route path='/verification' exact component={User.islogin?Verification:Loading?Verification:()=><Redirect to='/'/>}/>
         <Route path='/verification/:token' exact component={User.islogin?Verification:Loading?Verification:()=><Redirect to='/'/>}/>
         

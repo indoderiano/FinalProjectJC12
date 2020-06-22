@@ -84,9 +84,8 @@ class DeliveryList extends Component {
                         console.log('order id ',order.idtransactiondetail,' is updated')
                         // last cycle
                         if(orderlist.length-1==index){
-                            this.setState({loading:false})
+                            this.setState({loading:false,receiver:''})
                             this.getList()
-                            // this.props.LoadOrders() // DONT FORGET TO COMPLETE THIS
                         }
                     }).catch((err)=>{
                         console.log(err)

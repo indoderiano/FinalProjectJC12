@@ -210,6 +210,7 @@ module.exports={
 
                        ////////// KEEP LOGIN USER ////////////////
     keeplogin:(req,res)=>{
+        console.log('keeplogin')
         console.log(req.user)
         var sql=`select * from users where iduser=${req.user.id}`
         db.query(sql,(err,result)=>{
