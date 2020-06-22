@@ -22,7 +22,6 @@ import Admintable from './pages/Admin'
 import { KeepLogin,KeepSeller, LoadCart, LoadPayment } from './redux/actions'
 import { APIURL } from './supports/ApiUrl';
 import { connect } from 'react-redux';
-import HomeSeller from './pages/seller/HomeSeller';
 import MyProducts from './pages/seller/MyProduct';
 import MyOrders from './pages/seller/MyOrder';
 import Axios from'axios'
@@ -100,7 +99,6 @@ function App({KeepLogin,LoadCart,LoadPayment,User,KeepSeller}) {
         <Route path='/allproducts' exact component={AllProducts}/>
         <Route path='/search/:keyword' exact component={SearchProducts}/>
         <Route path='/seller/product' exact component={ManageProduct}/>
-        <Route path='/seller' exact component={HomeSeller}/>
         <Route path='/seller/product/myproduct' exact component={MyProducts}/>
         <Route path='/seller/myorder' exact component={MyOrders}/>
         <Route path='/seller/profile' exact component={StoreProfile}/>

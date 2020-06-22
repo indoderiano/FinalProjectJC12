@@ -97,3 +97,20 @@
   opacity: 1;
   transform: scale(1,1);
 }
+.p8 {
+  background-color: #fff;
+  width: auto;
+  /* padding: 0 4px; */
+  margin: auto 5px;
+  color: #000;
+  font-weight: bold;
+  /* border: 1px solid #000; */
+  font-size: 16px;
+  display: flex;
+  flex-direction: row;
+}
+
+.p8 :hover{
+  background-color: #f8e211;
+  color: #000;
+}

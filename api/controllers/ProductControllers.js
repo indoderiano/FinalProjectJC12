@@ -5,25 +5,21 @@ const fs=require('fs')
 
 module.exports={
     get:(req,res)=>{
-        var sql=`select p.*,c.isdeleted, c.name as namecategory
-        from products p join categories c on p.idcategory=c.idcategory
-        where c.isdeleted=0`
+        console.log('getting product...')
+        console.log(req.params)
+        const {idproduct}=req.params
+
+        var sql=`select * from products where idproduct=${idproduct}`
         db.query(sql,(err,product)=>{
-            // console.log(product)
-            if (err) res.status(500).send(err)
-            sql=`Select idcategory,name from categories`
-            db.query(sql,(err,category)=>{
-                if (err) res.status(500).send(err)
-                return res.send({product,category})
-            })
-            console.log('getting product...')
-            console.log(req.params)
-            const {idproduct}=req.params
-            var sql=`select * from products where idproduct=${idproduct}`
-            db.query(sql,(err,product)=>{
+            if(err) return res.status(500).send(err)
+            console.log('succeed')
+            console.log('')
+            sql=`UPDATE products SET isseen = isseen + 1 WHERE idproduct=${idproduct}`
+            db.query(sql,(err,isseen)=>{
                 if(err) return res.status(500).send(err)
                 res.status(200).send(product[0])
             })
+            
         })
     },
 
@@ -192,66 +188,45 @@ module.exports={
     },
                   ////////////// SHOWING ALL PRODUCT TO USER //////////////
     allproducts:(req,res)=>{
-        // console.log('All Product User')
-        // var {page}=req.query
-        // // var orderby=orderby
-        // var limit=5
-        // var offset= (page*limit)-limit
-        // var sql=`select p.*,c.isdeleted, c.name as namecategory
-        // from products p join categories c on p.idcategory=c.idcategory
-        // where c.isdeleted=0 `
-        // db.query(sql,(err,allproduct)=>{
-        //     if (err) res.status(500).send(err)
-        //     console.log(allproduct,'ALLPRODUCT LINE 209 LEWAT')
-        //     sql=`select p.*,c.isdeleted, c.name as namecategory
-        //     from products p join categories c on p.idcategory=c.idcategory
-        //     where c.isdeleted=0 limit ${offset},${limit}`
-        //     db.query(sql,(err,product)=>{
-        //         console.log(product, 'line 214')
-        //         if (err) res.status(500).send(err)
-        //         return res.send({allproduct,product})
-                  
-        //     })
-
-        // })
-        const {search, filter, page}=req.query
+        const {search, page}=req.query
         console.log(
             search,'search160',
-            filter,'filter161',
             page, 'page162'
         )
-        if(!page){
-            offset=0
-        }
-        const limit=4
-        const offset=(page*limit)-limit
-        // const offset=page
-      
+        const limit=1       //ini jumlah produk per page
+        const offset=page
         console.log(offset, 'dipsy')
         if(search){
-            var sql= `  SELECT p.*,c.idcategory AS idcat,c.name AS catnama
-                        FROM products p 
-                            JOIN categories c 
-                            ON p.idcategory=c.idcategory
-                        WHERE p.isdeleted=0 AND p.product_name LIKE '%${search}%'
-                        LIMIT ${offset},${limit}`
+            // var sql= `  SELECT p.*,c.idcategory AS idcat,c.name AS catnama
+            //             FROM products p 
+            //                 JOIN categories c 
+            //                 ON p.idcategory=c.idcategory
+            //             WHERE p.isdeleted=0 AND p.product_name LIKE '%${search}%'
+            //             LIMIT ${offset},${limit}`
+            var sql=`SELECT * FROM products
+                        WHERE isdeleted=0 AND product_name LIKE '%${search}%'
+                     LIMIT ${offset},${limit}`
             db.query(sql,(err,result)=>{
                 if(err) res.status(500).send({err,message:'error get product search'})
                 return res.send(result)
             })
         }else{
-            var sql= `  SELECT p.*,c.idcategory AS idcat,c.name AS catnama
-                        FROM products p 
-                            JOIN categories c 
-                            ON p.idcategory=c.idcategory
-                        WHERE p.isdeleted=0
-                        LIMIT ${offset},${limit}`
+            // var sql= `  SELECT p.*,c.idcategory AS idcat,c.name AS catnama
+            //             FROM products p 
+            //                 JOIN categories c 
+            //                 ON p.idcategory=c.idcategory
+            //             WHERE p.isdeleted=0
+            //             LIMIT ${offset},${limit}`
+            var sql=`SELECT * FROM products
+                        WHERE isdeleted=0
+                     LIMIT ${offset},${limit}`
             db.query(sql,(err,result)=>{
                 if(err) res.status(500).send({err,message:'error get total product'})
                 return res.send(result)
             })
         }
     },
+
     getTotalProduct:(req,res)=>{
         const {search, filter}=req.query
         if(search){
@@ -277,11 +252,17 @@ module.exports={
     },
 
 
-                    ///////////////// GET PRODUCT SELLER /////////////////
+                    ///////////////// GET PRODUCT SELLER ///////////////// ==> NOT YET FINISHED
     productseller:(req,res)=>{
         var sql=`select p.*,c.isdeleted, c.name as namecategory
         from products p join categories c on p.idcategory=c.idcategory
         where c.isdeleted=0`
+        var sql= `  SELECT p.*,c.idcategory AS idcat,c.name AS catnama
+                        FROM products p 
+                            JOIN categories c 
+                            ON p.idcategory=c.idcategory
+                        WHERE p.isdeleted=0 AND p.idseller=req.query.'
+                        LIMIT ${offset},${limit}`
         db.query(sql,(err,product)=>{
             // console.log(product)
             if (err) res.status(500).send(err)
@@ -292,35 +273,8 @@ module.exports={
             })
         })
     },
-                    ///////////////// GET PRODUCT BY SEARCH KEYWORD /////////////////
+                    ///////////////// GET PRODUCT BY SEARCH KEYWORD ///////////////// ==> NOT YET FINISHED
     searchproduct:(req,res)=>{
-        // var {prod,page,cat}=req.query
-        // var offset=(page*3)-3
-        // if(!page){
-        //     offset=0
-        // }
-        // if(!prod){
-        //     prod=''
-        // }
-        // var sql=`select p.*,c.isdeleted, c.name as namecategory
-        // from products p join categories c on p.idcategory=c.idcategory
-        // where c.isdeleted=0 and p.product_name like '%${prod}%' and p.isdeleted=0 limit ${offset},3`
-        // if(cat!=0){
-        //     sql=`select p.*,c.isdeleted, c.name as namecategory
-        //     from products p join categories c on p.idcategory=c.idcategory 
-        //     where p.product_name like '%${prod}%' and p.idcategory=${cat} and p.isdeleted=0 limit ${offset},3`
-        // }
-        // db.query(sql,(err,pagination)=>{
-        //     if(err) return res.status(500).send({message:err})
-        //     sql=`select count(*) as total from products where product_name like '%${prod}%' and isdeleted=0`
-        //     if(cat!=0){
-        //         sql=`select count(*) as total from products where product_name like '%${prod}%' and p.idcategory=${cat} and isdeleted=0`
-        //     }
-        //     db.query(sql,(err,page)=>{
-        //         if(err) return res.status(500).send({message:err})
-        //         return res.status(200).send({pagination,page})
-        //     })
-        // }) 
         const {keyword, filter, page}=req.query
         var offset=(page*limit)-limit
         var limit=4
@@ -335,17 +289,7 @@ module.exports={
                 if(err) res.status(500).send({err,message:'error get product search'})
                 return res.send(result)
             })
-        // }else if(filter){
-        //     var sql= `  SELECT p.*,c.id AS idcat,c.name AS catnama
-        //                 FROM products p 
-        //                     JOIN category c 
-        //                     ON p.categoryId=c.id
-        //                 WHERE p.isdeleted=0 AND p.categoryId=${filter}
-        //                 LIMIT ${page},8`
-        //     db.query(sql,(err,result)=>{
-        //         if(err) res.status(500).send({err,message:'error get total product'})
-        //         return res.send(result)
-        //     })
+     
         }else{
             var sql= `  SELECT p.*,c.id AS idcat,c.name AS namecategory
                         FROM products p 
@@ -357,7 +301,15 @@ module.exports={
                 return res.send(result)
             })
         }
-
+    },
+                    ///////////////// GET MOST VIEWED PRODUCT FOR HOMEPAGE /////////////////
+    mostviewed:(req,res)=>{
+        var sql= `  SELECT * FROM products
+                    ORDER BY isseen DESC
+                    LIMIT 0,4`
+        db.query(sql,(err,homepageRes)=>{
+            if(err) res.status(500).send({err,message:'error get product search'})
+            return res.send(homepageRes)
+        })
     }
-
 }

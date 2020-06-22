@@ -18,15 +18,25 @@ class MyProducts extends Component {
         direction:''
     }
     
-    componentDidMount=()=>{
-        Axios.get(`${APIURL}/products/productseller`)
-        .then((res)=>{
-            this.setState({
-                products:res.data.product,
-                searchproducts:res.data.product,
-                category:res.data.category,
-            })
-            console.log(res.data)
+    componentDidMount(){
+        console.log('masuk componentDidMount')
+        this.getData()
+    }
+    
+    getData=(search,filter)=>{
+        Axios.get(  
+            search?`${APIURL}/products/totalproduct?search=${search}`:
+            `${APIURL}/products/totalproduct`,{}
+        ).then((res)=>{
+            this.setState({totalProduct:res.data.total})
+            Axios.get(search?`${APIURL}/products/allproducts?search=${search}&page=${this.state.page}`:
+                    `${APIURL}/products/allproducts?page=${this.state.page}`
+                ).then((res1)=>{
+                    this.setState({products:res1.data, isLoading:false})
+                    console.log(this.state.products, 'ALLPRODUCT')
+                }).catch((err)=>{
+                    console.log(err)
+                })
         }).catch((err)=>{
             console.log(err)
         })
@@ -85,30 +95,12 @@ class MyProducts extends Component {
         if(this.state.searchproducts.length){
             return searchproducts.map((val, index)=>{
                 return (
-                    // <Table.Row >
-                    //     <Table.Cell style={{flexDirection: 'column',}}>
-                    //         <img src={val.imagecover} alt={val.product_name}  height='100px' />
-                    //         <div>
-                    //             <strong>{val.product_name}</strong><br/>
-                    //             {val.namecategory}
-                    //         </div>
-                    //     </Table.Cell>
-                    //     <Table.Cell><center><img src={val.imagecover} alt={val.product_name}  height='100px' /></center> </Table.Cell> 
-                    //     <Table.Cell>{val.namecategory}</Table.Cell>
-                    //     <Table.Cell>{val.price}</Table.Cell>
-                    //     <Table.Cell>{val.stock}</Table.Cell>
-                    //     <Table.Cell>jumlah terjual</Table.Cell>
-                    //     <Table.Cell>
-                    //         {val.isarchived==0?'LIVE':'ARCHIVED'}
-                    //     </Table.Cell>
-                    // </Table.Row>
-                    // <Grid inverted>
                         <Grid.Row style={{backgroundColor:index%2===0?'white':'#f5deb3'}} >
                             <Grid.Column width={1}>
                                 {index+1} 
                             </Grid.Column>
                             <Grid.Column width={2}>
-                                <Image src={val.imagecover}/>
+                                <Image src={APIURL+ JSON.parse(val.imagecover)[0]} style={{height:'150px' }}/>
                             </Grid.Column>
                             <Grid.Column width={2}>
                                 <Header as={'h4'}>
@@ -197,70 +189,6 @@ class MyProducts extends Component {
                             onChange={this.onchangesearch}
                         />
                     </div>
-                    <div>
-                        {/* <Table celled>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.HeaderCell 
-                                        sorted={column === 'product_name' ? direction : null}
-                                        onClick={this.handleSort('product_name')}
-                                    >
-                                        Name
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell >
-                                        Image
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell
-                                        sorted={column === 'namecategory' ? direction : null}
-                                        onClick={this.handleSort('namecategory')}
-                                    >
-                                        Category
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell
-                                         sorted={column === 'price' ? direction : null}
-                                        onClick={this.handleSort('price')}
-                                    >
-                                        Price
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell
-                                         sorted={column === 'stock' ? direction : null}
-                                        onClick={this.handleSort('stock')}
-                                    >
-                                        Stock
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell>
-                                        Sold
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell >
-                                        Status
-                                    </Table.HeaderCell>
-                                </Table.Row>
-                            </Table.Header>
-
-                            <Table.Body>
-                            
-                                {this.renderProducts()}
-                            </Table.Body>
-
-                            <Table.Footer>
-                            <Table.Row>
-                                <Table.HeaderCell colSpan='7'>
-                                <Menu floated='right' pagination>
-                                    <Pagination
-                                        boundaryRange={0}
-                                        defaultActivePage={1}
-                                        ellipsisItem={null}
-                                        firstItem={null}
-                                        lastItem={null}
-                                        siblingRange={1}
-                                        totalPages={10}
-                                    />
-                                </Menu>
-                                </Table.HeaderCell>
-                            </Table.Row>
-                            </Table.Footer>
-                        </Table> */}
-                    </div>
                     <div style={{paddingTop:'50px'}}>
                         <Grid style={{paddingLeft: 10, paddingRight: 10,}}>
                             <Grid.Row style={{border:'1px solid gray',borderRadius:'5px', backgroundColor:'white',}}>
@@ -341,38 +269,7 @@ class MyProducts extends Component {
                                     </Grid.Column>
                                 </Grid.Row>
                                 :
-                                // <Grid.Row style={{border:'1px solid gray',borderRadius:'5px'}}>
-                                //     <Grid.Column width={1}>
-                                //         1
-                                //     </Grid.Column>
-                                //     <Grid.Column width={2}>
-                                //         <Image src='https://s.blanja.com/picspace/392/241032/1250.1346_2dd6e3ef13f14da9b8e8f400c464ff5a.jpg'/>
-                                //     </Grid.Column>
-                                //     <Grid.Column width={2}>
-                                //         <Header as={'h4'}>
-                                //             Product Name
-                                //         </Header>
-                                //     </Grid.Column>
-                                //     <Grid.Column width={3}>
-                                //         <p>
-                                //         Quisque venenatis in arcu sit amet aliquam. Donec volutpat, ipsum pretium luctus accumsan, dolor mi pulvinar lorem, a pulvinar arcu ipsum
-                                //         </p>
-                                //     </Grid.Column>
-                                //     <Grid.Column width={2}>
-                                //         Rp70000,00
-                                //     </Grid.Column>
-                                //     <Grid.Column width={2}>
-                                //         30
-                                //     </Grid.Column>
-                                //     <Grid.Column width={3}>
-                                //         <Button 
-                                //             primary 
-                                //             style={{margin:'0 .5em .5em 0'}}
-                                //             onClick={()=>{this.setState({idproductedit:1})}}
-                                //         >Edit</Button>
-                                //         <Button color='red'>Delete</Button>
-                                //     </Grid.Column>
-                                // </Grid.Row>
+                               
                                 this.renderProducts()
                             }
                         </Grid>

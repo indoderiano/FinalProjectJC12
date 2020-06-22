@@ -12,6 +12,7 @@ Router.put('/:idproduct',ProductControllers.edit)
 Router.get('/allproducts',ProductControllers.allproducts)
 Router.get('/search',ProductControllers.searchproduct)
 Router.get('/totalproduct',ProductControllers.getTotalProduct)
+Router.get('/mostviewed',ProductControllers.mostviewed)
 
 /////////////////////////////////////////////////////////
 // NOTE IMPORTANT
