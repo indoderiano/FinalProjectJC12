@@ -12,7 +12,7 @@ const Testimage=(props)=>{
        var formData=new FormData()
        var options={
            headers:{
-               'Content-Type' : 'multipart/form-data',
+            'Content-Type':'multipart/form-data'
               
            }
        }

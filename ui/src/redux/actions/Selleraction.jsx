@@ -6,31 +6,32 @@ import{
 import Axios from 'axios'
 import {APIURL} from './../../supports/ApiUrl'
 
-export const SellerRegister=(dataseller,image)=>{
+export const SellerRegister=(dataseller)=>{
+    var formData=new FormData()
     var namatoko=dataseller.namatoko
     var alamattoko=dataseller.alamattoko
-    var imageprofile=image.imageprofile
-    // var formData=new FormData()
-    // var options={
-    //     headers:{
-    //         'Content-Type' : 'multipart/form-data',
-          
-    //     }
-    // }
-    // var data={
-    //     caption:'test',
+    var iduser=dataseller.iduser
+    var imageprofile=dataseller.imageprofile
+    var obj={
+      namatoko,
+      alamattoko,
+      iduser
+    }
+    var options={
+      headers:{
+       'Content-Type':'multipart/form-data',
+       'Authorization':`Bearer ${iduser}`
+      }
+  }
+    formData.append('imageprofile', imageprofile)
+    formData.append('data',JSON.stringify(obj))
 
-    // }
-    // formData.append('image',data1.image)
-    // console.log(data1)
-    
-    // formData.append('data', JSON.stringify(data))
     return(dispatch)=>{
         dispatch({type:SELLER_REGISTER_CHECK})
         if( namatoko==='' || alamattoko===''){
             dispatch({type:SELLER_REGISTER_FAILED,payload:'Please Fill in All Information'})
         }else{
-            Axios.post(`${APIURL}/sellers/createseller`,dataseller)
+            Axios.post(`${APIURL}/sellers/createseller`,formData,options)
             .then((res)=>{
                 console.log(res.data.message)
                 dispatch({type: SELLER_REGISTER_SUCCESS, payload:res.data})

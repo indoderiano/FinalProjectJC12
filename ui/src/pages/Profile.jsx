@@ -44,7 +44,7 @@ const Profile=(props)=>{
     <br/>
     <tr>
       <tr scope="row">Account Status:</tr>
-        <td>{data.isseller===true?'seller':'users'}</td>
+        <td>{data.isseller===1?'seller':'users'}</td>
     </tr>
   </tbody>
         <Button style={{marginLeft:'50%', marginTop:'10%'}} onClick={()=>{setedit(true)}}>

@@ -15,18 +15,17 @@ const Sellerregis = (props) => {
     namatoko:'',
     alamattoko:'',
     iduser:props.auth.iduser,
-    
+    imageprofile:undefined
   })
 
-  const [imageprofile,setimage]=useState({
-    image:undefined
-})
+//   const [imageprofile,setimage]=useState({
+//     image:undefined
+// })
 
   const testmasuk=()=>{
-    
     return(
-      props.SellerRegister(data,imageprofile)
-      
+      props.SellerRegister(data)
+
     )
   }
   
@@ -59,7 +58,7 @@ console.log(props.seller.namatoko)
                 icon='file image outline'
                 iconPosition='left'
                 placeholder='Insert Store Profile'
-                onChange={(e)=>setimage({imageprofile:e.target.files[0]})}
+                onChange={(e)=>setdata({...data,imageprofile:e.target.files[0]})}
             />
             <Button color='teal' fluid size='large' onClick={testmasuk}>
                 Register

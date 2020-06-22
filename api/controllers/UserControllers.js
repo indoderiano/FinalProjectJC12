@@ -77,7 +77,6 @@ module.exports={
                 sql=`select * from users where iduser=${decoded.iduser}`
                 db.query(sql,(err,userdata)=>{
                     if(err) return res.status(500).send(err)
-                    
                     var newtoken=createJWTToken({id:userdata[0].iduser,username:userdata[0].username})
                     var update={
                         // isverified:userdata[0].isverified,
