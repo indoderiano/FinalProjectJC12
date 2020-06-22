@@ -72,33 +72,21 @@ class TransactionList extends Component {
         })
     }
 
-    onRating=(idtransactiondetail,rating,idproduct)=>{
-        // CHANGE ORDER STATUS TO COMPLETE
-        // UPDATE RATING IN TRANSACTION DETAIL AND PRODUCT
-        
-        Axios.put(`${APIURL}/transactiondetails/${idtransactiondetail}`,{rating,idorderstatus:4})
+    autoCompleteOrder=(idtransactiondetail,idproduct)=>{
+        // UPDATE ORDER STATUS TO COMPLETE
+        Axios.put(`${APIURL}/transactiondetails/${idtransactiondetail}`,{idorderstatus:4})
         .then((updated)=>{
-            console.log('rating success')
+            console.log('order id ',idtransactiondetail,' is completed')
 
-            // RECOUNT PRODUCT_RATING
-            Axios.put(`${APIURL}/products/rating/${idproduct}`)
-            .then((res)=>{
-                console.log('product rating updated')
-                // console.log(res.data)
-            }).catch((err)=>{
-                console.log(err)
-            })
+            // RECOUNT SOLD NUMBER
+            this.countSold(idproduct)
 
-            var timeout=setTimeout(()=>{
-                this.setState({israted:false})
-            },2000)
-            this.setState({timeout,israted:true})
             this.getList()
+
+
         }).catch((err)=>{
             console.log(err)
         })
-
-
     }
 
     // COUNT SOLD WHEN ORDERSTATUS IS COMPLETED
@@ -125,7 +113,8 @@ class TransactionList extends Component {
                                     style={{
                                         paddingTop:'80%',
                                         backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                         position:'relative'
                                     }}
@@ -334,9 +323,9 @@ class TransactionList extends Component {
             var expiredinsecs=seconds%60
             var isexpired=seconds<=0
 
-            // if(isexpired){
-            //     this.CancelTransaction(transaction.idtransaction,transaction)
-            // }
+            if(isexpired){
+                this.autoCompleteOrder(item.idtransactiondetail,item.idproduct)
+            }
 
 
             return (
@@ -351,7 +340,8 @@ class TransactionList extends Component {
                                     style={{
                                         paddingTop:'80%',
                                         backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                         position:'relative'
                                     }}

@@ -22,7 +22,7 @@ import {
 } from 'semantic-ui-react'
 import PaymentVerify from './PaymentVerify'
 import DeliveryManage from './DeliveryManage'
-import DeliveredPackage from './DeliveredPackage'
+import AutoCompleteOrder from './AutoCompleteOrder'
 import PaymentList from '../PaymentList'
 import TransactionHistory from '../TransactionHistory'
 import OnTheWay from '../TransactionOnDelivery'
@@ -71,10 +71,10 @@ class Transactions extends Component {
             {
                 menuItem: (
                     <Menu.Item key='fifth'>
-                        Complete Transactions
+                        Delivered Orders
                     </Menu.Item>
                 ),
-                render: () => <Tab.Pane><DeliveredPackage/></Tab.Pane>,
+                render: () => <Tab.Pane><AutoCompleteOrder/></Tab.Pane>,
             },
           ]
 

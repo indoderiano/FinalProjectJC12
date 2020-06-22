@@ -17,6 +17,7 @@ import {
 } from 'semantic-ui-react'
 import {Redirect} from 'react-router-dom'
 import SidebarSeller from './componentseller/sidebar'
+import { connect } from 'react-redux'
 
 
 
@@ -24,6 +25,8 @@ class AddProduct extends Component {
     state = { 
 
         fileImage:[],
+
+        idcategory:0,
 
         category:'',
         // sub1CategoryAdd:'',
@@ -74,7 +77,7 @@ class AddProduct extends Component {
         // NEED TO ADD PROTECTION
         // ONLY SELLER CAN SUBMIT
         
-        if(!this.state.productName || !this.state.description || !this.state.category || !this.state.fileImage.length){
+        if(!this.state.productName || !this.state.description || !this.state.category || !this.state.fileImage.length || !this.state.idcategory){
             this.setState({message:'Masih ada kolom yang harus diisi'})
         }else if(this.state.fileImage.length>5){
             this.setState({message:'Jumlah image yang diupload tidak bisa lebih dari 5'})
@@ -107,9 +110,8 @@ class AddProduct extends Component {
                 product_name: this.state.productName,
                 description: this.state.description,
                 variant: JSON.stringify(variant),
-                // variant: JSON.stringify(this.state.varieties),
-                // DONT FORGET TO ADD IDSELLER
-                idseller: 1, // need to update this to sellerid once redux is finished
+                idseller: this.props.Seller.idseller,
+                idcategory: this.state.idcategory,
                 category: this.state.category,
             }
 
@@ -143,13 +145,13 @@ class AddProduct extends Component {
                     console.log('upload item berhasil')
                     console.log(newitems.data)
                     this.setState({newidproduct:newproduct.data.insertId})
+                    this.setState({loading:false})
                 }).catch((err)=>{
                     console.log(err)
                 })
             }).catch((err)=>{
                 console.log(err)
             }).finally(()=>{
-                this.setState({loading:false})
             })
         }
     }
@@ -368,10 +370,37 @@ class AddProduct extends Component {
         return ( 
             <Container style={{paddingTop:'2em',width:'800px'}}>
                 <Header as={'h1'}>Add Product</Header>
-                
+        {/* <Header as={'h1'}>{this.props.Seller.idseller}</Header> */}
                 <Grid style={{marginBottom:'3em'}}>
                     <Grid.Row>
                         
+                        <Segment style={{width:'100%'}}>
+                            <Header as={'h3'}>Main Category</Header>
+                            <Checkbox 
+                                label='Men' 
+                                style={{marginRight:'1.5em'}}
+                                checked={this.state.idcategory==1}
+                                onClick={()=>{
+                                    this.setState({idcategory:1})
+                                }}
+                            />
+                            <Checkbox 
+                                label='Women' 
+                                style={{marginRight:'1.5em'}}
+                                checked={this.state.idcategory==2}
+                                onClick={()=>{
+                                    this.setState({idcategory:2})
+                                }}
+                            />
+                            <Checkbox 
+                                label='All' 
+                                style={{marginRight:'1.5em'}}
+                                checked={this.state.idcategory==3}
+                                onClick={()=>{
+                                    this.setState({idcategory:3})
+                                }}
+                            />
+                        </Segment>
                         <Segment style={{width:'100%'}}>
                             <Header as={'h3'}>Category</Header>
                             <Input 
@@ -616,4 +645,10 @@ class AddProduct extends Component {
     }
 }
  
-export default AddProduct;
+const MapstatetoProps=(state)=>{
+    return {
+        Seller: state.Seller
+    }
+}
+
+export default connect(MapstatetoProps) (AddProduct);

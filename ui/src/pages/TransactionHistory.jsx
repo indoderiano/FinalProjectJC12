@@ -45,6 +45,7 @@ class TransactionList extends Component {
     }
 
     getList=()=>{
+        // GET LIST WHERE IDUSER, AND 
         Axios.get(`${APIURL}/transactions/user?iduser=${this.props.User.iduser}&idstatus=${[2,3,4,5,6]}`)
         .then((res)=>{
             // console.log('get list',res.data)
@@ -68,14 +69,12 @@ class TransactionList extends Component {
             console.log('rating success')
 
             // RECOUNT PRODUCT_RATING
-            Axios.put(`${APIURL}/products/rating/${idproduct}`)
-            .then((res)=>{
-                console.log('product rating updated')
-                // console.log(res.data)
-            }).catch((err)=>{
-                console.log(err)
-            })
+            this.countRating(idproduct)
 
+            // RECOUNT PRODUCT SOLD
+            this.countSold(idproduct)
+
+            // MESSAGE
             var timeout=setTimeout(()=>{
                 this.setState({israted:false})
             },2000)
@@ -86,6 +85,17 @@ class TransactionList extends Component {
         })
 
 
+    }
+
+    // COUNT RATING PRODUCT
+    countRating=(idproduct)=>{
+        Axios.put(`${APIURL}/products/rating/${idproduct}`)
+            .then((res)=>{
+                console.log('product rating updated')
+                // console.log(res.data)
+            }).catch((err)=>{
+                console.log(err)
+            })
     }
 
     // COUNT SOLD WHEN ORDERSTATUS IS COMPLETED
@@ -112,7 +122,8 @@ class TransactionList extends Component {
                                     style={{
                                         paddingTop:'80%',
                                         backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                         position:'relative'
                                     }}
@@ -325,7 +336,8 @@ class TransactionList extends Component {
                                     style={{
                                         paddingTop:'80%',
                                         backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                         position:'relative'
                                     }}

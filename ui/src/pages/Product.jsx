@@ -231,17 +231,20 @@ class Product extends Component {
         // }
 
         for(var i=0;i<this.state.items.length;i++){
+            var image=this.isJson(this.state.items[i].image)
 
+            
             // get image item order
             var order={
                 iditem: this.state.items[i].iditem,
-                index: imagecover.length+itemimages.length
+                index: image.length?imagecover.length+itemimages.length:0
             }
             itemimageorder.push(order)
 
             // merge image
-            var image=this.isJson(this.state.items[i].image)
             itemimages=itemimages.concat(image)
+
+            console.log('itemimages',itemimages)
 
         }
 
@@ -256,6 +259,8 @@ class Product extends Component {
 
         //counting maxorder
         var maxorder=imageList.length-slidercount
+
+        console.log('itemimageorder',itemimageorder)
 
         this.setState({
             imageList:imageList,
@@ -339,7 +344,8 @@ class Product extends Component {
                             width:'100%',
                             paddingTop:'80%',
                             backgroundImage:`url(${APIURL+image})`,
-                            backgroundSize:'cover',
+                            backgroundSize:'contain',
+                            backgroundRepeat:'no-repeat',
                             backgroundPosition:'center',
                             borderRadius:'4px',
                             // border:
@@ -446,7 +452,8 @@ class Product extends Component {
                                         width:'100%',
                                         paddingTop:'75%',
                                         backgroundImage:`url(${APIURL+this.state.imageshow})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                     }}
                                 />
