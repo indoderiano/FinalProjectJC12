@@ -4,7 +4,20 @@ const fs=require('fs')
 
 
 module.exports={
-    
+    get:(req,res)=>{
+        console.log('getting product...')
+        console.log(req.params)
+        const {idproduct}=req.params
+
+        var sql=`select * from products where idproduct=${idproduct}`
+        db.query(sql,(err,product)=>{
+            if(err) return res.status(500).send(err)
+
+            console.log('succeed')
+            console.log('')
+            res.status(200).send(product[0])
+        })
+    },
     
 
     // CURRENTLY NOT BEING USED
