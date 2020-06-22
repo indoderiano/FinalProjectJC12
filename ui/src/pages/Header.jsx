@@ -10,6 +10,8 @@ import {
 import { connect } from "react-redux";
 import {Link} from 'react-router-dom'
 import {isLogout} from './../redux/actions'
+import Axios from 'axios';
+import { APIURL } from '../supports/ApiUrl';
 
 class MainHeader extends Component {
     state = {  }
@@ -28,8 +30,9 @@ class MainHeader extends Component {
                   Home                 
                 </Menu.Item>
                 <Menu.Item as={Link} to='/seller' style={style.menu}>Seller</Menu.Item>
+        {/* <span style={{color:'white'}}>{this.props.Seller.idseller}</span> */}
                 <Menu.Item as='a' style={style.menu}>Company</Menu.Item>
-                <Menu.Item as='a' style={style.menu}>Careers</Menu.Item>
+                {/* <Menu.Item as='a' style={style.menu}>Careers</Menu.Item> */}
                 
 
                 <Menu.Item style={{float:'right'}}>
@@ -189,7 +192,8 @@ const MapstatetoProps=(state)=>{
         Cart: state.Cart,
         Payment: state.Payment,
         Store: state.Store,
-        Invoices: state.Invoices
+        Invoices: state.Invoices,
+        Seller: state.Seller,
     }
 }
  

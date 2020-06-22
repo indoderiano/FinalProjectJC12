@@ -1,6 +1,6 @@
 import React ,{Component} from 'react'
 import Axios from 'axios'
-import {APIURL} from '../supports/ApiUrl'
+import {APIURL} from '../../supports/ApiUrl'
 import {
     Grid,
     Header,
@@ -21,11 +21,10 @@ import {
     Menu,
     Label
 } from 'semantic-ui-react'
-import Payment from './Payment'
 import {Link} from 'react-router-dom'
-import {titleConstruct,isJson,getDate} from '../supports/services'
-import {ListByTransaction} from '../supports/ListAssembler'
-import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../redux/actions'
+import {titleConstruct,isJson,getDate} from '../../supports/services'
+import {ListByTransaction} from '../../supports/ListAssembler'
+import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -33,69 +32,61 @@ import { connect } from 'react-redux'
 
 class TransactionList extends Component {
     state = { 
-        historyList:[],
+        list:[],
         ismodal:false,
         modaltransaction:{},
         israted:false,
-        timeout:''
+        timeout:'',
+
+        now: new Date(),
+        clock:undefined,
      }
 
+     
     componentDidMount=()=>{
         this.getList()
+        var clock=setInterval(() => {
+            this.setState({now:new Date()})
+        }, 1000);
+        this.setState({clock})
+    }
+
+    componentWillUnmount=()=>{
+        clearTimeout(this.state.clock)
+        clearTimeout(this.state.timeout)
     }
 
     getList=()=>{
-        // GET LIST WHERE IDUSER, AND 
-        Axios.get(`${APIURL}/transactions/user?iduser=${this.props.User.iduser}&idstatus=${[2,3,4,5,6]}`)
+        // GET LIST WHERE IDORDERSTATUS=3
+        Axios.get(`${APIURL}/transactiondetails/admin?idorderstatus=${[3]}`)
         .then((res)=>{
-            // console.log('get list',res.data)
+            console.log('get list delivered',res.data)
 
             // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
             var listByTransaction=ListByTransaction(res.data).reverse()
             // console.log('transaction history',listByTransaction)
-            this.setState({historyList:listByTransaction})
+            this.setState({list:res.data.reverse()})
 
         }).catch((err)=>{
             console.log(err)
         })
     }
 
-    onRating=(idtransactiondetail,rating,idproduct)=>{
-        // CHANGE ORDER STATUS TO COMPLETE
-        // UPDATE RATING IN TRANSACTION DETAIL AND PRODUCT
-        
-        Axios.put(`${APIURL}/transactiondetails/${idtransactiondetail}`,{rating,idorderstatus:4})
+    autoCompleteOrder=(idtransactiondetail,idproduct)=>{
+        // UPDATE ORDER STATUS TO COMPLETE
+        Axios.put(`${APIURL}/transactiondetails/${idtransactiondetail}`,{idorderstatus:4})
         .then((updated)=>{
-            console.log('rating success')
+            console.log('order id ',idtransactiondetail,' is completed')
 
-            // RECOUNT PRODUCT_RATING
-            this.countRating(idproduct)
-
-            // RECOUNT PRODUCT SOLD
+            // RECOUNT SOLD NUMBER
             this.countSold(idproduct)
 
-            // MESSAGE
-            var timeout=setTimeout(()=>{
-                this.setState({israted:false})
-            },2000)
-            this.setState({timeout,israted:true})
             this.getList()
+
+
         }).catch((err)=>{
             console.log(err)
         })
-
-
-    }
-
-    // COUNT RATING PRODUCT
-    countRating=(idproduct)=>{
-        Axios.put(`${APIURL}/products/rating/${idproduct}`)
-            .then((res)=>{
-                console.log('product rating updated')
-                // console.log(res.data)
-            }).catch((err)=>{
-                console.log(err)
-            })
     }
 
     // COUNT SOLD WHEN ORDERSTATUS IS COMPLETED
@@ -323,14 +314,27 @@ class TransactionList extends Component {
     }
 
 
-    renderByOrder=(itemlist)=>{
+    renderByOrder=()=>{
         // console.log('itemlist',itemlist)
-        return itemlist.map((item,index)=>{
+        return this.state.list.map((item,index)=>{
             const typeArr=isJson(item.type)
+            var seconds=(-Date.parse(this.state.now)+Date.parse(item.order_updateat))/1000+(2*60*60)
+            var expiredinmins=Math.floor(seconds/60)
+            var expiredinsecs=seconds%60
+            var isexpired=seconds<=0
+
+            if(isexpired){
+                this.autoCompleteOrder(item.idtransactiondetail,item.idproduct)
+            }
+
+
             return (
-                <Grid.Column key={index} width={16} style={{paddingBottom:'1em'}}>
+                <Segment key={index}>
                     <Grid>
                         <Grid.Row>
+                            <Grid.Column width={16}>
+                                {getDate(item.order_updateat)}
+                            </Grid.Column>
                             <Grid.Column width={3}>
                                 <div
                                     style={{
@@ -393,11 +397,26 @@ class TransactionList extends Component {
                                 </Header>
                             </Grid.Column>
                             <Grid.Column width={4} style={{alignItems:'flex-end'}}>
-                                {
-                                    item.idorderstatus>=3?
-                                    this.renderRating(item.idtransactiondetail,item.rating,item)
-                                    : null
-                                }
+
+                                <p>
+                                    Deadline until complete
+                                </p>
+
+                                <div style={{textAlign:'center'}}>
+                                    {
+                                        isexpired?
+                                        <div><span style={{fontWeight:'800'}}>Transaction Is Expired</span></div>
+                                        :
+                                        <div style={{display:'inline-flex',padding:'0em 0em',border:'0px solid rgba(255,0,0,.5)',color:'rgb(178,34,34)',background:'rgba(255,0,0,.0)'}}>
+                                            Expire in 
+                                            <span style={{fontWeight:'800',marginLeft:'.5em'}}>{expiredinmins} : {expiredinsecs<10&expiredinsecs>=0?'0'+expiredinsecs:expiredinsecs}</span>
+                                            <Icon name='clock' style={{fontSize:'21px',margin:'0 0 0 .3em'}}/>
+                                        </div>
+                                    }
+                                </div>
+                                
+
+                                
                                 {/* <Button
                                     onClick={()=>{
                                         Axios.put(`${APIURL}/products/rating/${item.idproduct}`)
@@ -441,9 +460,7 @@ class TransactionList extends Component {
                             </Grid.Column> */}
                         </Grid.Row>
                     </Grid>
-                </Grid.Column>
-
-
+                </Segment>
             )
         })
     }
@@ -494,7 +511,7 @@ class TransactionList extends Component {
 
     renderByTransaction=()=>{
 
-        return this.state.historyList.map((transaction,index)=>{
+        return this.state.list.map((transaction,index)=>{
             return (
                 <Segment key={index}>
                     <Grid>
@@ -539,7 +556,7 @@ class TransactionList extends Component {
         return ( 
             <Container style={{paddingTop:'2em',width:'900px',marginBottom:'4em'}}>
 
-                {this.renderByTransaction()}
+                {this.renderByOrder()}
 
                 <Modal open={this.state.ismodal}>
                     <Modal.Header>Select a Photo</Modal.Header>

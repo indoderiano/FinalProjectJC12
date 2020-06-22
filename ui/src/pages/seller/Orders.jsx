@@ -58,7 +58,7 @@ class Orders extends Component {
             .then((updated)=>{
                 console.log('order id ',idtransactionseller,' is updated')
                 this.setState({loading:false})
-                // this.props.LoadOrders() // DONT FORGET TO COMPLETE THIS
+                this.props.LoadOrders(this.props.User.iduser)
             }).catch((err)=>{
                 console.log(err)
             })
@@ -95,7 +95,8 @@ class Orders extends Component {
                                 style={{
                                     paddingTop:'80%',
                                     backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                    backgroundSize:'cover',
+                                    backgroundSize:'contain',
+                                    backgroundRepeat:'no-repeat',
                                     backgroundPosition:'center',
                                     position:'relative'
                                 }}

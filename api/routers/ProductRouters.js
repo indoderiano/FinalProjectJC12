@@ -14,6 +14,7 @@ Router.put('/sold/:idproduct',ProductControllers.countSold)
 Router.get('/search',ProductControllers.searchproduct)
 Router.get('/totalproduct',ProductControllers.getTotalProduct)
 Router.get('/mostviewed',ProductControllers.mostviewed)
+Router.put('/rating/:idproduct',ProductControllers.countRating)
 
 /////////////////////////////////////////////////////////
 // NOTE IMPORTANT

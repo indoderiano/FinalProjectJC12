@@ -262,6 +262,28 @@ module.exports={
         })
     },
 
+    adminGetStatus:(req,res)=>{
+        console.log('get all orders with status')
 
+        const {idorderstatus}=req.query
+        var sql=`select * from transactiondetails td
+        join orderstatus os on os.idorderstatus=td.idorderstatus
+        join items i on i.iditem=td.iditem
+        join products prod on prod.idproduct=i.idproduct
+        join transactionsellers ts on ts.idtransactionseller=td.idtransactionseller
+        join seller sel on sel.idseller=ts.idseller
+        join delivery d on d.iddelivery=ts.iddelivery
+        join transactions t on t.idtransaction=ts.idtransaction
+        join payment p on p.idpayment=t.idpayment
+        join status s on s.idstatus=t.idstatus
+        join users u on u.iduser=t.iduser
+        where td.idorderstatus=${idorderstatus}`
+
+        db.query(sql,(err,list)=>{
+            if(err) return res.status(500).send(err)
+
+            res.status(200).send(list)
+        })
+    }
 
 }

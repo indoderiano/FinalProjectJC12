@@ -283,7 +283,8 @@ class ProductItems extends Component {
                                                 style={{
                                                     paddingTop:'80%',
                                                     backgroundImage:`url('${APIURL+image}')`,
-                                                    backgroundSize:'cover',
+                                                    backgroundSize:'contain',
+                                                    backgroundRepeat:'no-repeat',
                                                     backgroundPosition:'center',
                                                     marginBottom:'1em'
                                                 }}
@@ -317,7 +318,8 @@ class ProductItems extends Component {
                                         style={{
                                             paddingTop:'80%',
                                             backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
-                                            backgroundSize:'cover',
+                                            backgroundSize:'contain',
+                                            backgroundRepeat:'no-repeat',
                                             backgroundPosition:'center',
                                             marginBottom:'1em'
                                         }}
@@ -498,7 +500,8 @@ class ProductItems extends Component {
                                                 style={{
                                                     paddingTop:'80%',
                                                     backgroundImage:`url('${APIURL+image}')`,
-                                                    backgroundSize:'cover',
+                                                    backgroundSize:'contain',
+                                                    backgroundRepeat:'no-repeat',
                                                     backgroundPosition:'center',
                                                     marginBottom:'1em'
                                                 }}
@@ -533,7 +536,8 @@ class ProductItems extends Component {
                                         style={{
                                             paddingTop:'80%',
                                             backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
-                                            backgroundSize:'cover',
+                                            backgroundSize:'contain',
+                                            backgroundRepeat:'no-repeat',
                                             backgroundPosition:'center',
                                             marginBottom:'1em'
                                         }}
@@ -749,7 +753,8 @@ class ProductItems extends Component {
                                                         style={{
                                                             paddingTop:'80%',
                                                             backgroundImage:`url('${APIURL+path}')`,
-                                                            backgroundSize:'cover',
+                                                            backgroundSize:'contain',
+                                                            backgroundRepeat:'no-repeat',
                                                             backgroundPosition:'center',
                                                             marginBottom:'1em'
                                                         }}
@@ -785,7 +790,8 @@ class ProductItems extends Component {
                                                 style={{
                                                     paddingTop:'80%',
                                                     backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
-                                                    backgroundSize:'cover',
+                                                    backgroundSize:'contain',
+                                                    backgroundRepeat:'no-repeat',
                                                     backgroundPosition:'center',
                                                     marginBottom:'1em'
                                                 }}
@@ -818,7 +824,8 @@ class ProductItems extends Component {
                                             style={{
                                                 paddingTop:'80%',
                                                 backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
-                                                backgroundSize:'cover',
+                                                backgroundSize:'contain',
+                                                backgroundRepeat:'no-repeat',
                                                 backgroundPosition:'center',
                                                 marginBottom:'1em'
                                             }}

@@ -150,7 +150,8 @@ class Checkout extends Component {
                                                             style={{
                                                                 paddingTop:'80%',
                                                                 backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                                                backgroundSize:'cover',
+                                                                backgroundSize:'contain',
+                                                                backgroundRepeat:'no-repeat',
                                                                 backgroundPosition:'center',
                                                                 position:'relative'
                                                             }}

@@ -294,7 +294,7 @@ module.exports={
     },
 
     countSold:(req,res)=>{
-        console.log('counting rating and sold data...')
+        console.log('counting sold data...')
 
         const {idproduct}=req.params
 
@@ -324,4 +324,28 @@ module.exports={
             return res.send(homepageRes)
         })
     },
+
+    countRating:(req,res)=>{
+        console.log('counting rating data...')
+
+        const {idproduct}=req.params
+
+        var sql=`select avg(td.rating) as product_rating from transactiondetails td
+        join items i on i.iditem=td.iditem
+        join products p on p.idproduct=i.idproduct
+        where p.idproduct=${idproduct} and td.rating is not null`
+
+        db.query(sql,(err,result)=>{
+            if(err) return res.status(500).send(err)
+
+            sql=`update products set ? where idproduct=${idproduct}`
+            db.query(sql,result,(err,updated)=>{
+                if(err) return res.status(500).send(err)
+
+                console.log('product rating updated')
+                res.status(200).send(updated)
+            })
+        })
+    },
+
 }
