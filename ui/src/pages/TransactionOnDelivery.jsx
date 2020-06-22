@@ -39,7 +39,7 @@ class DeliveryList extends Component {
 
      componentDidMount=()=>{
         // GET TRANSACTIONSELLER LIST WHERE IDUSER,PACKAGESTATUS 
-        Axios.get(`${APIURL}/transactionstores/user?iduser=${this.props.User.iduser}&idpackagestatus=${[3]}`)
+        Axios.get(`${APIURL}/transactionstores/user?iduser=${this.props.User.iduser}&idpackagestatus=${[3,4]}`)
         .then((res)=>{
             console.log(res.data)
 
@@ -67,7 +67,8 @@ class DeliveryList extends Component {
                                     style={{
                                         paddingTop:'80%',
                                         backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                         position:'relative'
                                     }}

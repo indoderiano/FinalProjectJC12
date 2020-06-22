@@ -142,7 +142,8 @@ class PaymentList extends Component {
                                     style={{
                                         paddingTop:'100%',
                                         backgroundImage:`url(${APIURL+JSON.parse(transaction.paymentproof)})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                         position:'relative'
                                     }}

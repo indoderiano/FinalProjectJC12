@@ -137,7 +137,8 @@ class Cart extends Component {
                                                 style={{
                                                     paddingTop:'80%',
                                                     backgroundImage:`url('https://react.semantic-ui.com/images/wireframe/image.png')`,
-                                                    backgroundSize:'cover',
+                                                    backgroundSize:'contain',
+                                                    backgroundRepeat:'no-repeat',
                                                     backgroundPosition:'center',
                                                     position:'relative'
                                                 }}
@@ -212,7 +213,8 @@ class Cart extends Component {
                                                 style={{
                                                     paddingTop:'80%',
                                                     backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                                    backgroundSize:'cover',
+                                                    backgroundSize:'contain',
+                                                    backgroundRepeat:'no-repeat',
                                                     backgroundPosition:'center',
                                                     position:'relative',
                                                     opacity:typeof item.qtyshort !== 'undefined'?'.7':'1'

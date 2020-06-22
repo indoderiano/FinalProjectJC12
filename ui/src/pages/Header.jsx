@@ -30,7 +30,7 @@ class MainHeader extends Component {
                   Home                 
                 </Menu.Item>
                 <Menu.Item as={Link} to='/seller' style={style.menu}>Seller</Menu.Item>
-        <span style={{color:'white'}}>{this.props.Seller.idseller}</span>
+        {/* <span style={{color:'white'}}>{this.props.Seller.idseller}</span> */}
                 <Menu.Item as='a' style={style.menu}>Company</Menu.Item>
                 {/* <Menu.Item as='a' style={style.menu}>Careers</Menu.Item> */}
                 
