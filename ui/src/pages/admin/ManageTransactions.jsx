@@ -21,9 +21,8 @@ import {
     Label
 } from 'semantic-ui-react'
 import PaymentVerify from './PaymentVerify'
-import Orders from '../seller/Orders'
-import PackageOnDelivery from '../seller/PackageOnDelivery'
 import DeliveryManage from './DeliveryManage'
+import DeliveredPackage from './DeliveredPackage'
 import PaymentList from '../PaymentList'
 import TransactionHistory from '../TransactionHistory'
 import OnTheWay from '../TransactionOnDelivery'
@@ -68,6 +67,14 @@ class Transactions extends Component {
                     </Menu.Item>
                 ),
                 render: () => <Tab.Pane><DeliveryManage/></Tab.Pane>,
+            },
+            {
+                menuItem: (
+                    <Menu.Item key='fifth'>
+                        Complete Transactions
+                    </Menu.Item>
+                ),
+                render: () => <Tab.Pane><DeliveredPackage/></Tab.Pane>,
             },
           ]
 
