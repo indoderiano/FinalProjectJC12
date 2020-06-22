@@ -104,6 +104,8 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/admin' exact component={Admintable}/>
         <Route path='/forgotpassword' exact component={memberAccess?Forgotpass:Loading?Home:()=><Redirect to='/'/>}/>
         <Route path='/forgotpassword/:token' exact component={memberAccess?ChangePass:Loading?Home:()=><Redirect to='/'/>}/>
+        <Route path='/verifyseller' exact component={VerifyTable}/>
+        <Route path='/testimage' exact component={Testimage}/>
         
         
         {/* SELY */}
@@ -115,15 +117,7 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         
 
-        
-        {/* JAMES */}
-        <Route path='/Sellerregister' exact component={Sellerregis }/>
-        <Route path='/admin' exact component={Admintable}/>
-        <Route path='/forgotpassword' exact component={Forgotpass}/>
-        <Route path='/forgotpassword/:token' exact component={ChangePass}/>
-        <Route path='/profile' exact component={Profile}/>
-        <Route path='/verifyseller' exact component={VerifyTable}/>
-        <Route path='/testimage' exact component={Testimage}/>
+       
         {/*  */}
         
         
