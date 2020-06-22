@@ -24,11 +24,13 @@ import Admintable from './pages/Admin'
 import { KeepLogin, KeepSeller, LoadCart, LoadPayment, LoadInvoices, LoadOrders } from './redux/actions'
 import { APIURL } from './supports/ApiUrl';
 import { connect } from 'react-redux';
-import HomeSeller from './pages/seller/HomeSeller';
 import MyProducts from './pages/seller/MyProduct';
 import MyOrders from './pages/seller/MyOrder';
 import Axios from'axios'
 import StoreProfile from './pages/seller/StoreProfile';
+import SearchProducts from './pages/SearchProducts';
+import WomenProducts from './pages/WomenProducts';
+import MenProducts from './pages/MenProducts';
 
 
 function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSeller}) {
@@ -105,13 +107,14 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         
         {/* SELY */}
         <Route path='/allproducts' exact component={AllProducts}/>
-        <Route path='/seller' exact component={HomeSeller}/>
+        <Route path='/search/:keyword' exact component={SearchProducts}/>
+        <Route path='/seller/product' exact component={ManageProduct}/>
         <Route path='/seller/product/myproduct' exact component={MyProducts}/>
         <Route path='/seller/myorder' exact component={MyOrders}/>
         <Route path='/seller/profile' exact component={StoreProfile}/>
-        <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
-        
-
+        <Route path='/allproducts/women' exact component={WomenProducts}/>
+        <Route path='/allproducts/men' exact component={MenProducts}/>
+        {/*  */}
         
         
         

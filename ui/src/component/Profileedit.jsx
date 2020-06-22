@@ -28,7 +28,7 @@ const ProfileEdit=(props)=>{
     return <Redirect to='/'/>
   }
 
-
+  
     return(
         <div style={{width:'70%',
             marginLeft:'22%', 

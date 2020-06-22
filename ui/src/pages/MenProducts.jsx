@@ -6,7 +6,7 @@ import _, { orderBy } from 'lodash'
 import { Link, NavLink } from 'react-router-dom';
 import Search from '../component/Search';
 
-class AllProducts extends Component {
+class MenProducts extends Component {
     state = { 
         isloading:false,
         products:[],
@@ -135,47 +135,58 @@ class AllProducts extends Component {
 
     render() { 
         const {totalProduct, page, cardperPage}=this.state
+
         return ( 
-            <div style={{display:'flex', flexDirection:'column', alignItems:'center', padding:50 }}>
-                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'80%' }}>
-                    <div >
-                        {/* <Search /> */}
-                        <Input label="Search" labelPosition='right' placeholder='Search Product' onChange={this.onChangeSearch} />
-                        <br/>
-                        <p style={{color:'blue'}}>Hasil pencarian: &ensp;
-                        <span style={{fontSize:16, fontWeight:'bolder'}}>{this.state.totalProduct}</span> 
-                        &ensp; product</p>
-                    </div>
-                    {/* <div style={{textAlign:'right', width:'80%', float:'right', marginBottom: '20px',}}>
-                        Sorted By &ensp;
-                        <select button placeholder='Sort By' onChange={this.handleSort} >
-                            <option value='priceasc'>Harga Terendah</option>
-                            <option value='pricedesc'>Harga Tertinggi</option>
-                        </select>
-                    </div> */}
-                    <div style={{fontSize:20, fontWeight:'3px'}}>
-                        {this.state.searchKeyword?
-                        `Search for: ${this.state.searchKeyword}`
-                        :
-                        null}
-                    </div>
+            <div style={{ padding:20}} >
+                <div style={{
+                    backgroundColor:'linear-gradient(45deg, rgba(250,248,237,1) 0%, rgba(139,223,226,1) 46%)',
+                    display:'flex', 
+                    justifyContent:'space-between', 
+                    height:400
+                    }}>
+                    <p style={{
+                        fontSize:'100px', textAlign:"center", 
+                        letterSpacing:'8px', textTransform:'uppercase',fontWeight:'100',
+                        fontFamily:'Helvetica, sans-serif', paddingLeft:100}}>
+                         Men <br/> Collection </p>
+                    <Image src='/images/men-header3.png' style={{marginRight: 100, height:'400px'}} />
                 </div>
-                <div style={{display:'flex', flexWrap:'wrap',  padding:20, width:'80%'}}>
-                    {this.renderCardProduct()}
-                </div>
-                <div style={{padding:0, textAlign:'center',display:'flex'}}>
-                    Total Product={totalProduct}
-                    <div className="pagination p8">
-                        <Icon name='angle left' disabled={this.state.page===0} onClick={()=>this.getpaginationdata((page/cardperPage)-1)} />                                
+                <div style={{display:'flex', flexDirection:'column', alignItems:'center', padding:50 }}>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'80%' }}>
+                        <div >
+                            {/* <Search /> */}
+                            <Input label="Search" labelPosition='right' placeholder='Search Product' onChange={this.onChangeSearch} />
+                            <br/>
+                            <p style={{color:'blue'}}>Hasil pencarian: &ensp;
+                            <span style={{fontSize:16, fontWeight:'bolder'}}>{this.state.totalProduct}</span> 
+                            &ensp; product</p>
+                        </div>
+                        <div style={{fontSize:20, fontWeight:'3px'}}>
+                            {this.state.searchKeyword?
+                            `Search for: ${this.state.searchKeyword}`
+                            :
+                            null}
+                        </div>
                     </div>
-                    {this.renderpagination()}
-                    <div className="pagination p8">
-                        <Icon name='angle right' disabled={Math.ceil(totalProduct/cardperPage)===(page/cardperPage)+1} onClick={()=>this.getpaginationdata((page/cardperPage)+1)} />                             
+                    <div style={{display:'flex', flexWrap:'wrap',  padding:20, width:'80%'}}>
+                        {this.renderCardProduct()}
+                    </div>
+                    <div style={{padding:0, textAlign:'center',display:'flex'}}>
+                        Total Product={totalProduct}
+                        <div className="pagination p8">
+                            <Icon name='angle left' disabled={this.state.page===0} onClick={()=>this.getpaginationdata((page/cardperPage)-1)} />                                
+                        </div>
+                        {this.renderpagination()}
+                        <div className="pagination p8">
+                            <Icon name='angle right' disabled={Math.ceil(totalProduct/cardperPage)===(page/cardperPage)+1} onClick={()=>this.getpaginationdata((page/cardperPage)+1)} />                             
+                        </div>
                     </div>
                 </div>
             </div>
-        );
+         );
     }
 }
  
-export default AllProducts;
+export default MenProducts;
+
+
