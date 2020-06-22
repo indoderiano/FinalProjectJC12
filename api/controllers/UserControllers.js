@@ -68,19 +68,20 @@ module.exports={
         const {token}=req.body
         jwt.verify(token,"puripuriprisoner",(err,decoded)=>{
             if(err) return res.status(200).send({status:false,message:'Token kadaluarsa'})
-            // console.log(decoded)
-            var sql=`update users set ? where iduser=${decoded.userid}`
+            console.log(decoded)
+            var sql=`update users set ? where iduser=${decoded.iduser}`
             db.query(sql,{isverified:true},(err,updated)=>{
                 if(err) res.status(500).send(err)
                 console.log('email is verified')
                 console.log('')
-                sql=`select iduser,username from users where iduser=${decoded.userid}`
+                sql=`select * from users where iduser=${decoded.iduser}`
                 db.query(sql,(err,userdata)=>{
                     if(err) return res.status(500).send(err)
                     
                     var newtoken=createJWTToken({id:userdata[0].iduser,username:userdata[0].username})
                     var update={
-                        isverified:userdata[0].isverified,
+                        // isverified:userdata[0].isverified,
+                        ...userdata[0],
                         token:newtoken
                     }
                     res.status(200).send({status:true,update})
@@ -91,8 +92,9 @@ module.exports={
                    ////////// RESEND VERIFICATION ////////////////
     resendmail:(req,res)=>{
         console.log('resend email verification...')
-        const {userid}=req.body
-        var token=createJWTToken({userid:userid})
+        // const {username,email,password,address} = req.body
+        const {iduser,username,email}=req.body
+        var token=createJWTToken({iduser:iduser})
         var VerificationLink=`http://localhost:3000/verification/${token}`
         var maildata={
             from: 'Admin <mde50526@gmail.com>',
