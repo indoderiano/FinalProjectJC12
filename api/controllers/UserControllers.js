@@ -286,7 +286,18 @@ module.exports={
                 if(err) res.status(500).send(err)
                 res.status(200).send({message:'Profile Updated'})
             })
-        }
+        },
+
+    getSeller:(req,res)=>{
+        console.log('get data seller')
+        const {iduser}=req.query
+
+        var sql=`select * from seller where iduser=${iduser}`
+        db.query(sql,(err,sellers)=>{
+            if(err) return res.status(500).send(err)
+            res.status(200).send(sellers[0])
+        })
+    },
 }
                    
 

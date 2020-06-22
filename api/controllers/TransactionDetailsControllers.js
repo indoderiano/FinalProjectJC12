@@ -173,7 +173,7 @@ module.exports={
         var sql=`select * from transactiondetails td
         join items i on i.iditem=td.iditem
         join products p on p.idproduct=i.idproduct
-        join sellers s on s.idseller=p.idseller
+        join seller s on s.idseller=p.idseller
         where td.isdeleted=0 and td.iduser=${iduser} and idorderstatus=1`
         db.query(sql,(err,result)=>{
             if(err) return res.status(500).send(err)
@@ -184,6 +184,60 @@ module.exports={
     },
 
     edit:(req,res)=>{
+        console.log('editing transaction details...')
+
+        console.log(req.params)
+        const {idtransactiondetail} = req.params
+
+        console.log(req.body)
+
+        // CHECK ORDER IF IT IS ON CART
+        // IN NOT ON CART, CANNOT EDIT
+
+        var sql=`select idorderstatus from transactiondetails where idtransactiondetail=${idtransactiondetail}`
+        db.query(sql,(err,order)=>{
+            if(err) return res.status(500).send(err)
+
+            if(order[0].idorderstatus==1){
+                // ORDER IS ON CART
+                
+                var edit=req.body
+                edit.order_updateat=new Date()
+                
+                if(edit.qty==0){
+                    edit.isdeleted=1
+                }
+                
+                sql=`update transactiondetails set ? where idtransactiondetail=${idtransactiondetail}`
+                db.query(sql,edit,(err,updated)=>{
+                    if(err) return res.status(500).send(err)
+                    
+                    console.log('updated')
+                    res.status(200).send({status:true,message:'item is edited'})
+                })
+                
+            }else{
+                console.log('unable to edit, item is not on cart')
+                res.status(200).send({status:false,message:'Item is not on cart'})
+            }
+        })
+
+    },
+
+    get:(req,res)=>{
+        console.log('getting transaction details...')
+
+        const{idtransactiondetail}=req.params
+
+        var sql=`select * from transactiondetails where idtransactiondetail=${idtransactiondetail}`
+        db.query(sql,(err,data)=>{
+            if(err) return res.status(500).send(err)
+
+            res.status(200).send(data[0])
+        })
+    },
+
+    update:(req,res)=>{
         console.log('updating transaction details...')
 
         console.log(req.params)
@@ -191,8 +245,9 @@ module.exports={
 
         console.log(req.body)
 
+
         var edit=req.body
-        edit.updateat=new Date()
+        edit.order_updateat=new Date()
 
         if(edit.qty==0){
             edit.isdeleted=1
@@ -205,5 +260,8 @@ module.exports={
             console.log('updated')
             res.status(200).send(updated)
         })
-    }
+    },
+
+
+
 }

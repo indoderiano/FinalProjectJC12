@@ -11,6 +11,7 @@ Router.put('/image/:idproduct/:index',ProductControllers.deletecover)
 Router.put('/:idproduct',ProductControllers.edit)
 Router.get('/allproducts',ProductControllers.allproducts)
 Router.get('/searchproduct',ProductControllers.searchrpoduct)
+Router.put('/sold/:idproduct',ProductControllers.countSold)
 
 /////////////////////////////////////////////////////////
 // NOTE IMPORTANT

@@ -95,6 +95,7 @@ module.exports={
         var sql=`
         select * from items as i
         join products as p on i.idproduct=p.idproduct
+        join seller as s on s.idseller=p.idseller
         where i.idproduct=${idproduct}
         `
         db.query(sql,(err,items)=>{
@@ -214,7 +215,112 @@ module.exports={
             
             res.status(200).send(update)
         })
+    },
 
+
+    subtractStock:(req,res)=>{
+        console.log('subtracting stock...')
+        const {iditem}=req.params
+        const {qty}=req.body
+        
+        var sql=`select stock from items where iditem=${iditem}`
+        db.query(sql,(err,item)=>{
+            if(err) return res.status(500).send(err)
+
+            console.log('stock',item[0])
+            var stock=item[0].stock-qty
+            console.log('new stock',stock)
+            sql=`update items set ? where iditem=${iditem}`
+            db.query(sql,{stock},(err,subtracted)=>{
+                if(err) return res.status(500).send(err)
+
+                console.log(`substract stock of id${iditem} to ${stock}`)
+                res.status(200).send({stock})
+            })
+
+        })
+
+    },
+
+    undoStock:(req,res)=>{
+        console.log('Undo stock')
+
+        const {iditem}=req.params
+        const {qty}=req.body
+        
+        var sql=`select stock from items where iditem=${iditem}`
+        db.query(sql,(err,item)=>{
+            if(err) return res.status(500).send(err)
+
+            var stock=item[0].stock+qty
+            sql=`update items set ? where iditem=${iditem}`
+            db.query(sql,{stock},(err,undo)=>{
+                if(err) return res.status(500).send(err)
+
+                console.log(`undo stock of id${iditem} to ${stock}`)
+                res.status(200).send({stock})
+            })
+
+        })
+    },
+
+    checkStock:(req,res)=>{
+        console.log('checking stock...')
+        const {iditem}=req.params
+        const {qty}=req.body
+        
+        var sql=`select stock from items where iditem=${iditem}`
+        db.query(sql,(err,item)=>{
+            if(err) return res.status(500).send(err)
+
+            console.log('stock',item[0])
+            var stock=item[0].stock-qty
+            res.status(200).send({stock})
+
+        })
+
+    },
+
+
+    restockCancelledTransaction:(req,res)=>{
+        console.log('Put stock back in store...')
+
+        const{idtransaction}=req.query
+        
+        var sql=`select iditem,qty from transactiondetails where idtransaction=${idtransaction}`
+        db.query(sql,(err,orders)=>{
+            if(err) return res.status(500).send(err)
+
+            console.log(orders)
+
+            // LOOP
+            orders.forEach((order,index)=>{
+
+                console.log('restock item ',order.iditem)
+                let sqlitem=`select stock from items where iditem=${order.iditem}`
+                db.query(sqlitem,(err,item)=>{
+                    if(err) return res.status(500).send(err)
+
+                    var stock=item[0].stock+order.qty
+                    var undo={
+                        stock,
+                        updateat:new Date()
+                    }
+                    sqlitem=`update items set ? where iditem=${order.iditem}`
+                    db.query(sqlitem,undo,(err,restock)=>{
+                        if(err) return res.status(500).send(err)
+
+                        console.log('items ',order.iditem,' is restocked')
+                        // status 200 after cycle ends
+                        if(index==orders.length-1){
+                            res.status(200).send(restock)
+                        }
+                    })
+
+                })
+
+            })
+        })
 
     }
 }

@@ -33,3 +33,83 @@ export const isJson=(data)=>{
     }
     
 }
+
+export const getDate=(date)=>{
+
+    // PROTECTION, IF DATE IS EMPTY
+    if(typeof date == 'undefined'){
+        return 'no date found'
+    }
+
+    var dateParts = date.split("-");
+    // console.log(dateParts)
+    // console.log(dateParts[2])
+    var jsDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2].substr(0,2));
+    // return jsDate
+
+    var string=dateParts[2]
+    // GET MIN
+    var hour
+    var min
+    for(var i=0;i<string.length;i++){
+        if(string.charAt(i)=='T'){
+            hour=string.slice(i+1,i+3)
+            min=string.slice(i+4,i+6)
+        }
+    }
+
+    
+    // GET DATE
+    var date=jsDate.getDate()
+
+    // GET MONTH
+    var month=''
+    // console.log('getmonth',jsDate.getMonth())
+    switch(jsDate.getMonth()){
+        case 0:
+            month='January'
+            break;
+        case 1:
+            month='February'
+            break;
+        case 2:
+            month='March'
+            break;
+        case 3:
+            month='April'
+            break;
+        case 4:
+            month='May'
+            break;
+        case 5:
+            month='June'
+            break;
+        case 6:
+            month='July'
+            break;
+        case 7:
+            month='August'
+            break;
+        case 8:
+            month='September'
+            break;
+        case 9:
+            month='October'
+            break;
+        case 10:
+            month='November'
+            break;
+        case 11:
+            month='December'
+            break;
+    }
+
+    // GET YEAR
+    var year=jsDate.getFullYear()
+
+
+    var tanggal=date+' '+month+' '+year+' '+hour+':'+min
+    // console.log(tanggal)
+    
+    return tanggal
+}
