@@ -13,7 +13,7 @@ const Testimage=(props)=>{
        var options={
            headers:{
                'Content-Type' : 'multipart/form-data',
-               'Authorization':`Bearer ${props.token}`
+              
            }
        }
        var data={

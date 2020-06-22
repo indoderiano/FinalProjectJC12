@@ -6,9 +6,25 @@ import{
 import Axios from 'axios'
 import {APIURL} from './../../supports/ApiUrl'
 
-export const SellerRegister=(dataseller)=>{
+export const SellerRegister=(dataseller,image)=>{
     var namatoko=dataseller.namatoko
     var alamattoko=dataseller.alamattoko
+    var imageprofile=image.imageprofile
+    // var formData=new FormData()
+    // var options={
+    //     headers:{
+    //         'Content-Type' : 'multipart/form-data',
+          
+    //     }
+    // }
+    // var data={
+    //     caption:'test',
+
+    // }
+    // formData.append('image',data1.image)
+    // console.log(data1)
+    
+    // formData.append('data', JSON.stringify(data))
     return(dispatch)=>{
         dispatch({type:SELLER_REGISTER_CHECK})
         if( namatoko==='' || alamattoko===''){

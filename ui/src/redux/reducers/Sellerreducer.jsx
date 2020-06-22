@@ -8,6 +8,7 @@ const INITIAL_STATE={
     idseller:0,
     namatoko:'',
     alamattoko:'',
+    imageprofile:undefined,
     loading:false
 }
 
