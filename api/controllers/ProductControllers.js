@@ -183,4 +183,26 @@ module.exports={
 
     },
 
+    countSold:(req,res)=>{
+        console.log('counting rating and sold data...')
+
+        const {idproduct}=req.params
+
+        var sql=`select * from transactiondetails td
+        join items i on i.iditem=td.iditem
+        join products p on p.idproduct=i.idproduct
+        where p.idproduct=${idproduct} and idorderstatus in (3,4)`
+
+        db.query(sql,(err,count)=>{
+            if(err) return res.status(500).send(err)
+
+            sql=`update products set ? where idproduct=${idproduct}`
+            db.query(sql,{sold:count.length},(err,updated)=>{
+                if(err) return res.status(500).send(err)
+                console.log('sold number counter')
+                res.status(200).send(updated)
+            })
+        })
+    }
+
 }

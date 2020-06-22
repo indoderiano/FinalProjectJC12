@@ -60,48 +60,106 @@ class MainHeader extends Component {
                     >
                       Hi, {this.props.User.username}
                     </Menu.Item>
-                    <Menu.Item 
-                      as={Link}
-                      to='/cart'
-                      style={style.menuRight}
-                      // icon='cart'
-                    >
-                      <Icon name='cart'/>
-                      Cart
-                      {
-                        this.props.Cart.totalitems?
-                        <Label 
-                          color='blue' 
-                          // floating 
-                          // style={{top:'-.5em',left:'85%',}}
-                          style={{marginLeft:'.4em'}}
-                        >
-                          {this.props.Cart.totalitems}
-                        </Label>
-                        : null
-                      }
-                    </Menu.Item>
-                    <Menu.Item 
-                      as={Link}
-                      to='/transactions'
-                      style={style.menuRight}
-                      // icon='cart'
-                    >
-                      <Icon name='list alternate'/>
-                      Transactions
-                      {
-                        this.props.Payment.total?
-                        <Label 
-                          color='blue' 
-                          // floating 
-                          // style={{top:'-.5em',left:'85%',}}
-                          style={{marginLeft:'.4em'}}
-                        >
-                          {this.props.Payment.total}
-                        </Label>
-                        : null
-                      }
-                    </Menu.Item>
+                    {// CART
+                      this.props.User.isuser?
+                      <Menu.Item 
+                        as={Link}
+                        to='/cart'
+                        style={style.menuRight}
+                        // icon='cart'
+                      >
+                        <Icon name='cart'/>
+                        Cart
+                        {
+                          this.props.Cart.totalitems?
+                          <Label 
+                            color='blue' 
+                            // floating 
+                            // style={{top:'-.5em',left:'85%',}}
+                            style={{marginLeft:'.4em'}}
+                          >
+                            {this.props.Cart.totalitems}
+                          </Label>
+                          : null
+                        }
+                      </Menu.Item>
+                      : null
+                    }
+                    {// USER MANAGE TRANSACTION
+                      this.props.User.isuser?
+                      <Menu.Item 
+                        as={Link}
+                        to='/transactions'
+                        style={style.menuRight}
+                        // icon='cart'
+                      >
+                        <Icon name='list alternate'/>
+                        Transactions
+                        {
+                          this.props.Payment.total?
+                          <Label 
+                            color='blue' 
+                            // floating 
+                            // style={{top:'-.5em',left:'85%',}}
+                            style={{marginLeft:'.4em'}}
+                          >
+                            {this.props.Payment.total}
+                          </Label>
+                          : null
+                        }
+                      </Menu.Item>
+                      : null
+                    }
+                    {// SELLER MANAGE ORDERS
+                      this.props.User.isseller?
+                      <Menu.Item 
+                        as={Link}
+                        to='/manageorders'
+                        style={style.menuRight}
+                        // icon='cart'
+                      >
+                        <Icon name='list alternate'/>
+                        Orders
+                        {
+                          this.props.Store.total?
+                          <Label 
+                            color='blue' 
+                            // floating 
+                            // style={{top:'-.5em',left:'85%',}}
+                            style={{marginLeft:'.4em'}}
+                          >
+                            {this.props.Store.total}
+                          </Label>
+                          : null
+                        }
+                      </Menu.Item>
+                      : null
+                    }
+                    {// ADMIN MANAGE ORDERS
+                      this.props.User.isadmin?
+                      <Menu.Item 
+                        as={Link}
+                        to='/managetransactions'
+                        style={style.menuRight}
+                        // icon='cart'
+                      >
+                        <Icon name='list alternate'/>
+                        Manage Transactions
+                        {
+                          this.props.Invoices.total?
+                          <Label 
+                            color='blue' 
+                            // floating 
+                            // style={{top:'-.5em',left:'85%',}}
+                            style={{marginLeft:'.4em'}}
+                          >
+                            {this.props.Invoices.total}
+                          </Label>
+                          : null
+                        }
+                      </Menu.Item>
+                      : null
+                    }
                   </>
                   : null
                 }
@@ -129,7 +187,9 @@ const MapstatetoProps=(state)=>{
     return {
         User: state.Auth,
         Cart: state.Cart,
-        Payment: state.Payment
+        Payment: state.Payment,
+        Store: state.Store,
+        Invoices: state.Invoices
     }
 }
  

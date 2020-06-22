@@ -29,51 +29,63 @@ class Payment extends Component {
     state = { 
         idpayment:0,
 
-        isfinish:false
+        loading:false,
+        isfinish:false,
      }
 
 
     submitPayment=()=>{
+        this.setState({loading:true})
         console.log(this.props.Cart)
-        // NEED TO CREATE PROTECTION
-        /////////////////////////////////
-        // CHECK ITEM STOCK FOR AVAILIBILTY
-        this.checkStock()
 
         // CHECK ITEM ISSELECTED
         // CHECK PROMO AVAILIBILITY
         // CHECK POPCOIN CREDIT?
         // CHECK SAME TRANSACTION ALREADY DONE IN ANOTHER TAB
-
         /////////////////////////////////
 
-        // DONT FORGET TO SUB ITEM STOCK AFTER CHECKOUT
+        this.checkStatus()
+        // STEP 1
+        // CHECK ITEM STATUS, IT MUST BE 'ONCART'
+        // STEP 2
+        // CHECK ITEM STOCK
+        // STEP 3
+        // CREATE TRANSACTION
+
     }
     
-
-    undoStock=()=>{
+    // TRANSACTION DETAIL STATUS MUST BE FROM 'ON CART' TO UPDATE TO NEXT STATUS
+    checkStatus=()=>{
+        var status=true
         this.props.Cart.checkout.forEach((seller,checkoutindex)=>{
             seller.itemlist.forEach((order,sellerindex)=>{
                 // iditem
                 // qty
-
-                Axios.put(`${APIURL}/items/undostock/${order.iditem}`,{qty:order.qty})
-                .then((newstock)=>{
-                    console.log(`item id ${order.iditem} new stock is ${newstock.data.stock}`)
-
-                    // LAST CYCLE
-                    // AFTER ALL STOCK IS CHECKED
+                Axios.get(`${APIURL}/transactiondetails/order/${order.idtransactiondetail}`)
+                .then((ordernow)=>{
+                    if(ordernow.data.idorderstatus!==1){
+                        status=false
+                    }
+                    
+                    // last cycle
                     if(this.props.Cart.checkout.length-1==checkoutindex&&seller.itemlist.length-1==sellerindex){
-
-                        console.log('all stock is undo')
+                        console.log('last cycle')
+                        if(status){
+                            console.log('status is checked')
+                            this.checkStock()
+                        }else{
+                            console.log('item is not on cart')
+                            this.setState({loading:false})
+                        }
                     }
 
                 }).catch((err)=>{
-
+                    console.log(err)
                 })
+
             })
         })
-    }
+    } 
 
     checkStock=()=>{
 
@@ -112,12 +124,37 @@ class Payment extends Component {
                             console.log('stock is not enough')
                             console.log(`item id ${id}`)
                             this.undoStock()
+                            this.setState({loading:false})
 
                         }
                     }
 
                 }).catch((err)=>{
 
+                })
+            })
+        })
+    }
+
+    undoStock=()=>{
+        this.props.Cart.checkout.forEach((seller,checkoutindex)=>{
+            seller.itemlist.forEach((order,sellerindex)=>{
+                // iditem
+                // qty
+
+                Axios.put(`${APIURL}/items/undostock/${order.iditem}`,{qty:order.qty})
+                .then((newstock)=>{
+                    console.log(`item id ${order.iditem} new stock is ${newstock.data.stock}`)
+
+                    // LAST CYCLE
+                    // AFTER ALL STOCK IS CHECKED
+                    if(this.props.Cart.checkout.length-1==checkoutindex&&seller.itemlist.length-1==sellerindex){
+
+                        console.log('all stock is undo')
+                    }
+
+                }).catch((err)=>{
+                    console.log(err)
                 })
             })
         })
@@ -137,20 +174,16 @@ class Payment extends Component {
         .then((paymentcreated)=>{
             this.props.LoadCart(this.props.User.iduser)
             this.props.LoadPayment(this.props.User.iduser)
-            this.setState({isfinish:true})
+            this.setState({isfinish:true,loading:false})
         }).catch((err)=>{
             console.log(err)
+            this.setState({loading:false})
         })
     }
 
     createTransactionByFrontEnd=()=>{
 
-
-
         return 1
-
-
-
 
         // SAME FUNCTION, BUT WITH TRY CATCH
         console.log(this.props.Cart)
@@ -364,6 +397,10 @@ class Payment extends Component {
                             />
                         </div>
                         <p style={{fontSize:'16px'}}>Guide</p>
+                        <Message>
+                            <p style={{color:'red'}}>Important</p>
+                            Upload your proof of payment within an hour
+                        </Message>
                         <p>
                             Pellentesque finibus nulla dui, ac aliquam neque efficitur consequat. Phasellus mauris dui, consequat sit amet finibus ut, convallis ac augue
                         </p>
@@ -387,6 +424,10 @@ class Payment extends Component {
                             />
                         </div>
                         <p style={{fontSize:'16px'}}>Guide</p>
+                        <Message>
+                            <p style={{color:'red'}}>Important</p>
+                            Upload your proof of payment within an hour
+                        </Message>
                         <p>
                             Pellentesque finibus nulla dui, ac aliquam neque efficitur consequat. Phasellus mauris dui, consequat sit amet finibus ut, convallis ac augue
                         </p>
@@ -398,8 +439,9 @@ class Payment extends Component {
                 <Container style={{padding:'1em'}}>
                     <Button
                         primary
+                        loading={this.state.loading}
                         style={{width:'100%'}}
-                        disabled={this.props.Cart.totalpayment&&this.state.idpayment?false:true}
+                        disabled={(this.props.Cart.totalpayment&&this.state.idpayment?false:true) || this.state.loading}
                         onClick={this.submitPayment}
                     >
                         Pay

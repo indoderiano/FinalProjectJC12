@@ -95,6 +95,7 @@ module.exports={
         var sql=`
         select * from items as i
         join products as p on i.idproduct=p.idproduct
+        join seller as s on s.idseller=p.idseller
         where i.idproduct=${idproduct}
         `
         db.query(sql,(err,items)=>{
@@ -301,8 +302,12 @@ module.exports={
                     if(err) return res.status(500).send(err)
 
                     var stock=item[0].stock+order.qty
+                    var undo={
+                        stock,
+                        updateat:new Date()
+                    }
                     sqlitem=`update items set ? where iditem=${order.iditem}`
-                    db.query(sqlitem,{stock},(err,restock)=>{
+                    db.query(sqlitem,undo,(err,restock)=>{
                         if(err) return res.status(500).send(err)
 
                         console.log('items ',order.iditem,' is restocked')

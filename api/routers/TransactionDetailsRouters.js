@@ -7,6 +7,7 @@ const Router=express.Router()
 Router.post('/',TransactionDetailsControllers.add)
 Router.get('/item/product/seller',TransactionDetailsControllers.onCartDetails)
 Router.post('/:idtransactiondetail',TransactionDetailsControllers.edit)
+Router.get('/order/:idtransactiondetail',TransactionDetailsControllers.get)
 Router.put('/:idtransactiondetail',TransactionDetailsControllers.update)
 
 module.exports=Router

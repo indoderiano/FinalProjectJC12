@@ -1,4 +1,5 @@
 import{
+    CART_EMPTY,
     CART_DATA,
     CART_LIST,
     CART_CHECKOUT,
@@ -66,6 +67,8 @@ export default (state= INITIAL_STATE,action)=>{
                 ...state,
                 totalpayment: state.totalcharge-state.payment_promo
             }
+        case CART_EMPTY:
+            return INITIAL_STATE
         default:
             return state
     }

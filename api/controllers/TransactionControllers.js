@@ -62,8 +62,7 @@ module.exports={
     // },
 
     secureCreate:(req,res)=>{
-        console.log('creating transaction more secure way...')
-
+        console.log('creating transaction...')
 
         // iduser,idpayment
 
@@ -141,8 +140,6 @@ module.exports={
                     
                     seller.itemlist.forEach(async(item,itemindex)=>{
     
-                        // DONT FORGET TO SUBTRACT ITEM STOCK
-    
                         // CASE STUDY
                         // IF SAME PAGE IS OPEN IN ANOTHER TAB
                         // 
@@ -153,19 +150,20 @@ module.exports={
                             idtransactionseller:transactionseller.insertId,
                             idorderstatus:2,
                             checkout_price:item.price,
-                            updateat: new Date()
+                            order_updateat: new Date()
                         }
                         console.log(`update order id ${item.idtransactiondetail}`)
+
+                        // DONT FORGET TO ADD PROTECTION
+                        // WHERE IF TRANSACTION DETAIL THAT ALREADY HAS IDTRANSACTION, WILL CANCEL IT 
 
                         let sqltd=`update transactiondetails set ? where idtransactiondetail=${item.idtransactiondetail}`
                         db.query(sqltd,update,(err,updated)=>{
                             if(err) return res.status(500).send(err)
 
-                            console.log('updated')
-
                             // only status(200) after last loop is finished
                             if(checkout.length-1==checkoutindex&&seller.itemlist.length-1==itemindex){
-                                console.log('last order')
+                                console.log('all orders updated')
                                 res.status(200).send(updated)
                             }
                         })
@@ -280,10 +278,6 @@ module.exports={
 
         const {iduser,idstatus}=req.query
 
-        // var sql=`select * from transactions t
-        // join transactionsellers ts on ts.idtransaction=t.idtransaction
-        // join transactiondetails td on td.idtransactionseller=ts.idtransactionseller
-        // where t.iduser=${iduser} and t.idstatus=1`
         var sql=`select * from transactiondetails td
         join orderstatus os on os.idorderstatus=td.idorderstatus
         join items i on i.iditem=td.iditem
@@ -296,11 +290,10 @@ module.exports={
         join status s on s.idstatus=t.idstatus
         join users u on u.iduser=t.iduser
         where t.iduser=${iduser} and t.idstatus in (${idstatus})`
-        db.query(sql,(err,payment)=>{
+        db.query(sql,(err,list)=>{
             if(err) return res.status(500).send(err)
 
-            
-            res.status(200).send(payment)
+            res.status(200).send(list)
         })
     },
 
@@ -325,6 +318,35 @@ module.exports={
             if(err) return res.status(500).send(err)
 
             res.status(200).send(list)
+        })
+    },
+
+    adminGetStatus:(req,res)=>{
+        console.log('get all transaction list')
+
+        const {idstatus}=req.query
+
+        // var sql=`select * from transactions t
+        // join transactionsellers ts on ts.idtransaction=t.idtransaction
+        // join transactiondetails td on td.idtransactionseller=ts.idtransactionseller
+        // where t.iduser=${iduser} and t.idstatus=1`
+        var sql=`select * from transactiondetails td
+        join orderstatus os on os.idorderstatus=td.idorderstatus
+        join items i on i.iditem=td.iditem
+        join products prod on prod.idproduct=i.idproduct
+        join transactionsellers ts on ts.idtransactionseller=td.idtransactionseller
+        join seller sel on sel.idseller=ts.idseller
+        join delivery d on d.iddelivery=ts.iddelivery
+        join transactions t on t.idtransaction=ts.idtransaction
+        join payment p on p.idpayment=t.idpayment
+        join status s on s.idstatus=t.idstatus
+        join users u on u.iduser=t.iduser
+        where t.idstatus in (${idstatus})`
+        db.query(sql,(err,payment)=>{
+            if(err) return res.status(500).send(err)
+
+            
+            res.status(200).send(payment)
         })
     },
 

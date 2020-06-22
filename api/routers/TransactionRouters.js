@@ -14,6 +14,7 @@ Router.post('/paymentproof/:idtransaction',TransactionControllers.uploadPaymentP
 Router.put('/:idtransaction',TransactionControllers.update)
 
 Router.get('/seller',TransactionControllers.sellerGetStatus)
+Router.get('/admin',TransactionControllers.adminGetStatus)
 
 
 module.exports=Router

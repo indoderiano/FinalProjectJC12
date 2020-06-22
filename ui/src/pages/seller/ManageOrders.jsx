@@ -20,13 +20,8 @@ import {
     Menu,
     Label
 } from 'semantic-ui-react'
-import PaymentVerify from './PaymentVerify'
-import Orders from '../seller/Orders'
-import PackageOnDelivery from '../seller/PackageOnDelivery'
-import DeliveryManage from './DeliveryManage'
-import PaymentList from '../PaymentList'
-import TransactionHistory from '../TransactionHistory'
-import OnTheWay from '../TransactionOnDelivery'
+import Orders from './Orders'
+import PackageOnDelivery from './PackageOnDelivery'
 import {Link} from 'react-router-dom'
 import {titleConstruct,isJson} from '../../supports/services'
 import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../../redux/actions'
@@ -51,23 +46,19 @@ class Transactions extends Component {
             {
                 menuItem: (
                   <Menu.Item key='payment'>
-                    Payment Verification
+                    Orders
                     {
                         this.props.Invoices.total?
-                        <Label color='blue'>{this.props.Invoices.total}</Label>
+                        <Label color='blue'>{this.props.Store.total}</Label>
                         : null
                     }
                   </Menu.Item>
                 ),
-                render: () => <Tab.Pane><PaymentVerify/></Tab.Pane>,
+                render: () => <Tab.Pane><Orders/></Tab.Pane>,
             },
             {
-                menuItem: (
-                    <Menu.Item key='fourth'>
-                        Admin Logistic
-                    </Menu.Item>
-                ),
-                render: () => <Tab.Pane><DeliveryManage/></Tab.Pane>,
+                menuItem: { key: 'delivery', icon: 'shipping fast', content: 'Package On Delivery' },
+                render: () => <Tab.Pane><PackageOnDelivery/></Tab.Pane>,
             },
           ]
 

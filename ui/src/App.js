@@ -14,6 +14,7 @@ import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import Transactions from './pages/Transactions'
 import ManageTransactions from './pages/admin/ManageTransactions'
+import ManageOrders from './pages/seller/ManageOrders'
 import ChangePass from './pages/Changepass'
 import Forgotpass from './pages/Forgotpass'
 import { KeepLogin , LoadCart, LoadPayment, LoadInvoices, LoadOrders } from './redux/actions'
@@ -94,12 +95,11 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/product/:idproduct' exact component={Product}/>
         <Route path='/cart' exact component={visitorAccess?()=><Redirect to='/'/>:Cart}/>
         <Route path='/checkout' exact component={visitorAccess?()=><Redirect to='/'/>:Checkout}/>
+
         <Route path='/transactions' exact component={visitorAccess?()=><Redirect to='/'/>:Transactions}/>
-
         <Route path='/managetransactions' exact component={ManageTransactions}/>
+        <Route path='/manageorders' exact component={ManageOrders}/>
         
-
-
 
 
       </Switch>

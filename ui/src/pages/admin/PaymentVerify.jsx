@@ -47,8 +47,6 @@ class PaymentList extends Component {
 
     onAccept=(idtransaction,transaction)=>{
         // UPDATE TRANSACTION STATUS
-        // UPDATE TRANSACTION SELLER STATUS
-        
         var update={
             idstatus:3
         }
@@ -60,6 +58,7 @@ class PaymentList extends Component {
             console.log(err)
         })
 
+        // UPDATE TRANSACTION SELLER STATUS
         transaction.sellerlist.forEach((store)=>{
             let obj={
                 idpackagestatus:2
@@ -96,7 +95,7 @@ class PaymentList extends Component {
     
 
     renderByTransaction=()=>{
-        // console.log(this.props.Invoices)
+        console.log(this.props.Invoices)
         if(!this.props.Invoices.list.length){
             return (
                 <div style={{textAlign:'center'}}>There is no payment due</div>

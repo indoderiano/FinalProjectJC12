@@ -37,6 +37,8 @@ class PaymentList extends Component {
         filepaymentproof:undefined,
         errormessage:'',
         iddelete:0,
+        isuploaded:false,
+        timeout:''
      }
 
     componentDidMount=()=>{
@@ -49,6 +51,7 @@ class PaymentList extends Component {
 
     componentWillUnmount=()=>{
         clearTimeout(this.state.clock)
+        clearTimeout(this.state.timeout)
     }
 
     onUpload=()=>{
@@ -71,6 +74,11 @@ class PaymentList extends Component {
             .then((uploaded)=>{
                 console.log('payment proof uploaded')
                 this.props.LoadPayment(this.props.User.iduser)
+
+                var delay = setTimeout(()=>{
+                    this.setState({isuploaded:false})
+                },3000)
+                this.setState({isuploaded:true,timeout:delay})
 
             }).catch((err)=>{
                 console.log(err)
@@ -98,6 +106,7 @@ class PaymentList extends Component {
         })
 
         // RE-ADD ITEMS BACK TO CART
+        // DONT FORGET TO MAKE SURE NOT TO ADD TO DELETED ORDER
         console.log('transaction',transaction)
         transaction.sellerlist.forEach((seller)=>{
             seller.itemlist.forEach((item)=>{
@@ -123,7 +132,7 @@ class PaymentList extends Component {
         return itemlist.map((item,index)=>{
             const typeArr=isJson(item.type)
             return (
-                <Grid.Column key={index} width={16}>
+                <Grid.Column key={index} width={16} style={{paddingBottom:'1em'}}>
                     <Grid>
                         <Grid.Row>
                             <Grid.Column width={4}>
@@ -197,14 +206,14 @@ class PaymentList extends Component {
     renderByTransactionSeller=(sellerlist)=>{
         return sellerlist.map((seller,index)=>{
             return (
-                <Grid.Row key={index}>
+                <Grid.Row key={index} style={{paddingBottom:'0'}}>
                     <Grid.Column width={16} style={{marginBottom:'1em'}}>
                         <Header as={'h3'}>{titleConstruct(seller.namatoko)}</Header>
                     </Grid.Column>
 
                     <Grid.Column width={9}>
                         <Grid>
-                            <Grid.Row>
+                            <Grid.Row style={{paddingBottom:'0'}}>
                                 {this.renderByItem(seller.itemlist)}
                             </Grid.Row>
                         </Grid>
@@ -283,7 +292,7 @@ class PaymentList extends Component {
                 <Segment key={index}>
                     <Grid>
                         <Grid.Row>
-                            <Grid.Column width={5}>
+                            <Grid.Column width={5} style={{fontWeight:'bold'}}>
                                 Transaction ID {transaction.idtransaction}
                             </Grid.Column>
                             <Grid.Column width={5}>
@@ -313,7 +322,11 @@ class PaymentList extends Component {
                                     isexpired?
                                     <div><span style={{fontWeight:'800'}}>Transaction Is Expired</span></div>
                                     :
-                                    <div>Expire in <span style={{fontWeight:'800'}}>{expiredinmins} : {expiredinsecs<10&expiredinsecs>=0?'0'+expiredinsecs:expiredinsecs}</span></div>
+                                    <div style={{display:'inline-flex',padding:'0em 0em',border:'0px solid rgba(255,0,0,.5)',color:'rgb(178,34,34)',background:'rgba(255,0,0,.0)'}}>
+                                        Expire in 
+                                        <span style={{fontWeight:'800',marginLeft:'.5em'}}>{expiredinmins} : {expiredinsecs<10&expiredinsecs>=0?'0'+expiredinsecs:expiredinsecs}</span>
+                                        <Icon name='clock' style={{fontSize:'21px',margin:'0 0 0 .3em'}}/>
+                                    </div>
                                 }
                             </Grid.Column>
                                 {
@@ -362,7 +375,7 @@ class PaymentList extends Component {
                             <Divider style={{width:'100%'}}/>
                         </Grid.Row>
                         {this.renderByTransactionSeller(transaction.sellerlist)}
-                        <Grid.Row>
+                        <Grid.Row style={{paddingTop:'0'}}>
                             <Grid.Column width={16} style={{marginTop:'1em',textAlign:'center'}}>
                                 {
                                     transaction.idtransaction==this.state.iddelete?
@@ -399,6 +412,30 @@ class PaymentList extends Component {
                 <Message style={{textAlign:'center'}}>Upload The Proof of Payment Before It Expires</Message>
                 {this.renderByTransaction()}
                 
+
+                {/* MESSAGE AFTER UPLOAD */}
+                {
+                    this.state.isuploaded?
+                    <Message 
+                        style={{
+                            position:'fixed',
+                            top:'50%',
+                            left:'50%',
+                            transform: 'translate(-50%,-50%)',
+                            // color:'green'
+                        }}
+                        color='blue'
+                    >
+                        <p>
+                        Your Payment Proof Is Uploaded
+                        </p>
+                        <p>
+                            Your Order Will Be Processed After Your Payment Has Been Verified 
+                        </p>
+                        {/* <Icon name='check'/> */}
+                    </Message>
+                    : null
+                }
             </Container>
         );
     }

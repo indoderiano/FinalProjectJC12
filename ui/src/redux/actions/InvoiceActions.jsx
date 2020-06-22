@@ -9,13 +9,15 @@ import {ListByTransaction} from '../../supports/ListAssembler'
 export const LoadInvoices=(iduser)=>{
     console.log('request invoices list')
     return(dispatch)=>{
-        Axios.get(`${APIURL}/transactions/user?iduser=${iduser}&idstatus=2`)
+        // GET DATA TRANSACTION LIST WHERE ALL IDUSER AND IDSTATUS=2
+
+        Axios.get(`${APIURL}/transactions/admin?idstatus=2`)
         .then((res)=>{
             console.log(res.data)
 
 
             // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
-            var listByTransaction=ListByTransaction(res.data)
+            var listByTransaction=ListByTransaction(res.data).reverse()
 
 
             var data={

@@ -316,7 +316,8 @@ class Cart extends Component {
                                             }
                                         </Grid.Column>
                                         <Grid.Column width={4} style={{
-                                            display:typeof item.qtyshort !== 'undefined'?'none':'flex',
+                                            display:'flex',
+                                            // display:typeof item.qtyshort !== 'undefined'?'none':'flex',
                                             alignItems:'flex-end'
                                             }}>
                                             <div style={{display:'inline-block',marginLeft:'auto',fontSize:'16px'}}>
@@ -348,6 +349,7 @@ class Cart extends Component {
                                                 <Icon 
                                                     name='plus circle' 
                                                     color='blue' 
+                                                    disabled={typeof item.qtyshort !== 'undefined'}
                                                     style={{margin:'0 0 0 .3em',cursor:'pointer'}}
                                                     onClick={()=>{this.updateDetails(item.idtransactiondetail,{qty:item.qty+1})}}
                                                 />

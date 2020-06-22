@@ -1,6 +1,6 @@
 import React ,{Component} from 'react'
 import Axios from 'axios'
-import {APIURL} from '../supports/ApiUrl'
+import {APIURL} from '../../supports/ApiUrl'
 import {
     Grid,
     Header,
@@ -20,11 +20,10 @@ import {
     Menu,
     Label
 } from 'semantic-ui-react'
-import Payment from './Payment'
 import {Link} from 'react-router-dom'
-import {titleConstruct,isJson,getDate} from '../supports/services'
-import {ListByTransaction,ListByStoreTransaction} from '../supports/ListAssembler'
-import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../redux/actions'
+import {titleConstruct,isJson,getDate} from '../../supports/services'
+import {ListByStoreTransaction,ListByTransaction} from '../../supports/ListAssembler'
+import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -38,19 +37,34 @@ class DeliveryList extends Component {
      }
 
      componentDidMount=()=>{
-        // GET TRANSACTIONSELLER LIST WHERE IDUSER,PACKAGESTATUS 
-        Axios.get(`${APIURL}/transactionstores/user?iduser=${this.props.User.iduser}&idpackagestatus=${[3]}`)
-        .then((res)=>{
-            console.log(res.data)
+        // GET LIST DATA WHERE IDSELLER AND STATUSPACKAGE
 
-            // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
-            var listByTransaction=ListByStoreTransaction(res.data,'store').reverse()
-            // console.log('transaction history',listByTransaction)
-            this.setState({deliveryList:listByTransaction})
+        // DONT FORGET TO REPLACE THIS AFTER SELLER REDUCER IS COMPLETED
+        // FIND DATA IDSELLER
+        Axios.get(`${APIURL}/users/seller?iduser=${this.props.User.iduser}`)
+        .then((seller)=>{ // DONT FORGET TO REPLACE THIS AFTER SELLER REDUCER IS COMPLETED
+            
+            const {idseller}=seller.data
+
+            // GET LIST DATA WHERE IDSELLER AND STATUSPACKAGE
+            Axios.get(`${APIURL}/transactions/seller?idseller=${idseller}&idpackagestatus=3`)
+            .then((res)=>{
+                console.log('orders list loaded')
+                console.log(res.data)
+                
+                // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
+                var listByTransaction=ListByStoreTransaction(res.data,'store').reverse()
+                console.log(listByTransaction)
+                this.setState({deliveryList:listByTransaction})
+            }).catch((err)=>{
+                console.log(err)
+            })
 
         }).catch((err)=>{
             console.log(err)
         })
+
+        
     }
 
     renderByItem=(itemlist)=>{
@@ -132,11 +146,13 @@ class DeliveryList extends Component {
                 <Segment key={index}>
                     <Grid>
                         <Grid.Row>
-
-                            <Grid.Column width={16} style={{marginBottom:'0em'}}>
+                            {/* <Grid.Column width={12} style={{marginBottom:'1em',paddingTop:'.5em'}}>
+                                <Header as={'h4'} style={{display:'flex'}}><Icon name='user' style={{fontSize:'18px'}}/>{titleConstruct(seller.username)}</Header>
+                            </Grid.Column> */}
+                            <Grid.Column width={16} style={{marginBottom:'1em'}}>
                                 <Icon name='warehouse' style={{fontSize:'18px',marginRight:'.5em',verticalAlign:'2px'}}/>
-                                <Header as={'h4'} style={{display:'inline-block',marginRight:'.5em'}}>{titleConstruct(seller.namatoko)}</Header>
-                                <span style={{fontSize:'12px',color:'gray'}}>{getDate(seller.package_updateat)}</span>
+                                <Header as={'h4'} style={{display:'inline-block',marginRight:'.5em'}}>{titleConstruct(seller.username)}</Header>
+                                {/* <span style={{fontSize:'12px',color:'gray'}}>{getDate(seller.package_updateat)}</span> */}
                             </Grid.Column>
 
                             <Grid.Column width={7}>
@@ -152,7 +168,7 @@ class DeliveryList extends Component {
                                 <Header as={'h4'}>
                                     Delivery
                                 </Header>
-                                <div style={{marginTop:'.5em'}}>
+                                <div style={{margin:'.5em 0'}}>
                                     <span>
                                         Delivery Method
                                     </span>
@@ -160,26 +176,25 @@ class DeliveryList extends Component {
                                         {seller.delivery_method}
                                     </Header>
                                 </div>
-                                <div style={{marginTop:'.5em',fontSize:'12px',color:'gray'}}>
+                                {/* <div style={{marginTop:'.5em',fontSize:'12px',color:'gray'}}>
                                     <span>
                                         Total weight
                                     </span>
                                     <span style={{float:'right',display:'inline-block'}}>
                                         {seller.totalweight} g
                                     </span>
-                                </div>
+                                </div> */}
                                 {/* {
                                     seller.seller_delivery_cost?
                                     <div style={{marginTop:'.0em',fontSize:'12px',color:'gray'}}>
                                         <span>
-                                            delivery cost
+                                            Delivery cost
                                         </span>
                                         <span style={{float:'right'}}>
                                             Rp {seller.seller_delivery_cost},00
                                         </span>
                                     </div>
                                     : null
-
                                 } */}
                                 <div style={{marginTop:'.0em',fontSize:'12px',color:'gray'}}>
                                     <span>

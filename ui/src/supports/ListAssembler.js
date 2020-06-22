@@ -17,27 +17,35 @@ export const ListByTransaction=(list,method)=>{
                 idtransactionseller,
                 idtransaction,
                 idseller,
-                namatoko,
                 iddelivery,
-                delivery_method,
-                totalqty,
-                totalweight,
-                seller_delivery_cost,
-                seller_items_price,
-                total_price
-            }=item
-            var transactionsellerdata={
-                idtransactionseller,
-                idtransaction,
-                idseller,
+                idpackagestatus,
                 namatoko,
-                iddelivery,
                 delivery_method,
+                recipient,
                 totalqty,
                 totalweight,
                 seller_delivery_cost,
                 seller_items_price,
                 total_price,
+                package_createat,
+                package_updateat
+            }=item
+            var transactionsellerdata={
+                idtransactionseller,
+                idtransaction,
+                idseller,
+                iddelivery,
+                idpackagestatus,
+                namatoko,
+                delivery_method,
+                recipient,
+                totalqty,
+                totalweight,
+                seller_delivery_cost,
+                seller_items_price,
+                total_price,
+                package_createat,
+                package_updateat,
                 itemlist:[item]
             }
             listByTransactionSeller.push(transactionsellerdata)
@@ -113,8 +121,9 @@ export const ListByTransaction=(list,method)=>{
 }
 
 
-
-export const OrderListByTransaction=(list,method)=>{
+// REASON USING THIS ASSEMBLER
+// NEED VALUE FROM TRANSACTION SUCH AS IDUSER,USERNAME,UPDATEAT,...
+export const ListByStoreTransaction=(list)=>{
     // RECONSTRUCT LIST , BY TRANSACTION
     var listByTransaction=[]
     list.forEach((item)=>{
@@ -134,7 +143,10 @@ export const OrderListByTransaction=(list,method)=>{
                 idstatus,
                 createat,
                 updateat,
+
                 idtransactionseller,
+                idseller,
+                namatoko,
                 iddelivery,
                 delivery_method,
                 totalqty,
@@ -142,6 +154,8 @@ export const OrderListByTransaction=(list,method)=>{
                 seller_delivery_cost,
                 seller_items_price,
                 total_price,
+                package_createat,
+                package_updateat
             }=item
             var transactiondata={
                 idtransaction,
@@ -151,7 +165,10 @@ export const OrderListByTransaction=(list,method)=>{
                 idstatus,
                 createat,
                 updateat,
+
                 idtransactionseller,
+                idseller,
+                namatoko,
                 iddelivery,
                 delivery_method,
                 totalqty,
@@ -159,6 +176,8 @@ export const OrderListByTransaction=(list,method)=>{
                 seller_delivery_cost,
                 seller_items_price,
                 total_price,
+                package_createat,
+                package_updateat,
                 itemlist:[item]
             }
             listByTransaction.push(transactiondata)

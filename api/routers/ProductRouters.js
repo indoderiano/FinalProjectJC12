@@ -9,6 +9,7 @@ Router.get('/get/:idproduct',ProductControllers.get)
 Router.put('/image/:idproduct',ProductControllers.addcover)
 Router.put('/image/:idproduct/:index',ProductControllers.deletecover)
 Router.put('/:idproduct',ProductControllers.edit)
+Router.put('/sold/:idproduct',ProductControllers.countSold)
 
 /////////////////////////////////////////////////////////
 // NOTE IMPORTANT

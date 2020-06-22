@@ -41,15 +41,40 @@ class TransactionList extends Component {
     // DONT FORGET TO ADD RATING ITEMS
 
     componentDidMount=()=>{
+        this.getList()
+    }
+
+    getList=()=>{
         Axios.get(`${APIURL}/transactions/user?iduser=${this.props.User.iduser}&idstatus=${[2,3,4,5,6]}`)
         .then((res)=>{
-            // console.log(res.data)
+            // console.log('get list',res.data)
 
             // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
             var listByTransaction=ListByTransaction(res.data).reverse()
             // console.log('transaction history',listByTransaction)
             this.setState({historyList:listByTransaction})
 
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+
+    onRating=(idtransactiondetail,rating)=>{
+        Axios.put(`${APIURL}/transactiondetails/${idtransactiondetail}`,{rating})
+        .then((updated)=>{
+            console.log('rating success')
+            this.getList()
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+
+    // COUNT SOLD WHEN ORDERSTATUS IS COMPLETED
+    countSold=(idproduct)=>{
+        Axios.put(`${APIURL}/products/sold/${idproduct}`)
+        .then((res)=>{
+            console.log('sold number is counted')
+            this.getList()
         }).catch((err)=>{
             console.log(err)
         })
@@ -223,8 +248,53 @@ class TransactionList extends Component {
         )
     }
 
+    renderRating=(idtransactiondetail,rating,item)=>{
+        // console.log('idtransactiondetail',idtransactiondetail)
+        // console.log('rating ',rating)
+        // console.log(item)
+        if(rating){
+            // return (
+            //     <p>asdf</p>
+            // )
+            console.log(rating)
+            var stars=[]
+            for(var i=1;i<=rating;i++){
+                stars[i]=(<Icon name='star'/>)
+            }
+
+            console.log(stars)
+            return (
+                <div style={{textAlign:'right'}}>
+                    {stars}
+                </div>
+            )
+        }else{
+            return (
+                <div style={{textAlign:'right'}}>
+                    <span style={{marginRight:'.5em'}}>Rate Order </span>
+                    <Icon name='star outline' style={{cursor:'pointer'}} onClick={()=>{
+                        this.onRating(idtransactiondetail,1)
+                    }}/>
+                    <Icon name='star outline' style={{cursor:'pointer'}} onClick={()=>{
+                        this.onRating(idtransactiondetail,2)
+                    }}/>
+                    <Icon name='star outline' style={{cursor:'pointer'}} onClick={()=>{
+                        this.onRating(idtransactiondetail,3)
+                    }}/>
+                    <Icon name='star outline' style={{cursor:'pointer'}} onClick={()=>{
+                        this.onRating(idtransactiondetail,4)
+                    }}/>
+                    <Icon name='star outline' style={{cursor:'pointer'}} onClick={()=>{
+                        this.onRating(idtransactiondetail,5)
+                    }}/>
+                </div>
+            )
+        }
+    }
+
 
     renderByOrder=(itemlist)=>{
+        // console.log('itemlist',itemlist)
         return itemlist.map((item,index)=>{
             const typeArr=isJson(item.type)
             return (
@@ -284,21 +354,47 @@ class TransactionList extends Component {
 
                                 
                             </Grid.Column>
-                            <Grid.Column width={5}>
+                            <Grid.Column width={4}>
                                 <Header as={'h4'} color='blue'>
                                     {
-                                        item.idorderstatus==2?
-                                        'Status'
-                                        :
                                         item.orderstatus_name
                                     }
                                 </Header>
                             </Grid.Column>
-                            <Grid.Column width={4} style={{textAlign:'right'}}>
-                                <Button style={{width:'100%'}}>
-                                    Return
-                                </Button>
+                            <Grid.Column width={4} style={{alignItems:'flex-end'}}>
+                                {
+                                    item.idorderstatus>=3?
+                                    this.renderRating(item.idtransactiondetail,item.rating,item)
+                                    : null
+                                }
+                                {/* <div style={{textAlign:'right',marginTop:'auto'}}>
+                                    <Header 
+                                        as={'span'} 
+                                        color='blue'
+                                        style={{
+                                            margin:'0',
+                                            fontSize:'15px',
+                                            fontWeight:'600',
+                                            cursor:'pointer'
+                                        }} 
+                                    >
+                                        return</Header>
+                                </div> */}
                             </Grid.Column>
+                            {/* <Grid.Column width={4} style={{textAlign:'right'}}>
+                                {
+                                    item.idorderstatus==3?
+                                    <>
+                                    <Button style={{width:'100%'}}>
+                                        Return
+                                    </Button>
+                                    <Button style={{width:'100%'}}>
+                                        Complete
+                                    </Button>
+                                    </>
+                                    : null
+                                }
+                            </Grid.Column> */}
                         </Grid.Row>
                     </Grid>
                 </Grid.Column>
@@ -313,11 +409,29 @@ class TransactionList extends Component {
         return sellerlist.map((seller,index)=>{
             return (
                 <Grid.Row key={index} style={{padding:'0'}}>
-                    <Grid.Column width={16} style={{marginBottom:'1em'}}>
-                        <Header as={'h3'}>{titleConstruct(seller.namatoko)}</Header>
+                    <Grid.Column width={3} style={{marginBottom:'1em'}}>
+                        <Header as={'h3'} style={{display:'inline-block'}}>{titleConstruct(seller.namatoko)}</Header>
+                    </Grid.Column>
+                    <Grid.Column width={4}>
+                        {
+                            seller.idpackagestatus==4?
+                            <div style={{display:'inline-block',fontSize:'12px'}}>
+                                Time of Arrival: {getDate(seller.package_updateat)}
+                            </div>
+                            : null
+                        }
+                    </Grid.Column>
+                    <Grid.Column width={4}>
+                        {
+                            seller.idpackagestatus==4?
+                            <div style={{display:'inline-block',fontSize:'12px'}}>
+                                Accepted By: {titleConstruct(seller.recipient)}
+                            </div>
+                            : null
+                        }
                     </Grid.Column>
 
-                    <Grid.Column width={16}>
+                    <Grid.Column width={16} style={{paddingTop:'1em'}}>
                         <Grid>
                             <Grid.Row>
                                 {this.renderByOrder(seller.itemlist)}
@@ -350,8 +464,6 @@ class TransactionList extends Component {
                                     {
                                         transaction.idstatus==2?
                                         'Waiting For Payment Verification'
-                                        : transaction.idstatus==3?
-                                        'Payment Is Verified, Wrapping Package'
                                         : titleConstruct(transaction.status_name)
                                     }
                                 </Header>

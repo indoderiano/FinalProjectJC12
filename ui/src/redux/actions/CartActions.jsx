@@ -1,4 +1,5 @@
 import {
+    CART_EMPTY,
     CART_DATA,
     CART_LIST,
     CART_CHECKOUT,
@@ -17,7 +18,6 @@ export const LoadCart=(iduser)=>{
         // GET TRANSACTION DETAILS JOIN ITEMS JOIN PRODUCT
         Axios.get(`${APIURL}/transactiondetails/item/product/seller?iduser=${iduser}`)
         .then((res)=>{
-            // console.log('transaction action',res.data)
             // dispatch({type:CART_LIST,payload:res.data})
 
             var cartlist=res.data
@@ -26,6 +26,10 @@ export const LoadCart=(iduser)=>{
             var stock=true
             var id=0
             console.log('cartlist',cartlist)
+
+            if(cartlist.length==0){
+                dispatch({type:CART_EMPTY})
+            }
     
             cartlist.forEach((td,cartlistindex)=>{
                 console.log(td)
@@ -39,6 +43,7 @@ export const LoadCart=(iduser)=>{
                         stock=false
                         id=td.iditem
 
+                        // DATA CHECK FOR STOCK
                         cartlist[cartlistindex].qtyshort=newstock.data.stock
                         
                     }

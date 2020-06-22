@@ -202,7 +202,7 @@ module.exports={
                 // ORDER IS ON CART
                 
                 var edit=req.body
-                edit.updateat=new Date()
+                edit.order_updateat=new Date()
                 
                 if(edit.qty==0){
                     edit.isdeleted=1
@@ -222,9 +222,19 @@ module.exports={
             }
         })
 
+    },
 
+    get:(req,res)=>{
+        console.log('getting transaction details...')
 
+        const{idtransactiondetail}=req.params
 
+        var sql=`select * from transactiondetails where idtransactiondetail=${idtransactiondetail}`
+        db.query(sql,(err,data)=>{
+            if(err) return res.status(500).send(err)
+
+            res.status(200).send(data[0])
+        })
     },
 
     update:(req,res)=>{
@@ -237,7 +247,7 @@ module.exports={
 
 
         var edit=req.body
-        edit.updateat=new Date()
+        edit.order_updateat=new Date()
 
         if(edit.qty==0){
             edit.isdeleted=1
@@ -250,5 +260,8 @@ module.exports={
             console.log('updated')
             res.status(200).send(updated)
         })
-    }
+    },
+
+
+
 }

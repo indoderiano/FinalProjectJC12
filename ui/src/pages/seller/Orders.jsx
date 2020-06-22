@@ -18,7 +18,8 @@ import {
     Dropdown,
     Tab,
     Menu,
-    Label
+    Label,
+    GridColumn
 } from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
 import {titleConstruct,isJson,getDate} from '../../supports/services'
@@ -36,7 +37,8 @@ class Orders extends Component {
         cancelid:0,
         reason:'',
 
-        errormessage:''
+        errormessage:'',
+        loading:false
      }
 
     componentDidMount=()=>{
@@ -44,7 +46,7 @@ class Orders extends Component {
     }
 
     onDrop=(idtransactionseller)=>{
-
+        this.setState({loading:true})
         if(!this.state.trackingcode){
             this.setState({errormessage:'Tracking Code is Empty'})
         }else{
@@ -55,6 +57,7 @@ class Orders extends Component {
             Axios.put(`${APIURL}/transactionstores/${idtransactionseller}`,update)
             .then((updated)=>{
                 console.log('order id ',idtransactionseller,' is updated')
+                this.setState({loading:false})
                 // this.props.LoadOrders() // DONT FORGET TO COMPLETE THIS
             }).catch((err)=>{
                 console.log(err)
@@ -167,7 +170,7 @@ class Orders extends Component {
                     <Grid>
                         <Grid.Row style={{paddingBottom:'0'}}>
                             <Grid.Column width={5}>
-                                {getDate(transaction.updateat)}
+                                {getDate(transaction.package_updateat)}
                             </Grid.Column>
                             <Grid.Column width={5}>
                             
@@ -185,10 +188,13 @@ class Orders extends Component {
                             </Grid.Column>
                         </Grid.Row>
                         <Grid.Row>
+                            <Grid.Column width={16} style={{marginBottom:'1em'}}>
+                                <Header as={'h4'} style={{display:'flex'}}><Icon name='user' style={{fontSize:'18px'}}/>{titleConstruct(transaction.username)}</Header>
+                            </Grid.Column>
                             <Grid.Column width={7}>
                                 {this.renderByItem(transaction.itemlist)}
                             </Grid.Column>
-                            <Grid.Column width={4}>
+                            <Grid.Column width={3}>
 
                             </Grid.Column>
                             <Grid.Column width={5}>
@@ -224,6 +230,14 @@ class Orders extends Component {
                                     : null
 
                                 }
+                                <div style={{marginTop:'.0em',fontSize:'12px',color:'gray'}}>
+                                    <span>
+                                        To
+                                    </span>
+                                    <span style={{float:'right'}}>
+                                        {titleConstruct(transaction.username)}
+                                    </span>
+                                </div>
                                 <Divider/>
                                 {
                                     transaction.idtransaction==this.state.orderid?
@@ -238,6 +252,8 @@ class Orders extends Component {
                                         primary
                                         style={{width:'100%',marginBottom:'.5em'}}
                                         onClick={()=>{this.onDrop(transaction.idtransactionseller)}}
+                                        loading={this.state.loading}
+                                        disabled={this.state.loading}
                                     >
                                         {/* <Icon name='barcode'/> */}
                                         Confirm
@@ -280,7 +296,7 @@ class Orders extends Component {
                                     </Button>
                                 }
                                 {
-                                    this.state.errormessage?
+                                    this.state.errormessage&&transaction.idtransaction==this.state.orderid?
                                     <p style={{color:'red'}}>{this.state.errormessage}</p>
                                     : null
                                 }

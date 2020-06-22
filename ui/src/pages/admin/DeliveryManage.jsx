@@ -1,6 +1,6 @@
 import React ,{Component} from 'react'
 import Axios from 'axios'
-import {APIURL} from '../supports/ApiUrl'
+import {APIURL} from '../../supports/ApiUrl'
 import {
     Grid,
     Header,
@@ -20,11 +20,10 @@ import {
     Menu,
     Label
 } from 'semantic-ui-react'
-import Payment from './Payment'
 import {Link} from 'react-router-dom'
-import {titleConstruct,isJson,getDate} from '../supports/services'
-import {ListByTransaction,ListByStoreTransaction} from '../supports/ListAssembler'
-import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../redux/actions'
+import {titleConstruct,isJson,getDate} from '../../supports/services'
+import {ListByTransaction,ListByStoreTransaction} from '../../supports/ListAssembler'
+import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -34,12 +33,20 @@ class DeliveryList extends Component {
     state = { 
         deliveryList:[],
         ismodal:false,
-        modaltransaction:{}
+        modaltransaction:{},
+        packageid:0,
+        receiver:'',
+        errormessage:'',
+        loading:false
      }
 
      componentDidMount=()=>{
-        // GET TRANSACTIONSELLER LIST WHERE IDUSER,PACKAGESTATUS 
-        Axios.get(`${APIURL}/transactionstores/user?iduser=${this.props.User.iduser}&idpackagestatus=${[3]}`)
+        this.getList()
+    }
+
+    getList=()=>{
+        // GET TRANSACTIONSELLER LIST WHERE ALL USER AND IDPACKAGESTATUS= 
+        Axios.get(`${APIURL}/transactionstores/admin?idpackagestatus=${[3]}`)
         .then((res)=>{
             console.log(res.data)
 
@@ -51,6 +58,44 @@ class DeliveryList extends Component {
         }).catch((err)=>{
             console.log(err)
         })
+    }
+
+    onDelivered=(idtransactionseller,orderlist)=>{
+        this.setState({loading:true})
+        if(!this.state.receiver){
+            this.setState({errormessage:'Input The Receiver Name'})
+        }else{
+            var update={
+                idpackagestatus:4,
+                recipient:this.state.receiver
+            }
+            Axios.put(`${APIURL}/transactionstores/${idtransactionseller}`,update)
+            .then((updated)=>{
+                console.log('store transaction id ',idtransactionseller,' is updated')
+                
+                // UPDATE TRANSACTIONDETAILS ORDERSTATUS
+                orderlist.forEach((order,index)=>{
+                    var update={
+                        idorderstatus:3,
+                        order_updateat:new Date()
+                    }
+                    Axios.put(`${APIURL}/transactiondetails/${order.idtransactiondetail}`,update)
+                    .then((updated)=>{
+                        console.log('order id ',order.idtransactiondetail,' is updated')
+                        // last cycle
+                        if(orderlist.length-1==index){
+                            this.setState({loading:false})
+                            this.getList()
+                            // this.props.LoadOrders() // DONT FORGET TO COMPLETE THIS
+                        }
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
+                })
+            }).catch((err)=>{
+                console.log(err)
+            })
+        }
     }
 
     renderByItem=(itemlist)=>{
@@ -134,9 +179,9 @@ class DeliveryList extends Component {
                         <Grid.Row>
 
                             <Grid.Column width={16} style={{marginBottom:'0em'}}>
-                                <Icon name='warehouse' style={{fontSize:'18px',marginRight:'.5em',verticalAlign:'2px'}}/>
-                                <Header as={'h4'} style={{display:'inline-block',marginRight:'.5em'}}>{titleConstruct(seller.namatoko)}</Header>
-                                <span style={{fontSize:'12px',color:'gray'}}>{getDate(seller.package_updateat)}</span>
+                                {/* <Icon name='warehouse' style={{fontSize:'18px',marginRight:'.5em',verticalAlign:'2px'}}/>
+                                <Header as={'h4'} style={{display:'inline-block',marginRight:'.5em'}}>{titleConstruct(seller.namatoko)}</Header> */}
+                                <span style={{fontSize:'12px'}}>{getDate(seller.package_updateat)}</span>
                             </Grid.Column>
 
                             <Grid.Column width={7}>
@@ -191,6 +236,14 @@ class DeliveryList extends Component {
                                 </div>
                                 <div style={{marginTop:'.0em',fontSize:'12px',color:'gray'}}>
                                     <span>
+                                        From
+                                    </span>
+                                    <span style={{float:'right'}}>
+                                        {titleConstruct(seller.namatoko)}
+                                    </span>
+                                </div>
+                                <div style={{marginTop:'.0em',fontSize:'12px',color:'gray'}}>
+                                    <span>
                                         To
                                     </span>
                                     <span style={{float:'right'}}>
@@ -198,6 +251,43 @@ class DeliveryList extends Component {
                                     </span>
                                 </div>
                                 <Divider/>
+                                {
+                                    seller.idtransactionseller==this.state.packageid?
+                                    <>
+                                    Package was accepted by 
+                                    <Input
+                                        placeholder='Mba Inem'
+                                        style={{width:'100%',marginBottom:'.5em'}}
+                                        value={this.state.receiver}
+                                        onChange={(e)=>{this.setState({receiver:e.target.value})}}
+                                    />
+                                    <Button 
+                                        primary
+                                        style={{width:'100%',marginBottom:'.5em'}}
+                                        loading={this.state.loading}
+                                        disabled={this.state.loading}
+                                        onClick={()=>{this.onDelivered(seller.idtransactionseller,seller.itemlist)}}
+                                        // onClick={()=>{this.onDrop(transaction.idtransactionseller)}}
+                                    >
+                                        {/* <Icon name='barcode'/> */}
+                                        Confirm
+                                    </Button>
+                                    </>
+                                    :
+                                    <Button 
+                                        primary
+                                        style={{width:'100%',marginBottom:'.5em'}}
+                                        onClick={()=>{this.setState({packageid:seller.idtransactionseller})}}
+                                        // onClick={()=>{this.setState({orderid:transaction.idtransaction,trackingcode:'',cancelid:0,errormessage:''})}}
+                                    >
+                                        The Package Has Been Delivered
+                                    </Button>
+                                }
+                                {
+                                    this.state.errormessage&&seller.idtransactionseller==this.state.packageid?
+                                    <p style={{color:'red'}}>{this.state.errormessage}</p>
+                                    : null
+                                }
                             </Grid.Column>
                         </Grid.Row>
 

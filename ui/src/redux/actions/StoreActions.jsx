@@ -3,7 +3,7 @@ import {
 } from '../type'
 import Axios from 'axios';
 import { APIURL } from '../../supports/ApiUrl';
-import {OrderListByTransaction} from '../../supports/ListAssembler'
+import {ListByStoreTransaction} from '../../supports/ListAssembler'
 
 
 export const LoadOrders=(iduser)=>{
@@ -22,7 +22,7 @@ export const LoadOrders=(iduser)=>{
                 console.log(res.data)
                 
                 // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
-                var listByTransaction=OrderListByTransaction(res.data)
+                var listByTransaction=ListByStoreTransaction(res.data)
     
     
                 var data={
