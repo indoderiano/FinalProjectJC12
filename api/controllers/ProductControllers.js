@@ -250,7 +250,7 @@ module.exports={
             })
         }) 
 
-    }
+    },
 
     countSold:(req,res)=>{
         console.log('counting rating and sold data...')
