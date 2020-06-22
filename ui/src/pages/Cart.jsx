@@ -28,17 +28,76 @@ class Cart extends Component {
         items:[],
 
         editid:0,
-        editmessage:''
+        editmessage:'',
+
+        // stock is not enough
+        iditemshortlist:[],
+        qtyshort:[]
      }
 
     componentDidMount=()=>{
         // this.props.LoadCart()
+
+        // DONT FORGET TO CHECK IF STOCK IS GOOD BEFORE CHECKOUT
+        console.log('cart componentdidmount')
+
+        this.checkStock()
+        
+    }
+
+    checkStock=()=>{
+
+        // CHECK ITEM STOCK
+
+        var stock=true
+        var id=0
+
+        this.props.Cart.list.forEach((seller,checkoutindex)=>{
+            seller.itemlist.forEach((order,sellerindex)=>{
+                // iditem
+                // qty
+
+                Axios.put(`${APIURL}/items/checkstock/${order.iditem}`,{qty:order.qty})
+                .then((newstock)=>{
+                    console.log(`item id ${order.iditem} newstock is ${newstock.data.stock}`)
+                    if(newstock.data.stock<0){
+                        stock=false
+                        id=order.iditem
+
+                        var listiditem=this.state.iditemshortlist.concat(order.iditem)
+                        var qtyshort=newstock.data.stock
+
+                        this.setState({iditemshortlist:listiditem,qtyshort})
+                        
+                    }
+
+                    // LAST CYCLE
+                    // AFTER ALL STOCK IS CHECKED
+                    if(this.props.Cart.list.length-1==checkoutindex&&seller.itemlist.length-1==sellerindex){
+
+                        if(stock){
+                            // STOCK IS GOOD
+                            
+                        }else{
+                            // RELOAD
+                            console.log('stock is not enough')
+                            console.log(this.state.iditemshortlist)
+                            this.props.LoadCart(this.props.User.iduser)
+
+                        }
+                    }
+
+                }).catch((err)=>{
+                    console.log(err)
+                })
+            })
+        })
     }
 
     updateDetails=(idtransactiondetail,edit)=>{
         console.log('edit details')
 
-        Axios.put(`${APIURL}/transactiondetails/${idtransactiondetail}`,edit)
+        Axios.post(`${APIURL}/transactiondetails/${idtransactiondetail}`,edit)
         .then((res)=>{
             console.log('details updated')
             this.props.LoadCart(this.props.User.iduser)
@@ -47,7 +106,6 @@ class Cart extends Component {
             console.log(err)
         })
     }
-
     
 
     renderItems=()=>{
@@ -124,6 +182,15 @@ class Cart extends Component {
                         {
                             seller.itemlist.map((item,i)=>{
                                 const typeArr=isJson(item.type)
+
+                                // CHECK STOCK
+                                // UNSELECT ORDER
+                                if(typeof item.qtyshort !== 'undefined'){
+                                    if(item.isselected){
+                                        this.updateDetails(item.idtransactiondetail,{isselected:false})
+                                    }
+                                }
+
                                 return (
                                     <Grid.Row key={i} style={{paddingTop:'0'}}>
                                         <Grid.Column width={16}>
@@ -147,7 +214,8 @@ class Cart extends Component {
                                                     backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
                                                     backgroundSize:'cover',
                                                     backgroundPosition:'center',
-                                                    position:'relative'
+                                                    position:'relative',
+                                                    opacity:typeof item.qtyshort !== 'undefined'?'.7':'1'
                                                 }}
                                                 // as={Link}
                                                 // to={`/product/${item.idproduct}`}
@@ -167,6 +235,16 @@ class Cart extends Component {
                                             </div>
                                         </Grid.Column>
                                         <Grid.Column width={6} style={{display:'flex',flexDirection:'column'}}>
+                                            {/* CHECK STOCK */}
+                                            {/* MESSAGE */}
+                                            {
+                                                typeof item.qtyshort == 'undefined'?
+                                                null
+                                                :item.qtyshort==-item.qty?
+                                                <p style={{color:'red',margin:'0'}}>Stock is empty</p>
+                                                :
+                                                <p style={{color:'red',margin:'0'}}>Quantity is short by {-item.qtyshort}</p>
+                                            }
                                             <Header as={'h4'} style={{marginBottom:'0em',flexBasis:'1em',opacity:item.isselected?'1':'.8'}}>{item.product_name}</Header>
                                             <p style={{margin:'0 0 .5em',fontSize:'12px',flexBasis:'.8em',opacity:item.isselected?'1':'.8'}}>
                                                 {
@@ -237,7 +315,11 @@ class Cart extends Component {
 
                                             }
                                         </Grid.Column>
-                                        <Grid.Column width={4} style={{display:'flex',alignItems:'flex-end'}}>
+                                        <Grid.Column width={4} style={{
+                                            display:'flex',
+                                            // display:typeof item.qtyshort !== 'undefined'?'none':'flex',
+                                            alignItems:'flex-end'
+                                            }}>
                                             <div style={{display:'inline-block',marginLeft:'auto',fontSize:'16px'}}>
                                                 <Icon 
                                                     name='trash' 
@@ -267,6 +349,7 @@ class Cart extends Component {
                                                 <Icon 
                                                     name='plus circle' 
                                                     color='blue' 
+                                                    disabled={typeof item.qtyshort !== 'undefined'}
                                                     style={{margin:'0 0 0 .3em',cursor:'pointer'}}
                                                     onClick={()=>{this.updateDetails(item.idtransactiondetail,{qty:item.qty+1})}}
                                                 />

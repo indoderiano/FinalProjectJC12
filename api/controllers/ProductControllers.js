@@ -5,27 +5,20 @@ const fs=require('fs')
 
 module.exports={
     get:(req,res)=>{
-        var sql=`select p.*,c.isdeleted, c.name as namecategory
-        from products p join categories c on p.idcategory=c.idcategory
-        where c.isdeleted=0`
+        console.log('getting product...')
+        console.log(req.params)
+        const {idproduct}=req.params
+
+        var sql=`select * from products where idproduct=${idproduct}`
         db.query(sql,(err,product)=>{
-            // console.log(product)
-            if (err) res.status(500).send(err)
-            sql=`Select idcategory,name from categories`
-            db.query(sql,(err,category)=>{
-                if (err) res.status(500).send(err)
-                return res.send({product,category})
-            })
-            console.log('getting product...')
-            console.log(req.params)
-            const {idproduct}=req.params
-            var sql=`select * from products where idproduct=${idproduct}`
-            db.query(sql,(err,product)=>{
-                if(err) return res.status(500).send(err)
-                res.status(200).send(product[0])
-            })
+            if(err) return res.status(500).send(err)
+
+            console.log('succeed')
+            console.log('')
+            res.status(200).send(product[0])
         })
     },
+    
 
     // CURRENTLY NOT BEING USED
     // create:(req,res)=>{
@@ -270,6 +263,28 @@ module.exports={
             })
         }) 
 
+    },
+
+    countSold:(req,res)=>{
+        console.log('counting rating and sold data...')
+
+        const {idproduct}=req.params
+
+        var sql=`select * from transactiondetails td
+        join items i on i.iditem=td.iditem
+        join products p on p.idproduct=i.idproduct
+        where p.idproduct=${idproduct} and idorderstatus in (3,4)`
+
+        db.query(sql,(err,count)=>{
+            if(err) return res.status(500).send(err)
+
+            sql=`update products set ? where idproduct=${idproduct}`
+            db.query(sql,{sold:count.length},(err,updated)=>{
+                if(err) return res.status(500).send(err)
+                console.log('sold number counter')
+                res.status(200).send(updated)
+            })
+        })
     }
 
 }

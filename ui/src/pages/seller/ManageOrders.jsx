@@ -1,6 +1,6 @@
 import React ,{Component} from 'react'
 import Axios from 'axios'
-import {APIURL} from '../supports/ApiUrl'
+import {APIURL} from '../../supports/ApiUrl'
 import {
     Grid,
     Header,
@@ -20,12 +20,11 @@ import {
     Menu,
     Label
 } from 'semantic-ui-react'
-import PaymentList from './PaymentList'
-import TransactionHistory from './TransactionHistory'
-import OnTheWay from './TransactionOnDelivery'
+import Orders from './Orders'
+import PackageOnDelivery from './PackageOnDelivery'
 import {Link} from 'react-router-dom'
-import {titleConstruct,isJson} from '../supports/services'
-import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../redux/actions'
+import {titleConstruct,isJson} from '../../supports/services'
+import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -47,23 +46,19 @@ class Transactions extends Component {
             {
                 menuItem: (
                   <Menu.Item key='payment'>
-                    Payment Due
+                    Orders
                     {
-                        this.props.Payment.total?
-                        <Label color='blue'>{this.props.Payment.total}</Label>
+                        this.props.Invoices.total?
+                        <Label color='blue'>{this.props.Store.total}</Label>
                         : null
                     }
                   </Menu.Item>
                 ),
-                render: () => <Tab.Pane><PaymentList/></Tab.Pane>,
+                render: () => <Tab.Pane><Orders/></Tab.Pane>,
             },
             {
-              menuItem: { key: 'history', icon: 'list ul', content: 'History Transactions' },
-              render: () => <Tab.Pane><TransactionHistory/></Tab.Pane>,
-            },
-            {
-                menuItem: { key: 'delivery', icon: 'shipping fast', content: 'Items On Delivery' },
-                render: () => <Tab.Pane><OnTheWay/></Tab.Pane>,
+                menuItem: { key: 'delivery', icon: 'shipping fast', content: 'Package On Delivery' },
+                render: () => <Tab.Pane><PackageOnDelivery/></Tab.Pane>,
             },
           ]
 
@@ -81,7 +76,9 @@ const MapstatetoProps=(state)=>{
     return {
         User: state.Auth,
         Cart: state.Cart,
-        Payment: state.Payment
+        Payment: state.Payment,
+        Store: state.Store,
+        Invoices: state.Invoices
     }
 }
 

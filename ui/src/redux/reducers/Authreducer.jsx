@@ -15,7 +15,8 @@ const INITIAL_STATE={
     isverified:0,
     email:'',
     address:'',
-    isseller:''
+    isseller:false,
+    isadmin:false,
     
 }
 

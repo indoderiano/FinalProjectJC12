@@ -26,7 +26,8 @@ const {
     TransactionDetailsRouters,
     SellerRouters, 
     AdminRouters,
-    WishlistRouters
+    WishlistRouters,
+    TransactionSellerRouters,
 }=require('./routers')
 const { db } = require('./connections/mysql')
 
@@ -40,6 +41,7 @@ app.use('/admin',AdminRouters)
 app.use('/wishlist',WishlistRouters)
 
 
+app.use('/transactionstores',TransactionSellerRouters)
 
 app.use(express.static('public')) // access to public folder
 

@@ -117,6 +117,7 @@ class ProductItems extends Component {
         Axios.put(`${APIURL}/products/image/${this.state.product.idproduct}/${index}`,oldcover)
         .then((res)=>{
             console.log('berhasil delete cover')
+            this.setState({deletecoverimageindex:-1})
             this.getProduct()
         }).catch((err)=>{
             console.log(err)
@@ -204,7 +205,6 @@ class ProductItems extends Component {
             })
         }
 
-
     }
 
     onDeletePhoto=(iditem,index,oldimage)=>{
@@ -212,6 +212,7 @@ class ProductItems extends Component {
         Axios.put(`${APIURL}/items/image/${iditem}/${index}`,oldimage)
         .then((res)=>{
             console.log('berhasil delete image')
+            this.setState({deleteimageiditem:-1,deleteimageindex:-1})
             this.getItems()
         }).catch((err)=>{
             console.log(err)
@@ -221,8 +222,8 @@ class ProductItems extends Component {
     onSubmit=()=>{
 
         var edit={
-            price:this.state.price,
-            stock:this.state.stock
+            price:this.state.price?this.state.price:0,
+            stock:this.state.stock?this.state.stock:0
         }
 
         Axios.put(`${APIURL}/items/${this.state.editid}`,edit)
