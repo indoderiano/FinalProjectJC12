@@ -59,14 +59,13 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
 
 
   const visitorAccess=!Loading&&!User.islogin
-  const memberAccess=!Loading&&User.islogin
-  const sellerAccess=!Loading&&User.isseller
+  const memberAccess=!Loading&&User.islogin&&User.isverified // only true if not loading,islogin,and isverified
+  const sellerAccess=!Loading&&User.isseller&&User.isverified
   
 
   if(Loading){
     return <div><center><h3>Loading...</h3><img width="400px" src="https://static.boredpanda.com/blog/wp-content/uploads/2016/07/totoro-exercising-100-days-of-gifs-cl-terryart-2-578f80ec7f328__605.gif"/></center></div>
   }
-
   
   return (
     <div>
@@ -81,19 +80,18 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/' exact component={Home}/>
         <Route path='/login' exact component={Login}/>
         <Route path='/register' exact component={Register}/>
-        <Route path='/forgotpassword' exact component={Forgotpass}/>
-        <Route path='/forgotpassword/:token' exact component={ChangePass}/>
-        <Route path='/verification' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
-        <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
+        <Route path='/forgotpassword' exact component={memberAccess?Forgotpass:Loading?Home:()=><Redirect to='/'/>}/>
+        <Route path='/forgotpassword/:token' exact component={memberAccess?ChangePass:Loading?Home:()=><Redirect to='/'/>}/>
+        <Route path='/verification' exact component={User.islogin?Verification:Loading?Verification:()=><Redirect to='/'/>}/>
+        <Route path='/verification/:token' exact component={User.islogin?Verification:Loading?Verification:()=><Redirect to='/'/>}/>
         
 
-
-
-        <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:()=><Redirect to='/'/>}/>
-        <Route path='/seller/product/add' exact component={sellerAccess?AddProduct:Loading?Home:()=><Redirect to='/'/>}/>
-        <Route path='/seller/product/:idproduct' exact component={sellerAccess?ProductItems:Loading?Home:()=><Redirect to='/'/>}/>
+        <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
+        <Route path='/seller/product/add' exact component={sellerAccess?AddProduct:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
+        <Route path='/seller/product/:idproduct' exact component={sellerAccess?ProductItems:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
+        
         <Route path='/product/:idproduct' exact component={Product}/>
-        <Route path='/cart' exact component={visitorAccess?()=><Redirect to='/'/>:Cart}/>
+        <Route path='/cart' exact component={memberAccess?Cart:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>
         <Route path='/checkout' exact component={visitorAccess?()=><Redirect to='/'/>:Checkout}/>
 
         <Route path='/transactions' exact component={visitorAccess?()=><Redirect to='/'/>:Transactions}/>

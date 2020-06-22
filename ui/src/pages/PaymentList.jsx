@@ -18,12 +18,13 @@ import {
     Dropdown,
     Tab,
     Menu,
-    Label
+    Label,
+    Modal
 } from 'semantic-ui-react'
 import Payment from './Payment'
 import {Link} from 'react-router-dom'
 import {titleConstruct,isJson} from '../supports/services'
-import {LoadPayment} from '../redux/actions'
+import {LoadPayment,LoadCart} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -38,7 +39,8 @@ class PaymentList extends Component {
         errormessage:'',
         iddelete:0,
         isuploaded:false,
-        timeout:''
+        timeout:'',
+
      }
 
     componentDidMount=()=>{
@@ -77,7 +79,7 @@ class PaymentList extends Component {
 
                 var delay = setTimeout(()=>{
                     this.setState({isuploaded:false})
-                },3000)
+                },4000)
                 this.setState({isuploaded:true,timeout:delay})
 
             }).catch((err)=>{
@@ -93,6 +95,8 @@ class PaymentList extends Component {
             console.log('transaction '+idtransaction+' cancelled')
             
             this.props.LoadPayment(this.props.User.iduser)
+            
+
         }).catch((err)=>{
             console.log(err)
         })
@@ -108,8 +112,8 @@ class PaymentList extends Component {
         // RE-ADD ITEMS BACK TO CART
         // DONT FORGET TO MAKE SURE NOT TO ADD TO DELETED ORDER
         console.log('transaction',transaction)
-        transaction.sellerlist.forEach((seller)=>{
-            seller.itemlist.forEach((item)=>{
+        transaction.sellerlist.forEach((seller,i)=>{
+            seller.itemlist.forEach((item,j)=>{
                 // 
                 var td={
                     iduser: this.props.User.iduser,
@@ -119,8 +123,11 @@ class PaymentList extends Component {
                 }
                 Axios.post(`${APIURL}/transactiondetails`,td)
                 .then((res)=>{
-                    //
-                    
+                    // last cycle
+                    if(transaction.sellerlist.length-1==i&&seller.itemlist.length-1==j){
+                        // ALL ITEMS ARE BACK TO CART
+                        this.props.LoadCart(this.props.User.iduser)
+                    }
                 }).catch((err)=>{
                     console.log(err)
                 })
@@ -416,24 +423,26 @@ class PaymentList extends Component {
                 {/* MESSAGE AFTER UPLOAD */}
                 {
                     this.state.isuploaded?
-                    <Message 
-                        style={{
-                            position:'fixed',
-                            top:'50%',
-                            left:'50%',
-                            transform: 'translate(-50%,-50%)',
-                            // color:'green'
-                        }}
-                        color='blue'
-                    >
-                        <p>
-                        Your Payment Proof Is Uploaded
-                        </p>
-                        <p>
-                            Your Order Will Be Processed After Your Payment Has Been Verified 
-                        </p>
-                        {/* <Icon name='check'/> */}
-                    </Message>
+                    <Modal open={this.state.isuploaded}>
+                        <Message 
+                            style={{
+                                position:'fixed',
+                                top:'50%',
+                                left:'50%',
+                                transform: 'translate(-50%,-50%)',
+                                // color:'green'
+                            }}
+                            color='blue'
+                        >
+                            <p>
+                            Your Payment Proof Is Uploaded
+                            </p>
+                            <p>
+                                Your Order Will Be Processed After Your Payment Has Been Verified 
+                            </p>
+                            {/* <Icon name='check'/> */}
+                        </Message>
+                    </Modal>
                     : null
                 }
             </Container>
@@ -450,4 +459,4 @@ const MapstatetoProps=(state)=>{
 }
 
  
-export default connect(MapstatetoProps,{LoadPayment}) (PaymentList);
+export default connect(MapstatetoProps,{LoadPayment,LoadCart}) (PaymentList);
