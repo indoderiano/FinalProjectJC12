@@ -23,6 +23,7 @@ export const LoginUser=({username,password})=>{
                     dispatch({type:USER_LOGIN_SUCCESS,payload:res.data})
 
                     // ALL INITIAL REDUX FUNCTION
+                    // DONT FORGET
                     dispatch(LoadCart(res.data.iduser))
                 }else{
                     dispatch({type:USER_LOGIN_FAILED,payload:'Account is not recognized!'})

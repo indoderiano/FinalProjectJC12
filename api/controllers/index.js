@@ -5,6 +5,8 @@ const TransactionControllers=require('./TransactionControllers')
 const TransactionDetailsControllers=require('./TransactionDetailsControllers')
 const SellerControllers=require('./SellerControllers')
 const AdminControllers=require('./AdminControllers')
+const TransactionSellerControllers=require('./TransactionSellerControllers')
+
 module.exports={
     UserControllers,
     ProductControllers,
@@ -12,5 +14,6 @@ module.exports={
     TransactionControllers,
     TransactionDetailsControllers,
     SellerControllers,
-    AdminControllers
+    AdminControllers,
+    TransactionSellerControllers
 }

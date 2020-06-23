@@ -49,6 +49,7 @@ class Product extends Component {
         // MESSAGES
         err:'',
         buy:false,
+        qtymessage:'',
 
         // timeout
         timeout:''
@@ -105,9 +106,21 @@ class Product extends Component {
         // if item is selected
         console.log(this.state.itemselect)
 
-        if(!this.state.itemselect.iditem){
+        if(this.state.itemselect.iduser==this.props.User.iduser){
+
+            this.setState({err:'You cannot buy your own product'})
+
+        }else if(!this.state.itemselect.iditem){
 
             this.setState({err:'Item is not selected'})
+
+        }else if(!this.state.itemselect.stock){
+
+            this.setState({err:'Stock is empty'})
+
+        }else if(!this.state.itemselect.price){
+
+            this.setState({err:'Item is not available'})
 
         }else if( this.state.qty=='' || this.state.qty==0 || !this.state.qty>0 ){
 
@@ -218,17 +231,20 @@ class Product extends Component {
         // }
 
         for(var i=0;i<this.state.items.length;i++){
+            var image=this.isJson(this.state.items[i].image)
 
+            
             // get image item order
             var order={
                 iditem: this.state.items[i].iditem,
-                index: imagecover.length+itemimages.length
+                index: image.length?imagecover.length+itemimages.length:0
             }
             itemimageorder.push(order)
 
             // merge image
-            var image=this.isJson(this.state.items[i].image)
             itemimages=itemimages.concat(image)
+
+            console.log('itemimages',itemimages)
 
         }
 
@@ -243,6 +259,8 @@ class Product extends Component {
 
         //counting maxorder
         var maxorder=imageList.length-slidercount
+
+        console.log('itemimageorder',itemimageorder)
 
         this.setState({
             imageList:imageList,
@@ -326,7 +344,8 @@ class Product extends Component {
                             width:'100%',
                             paddingTop:'80%',
                             backgroundImage:`url(${APIURL+image})`,
-                            backgroundSize:'cover',
+                            backgroundSize:'contain',
+                            backgroundRepeat:'no-repeat',
                             backgroundPosition:'center',
                             borderRadius:'4px',
                             // border:
@@ -433,7 +452,8 @@ class Product extends Component {
                                         width:'100%',
                                         paddingTop:'75%',
                                         backgroundImage:`url(${APIURL+this.state.imageshow})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                     }}
                                 />
@@ -524,6 +544,7 @@ class Product extends Component {
                                     basic
                                     style={{height:'100%',margin:'0 .5em'}}
                                     onClick={()=>{
+                                        this.setState({qtymessage:''})
                                         if(this.state.qty==0||this.state.qty==''||this.state.qty==null||this.state.qty==undefined){
                                             this.setState({qty:0})
                                         }else{
@@ -551,18 +572,32 @@ class Product extends Component {
                                 />
                                 <Button
                                     basic
-                                    style={{height:'100%',margin:'0 .5em'}}
+                                    style={{height:'100%',margin:'0 1.5em 0 .5em'}}
                                     onClick={()=>{
+                                        // CHECK STOCK
+                                        if(this.state.itemselect.stock<this.state.qty+1){
+                                            this.setState({qtymessage:'Stock is not enough'})
+                                        }else{
+                                            this.setState({qtymessage:''})
+                                        }
+                                        // ADD QTY
                                         if(this.state.qty==''||this.state.qty==null||this.state.qty==undefined){
                                             this.setState({qty:1})
                                         }else{
                                             this.setState({qty:this.state.qty+1})
                                         }
                                     }}
+                                    disabled={this.state.itemselect.stock<this.state.qty}
                                 >
                                     +
                                 </Button>
-
+                                {
+                                    this.state.qtymessage?
+                                    <div style={{display:'inline-block'}}>
+                                        <Message style={{position:'absolute',top:'0',color:'red'}}>{this.state.qtymessage}</Message>
+                                    </div>
+                                    : null
+                                }
                             </Grid.Column>
                         </Grid.Row>
 

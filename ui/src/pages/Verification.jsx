@@ -11,39 +11,46 @@ import { Redirect } from 'react-router-dom'
 class Verification extends Component {
     state = { 
         message: 'wait...',
-        redirect: false
+        redirect: false,
+        loading: false,
      }
 
     componentDidMount=()=>{
-        var token=this.props.match.params.token
 
-        if(!token){
-            this.setState({message:'An Email verification has been sent to your email, click the verification link to verify your account'})
+        if(this.props.User.isverified){
+            this.setState({message:'Your Account Is Already Verified'})
         }else{
-            Axios.put(`${APIURL}/users/verify`,{token})
-            .then((res)=>{
-                if(res.data.status){
-                    this.setState({message:'Email is verified, you will be redirected to home page...'})
+            var token=this.props.match.params.token
+
+            if(!token){
+                this.setState({message:'An Email verification has been sent to your email, click the verification link to verify your account'})
+            }else{
+                Axios.put(`${APIURL}/users/verify`,{token})
+                .then((res)=>{
+
                     // ACTION KEEPLOGIN
                     this.props.KeepLogin(res.data.update)
-                    // WILL AUTOMATICALLY REDIRECT TO HOMEPAGE
-                    setTimeout(()=>{
-                        this.setState({redirect:true})
-                    },2000)
-                }else{
-                    this.setState({message:res.data.message})
-                }
-            }).catch((err)=>{
-                console.log(err)
-            })
+                    this.setState({message:'Your Account Has been verified, Enjoy our product'})
+
+                }).catch((err)=>{
+                    console.log(err)
+                })
+            }
         }
     }
 
     onResend=()=>{
-        Axios.post(`${APIURL}/users/resendmail`,{userid:this.props.User.userid})
+        this.setState({loading:true})
+        var datauser={
+            iduser:this.props.User.iduser,
+            username:this.props.User.username,
+            email:this.props.User.email
+        }
+        Axios.post(`${APIURL}/users/resendmail`,datauser)
         .then((res)=>{
-            this.setState({message:'Resend Email berhasil'})
+            this.setState({message:'Resend Email berhasil',loading:false})
         }).catch((err)=>{
+            this.setState({loading:false})
             console.log(err)
         })
     }
@@ -56,9 +63,19 @@ class Verification extends Component {
                 <Message style={{marginBottom:'50px'}}>
                     {this.state.message}
                 </Message>
-                <Button primary onClick={this.onResend}>
-                    Resend Email
-                </Button>
+
+                {
+                    !this.props.User.isverified?
+                    <Button 
+                        primary 
+                        onClick={this.onResend}
+                        loading={this.state.loading}
+                        disabled={this.state.loading}
+                    >
+                        Resend Email
+                    </Button>
+                    : null
+                }
 
                 {
                     this.state.redirect?

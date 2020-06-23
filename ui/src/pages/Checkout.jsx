@@ -51,9 +51,7 @@ class Checkout extends Component {
         })
     }
 
-    onClickPayment=()=>{
-        console.log(this.props.Cart)
-    }
+    
 
     renderDeliveryList=(index)=>{
         const list=this.state.delivery.map((del,index)=>{
@@ -152,7 +150,8 @@ class Checkout extends Component {
                                                             style={{
                                                                 paddingTop:'80%',
                                                                 backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                                                backgroundSize:'cover',
+                                                                backgroundSize:'contain',
+                                                                backgroundRepeat:'no-repeat',
                                                                 backgroundPosition:'center',
                                                                 position:'relative'
                                                             }}
@@ -335,6 +334,7 @@ class Checkout extends Component {
                                                 disabled={this.props.Cart.ischeckout?false:true}
                                                 onClick={()=>{
                                                     this.props.CountTotalCharge()
+                                                    console.log(this.props.Cart)
                                                     // this.props.CountTotalPayment()
                                                 }}
                                             >

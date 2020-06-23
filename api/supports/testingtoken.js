@@ -10,12 +10,12 @@ const token2 = jwt.sign(data2, "shifu", { expiresIn : '5000' })
 
 console.log(token2)
 
-var tokenid='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImlhdCI6MTU4NzkzMjE4MiwiZXhwIjoxNTg3OTM5MzgyfQ.Pa6XrAYGJZQp4uNdkfgBJ5oAGog45MzOB80Z3GpXv2U'
+var tokenid='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1OTI4MDkwNTEsImV4cCI6MTU5Mjg5NTQ1MX0.7bSQ9aqNXO3dGzVWorn0zmrOGZ3InBwG_VEEm4u_m7Y'
 
 
 setTimeout(()=>{
     
-    jwt.verify(token2, "shifu", (error, decoded) => {
+    jwt.verify(tokenid, "puripuriprisoner", (error, decoded) => {
         if (error) {
             console.log('verify fail')
             // return res.status(401).json({ message: "User not authorized.", error: "User not authorized." });

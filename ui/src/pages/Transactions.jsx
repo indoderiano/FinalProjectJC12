@@ -21,6 +21,8 @@ import {
     Label
 } from 'semantic-ui-react'
 import PaymentList from './PaymentList'
+import TransactionHistory from './TransactionHistory'
+import OnTheWay from './TransactionOnDelivery'
 import {Link} from 'react-router-dom'
 import {titleConstruct,isJson} from '../supports/services'
 import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../redux/actions'
@@ -40,11 +42,11 @@ class Transactions extends Component {
 
     
     render() { 
-        console.log(this.props.Payment)
+        // console.log(this.props.Payment)
         const panes = [
             {
                 menuItem: (
-                  <Menu.Item key='messages'>
+                  <Menu.Item key='payment'>
                     Payment Due
                     {
                         this.props.Payment.total?
@@ -56,8 +58,12 @@ class Transactions extends Component {
                 render: () => <Tab.Pane><PaymentList/></Tab.Pane>,
             },
             {
-              menuItem: { key: 'users', icon: 'users', content: 'All Transactions' },
-              render: () => <Tab.Pane>Tab 1 Content</Tab.Pane>,
+              menuItem: { key: 'history', icon: 'list ul', content: 'History Transactions' },
+              render: () => <Tab.Pane><TransactionHistory/></Tab.Pane>,
+            },
+            {
+                menuItem: { key: 'delivery', icon: 'shipping fast', content: 'Items On Delivery' },
+                render: () => <Tab.Pane><OnTheWay/></Tab.Pane>,
             },
           ]
 
