@@ -81,16 +81,7 @@ class Checkout extends Component {
                             checkout[index].seller_delivery_cost=Math.ceil(checkout[index].totalweight/del.per_weight)*del.delivery_cost
                         }
                     }
-                    
-                    // console.log(checkout)
-
                     this.props.UpdateCheckout(checkout)
-
-
-                    // UPDATE CART DATA
-
-
-                    
                 }}
             />
         )
