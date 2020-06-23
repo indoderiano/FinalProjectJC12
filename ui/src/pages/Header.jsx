@@ -21,7 +21,7 @@ class MainHeader extends Component {
               pointing={!this.props.fixed}
               secondary={!this.props.fixed}
               size={this.props.size}
-              style={{backgroundColor:'rgb(27, 28, 29)',margin:'0',padding:'14px 0 14px'}}
+              style={{backgroundColor:'#2d2b36',margin:'0',padding:'14px 0 14px'}}
             >
               <Container style={{display:'block'}}>
                 <Menu.Item as={Link} to='/' style={style.menu} active>
@@ -174,7 +174,8 @@ class MainHeader extends Component {
 const style={
   menu:{
     display:'inline-block',
-    marginTop:'5px'
+    marginTop:'5px',
+    color:'black'
   },
   menuRight:{
     display:'inline-block',

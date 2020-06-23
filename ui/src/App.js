@@ -125,15 +125,14 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
 
 
         {/* INDO */}
-        <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:()=><Redirect to='/'/>}/>
-        <Route path='/verification' exact component={User.islogin?Verification:Loading?Verification:()=><Redirect to='/'/>}/>
-        <Route path='/verification/:token' exact component={User.islogin?Verification:Loading?Verification:()=><Redirect to='/'/>}/>
         
         {/* IF LOADING, HOME, THEN IF SELLER, MANAGEPRODUCT, IF NOT VERIFIED, REDIRECT TO VERIFICATION, IF OTHERS, REDIRECT TO HOME */}
         <Route path='/seller/product/add' exact component={sellerAccess?AddProduct:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         <Route path='/seller/product/:idproduct' exact component={sellerAccess?ProductItems:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         
+        {/* SHOW PRODUCT DETAIL */}
         <Route path='/product/:idproduct' exact component={Product}/>
+
         <Route path='/cart' exact component={memberAccess?Cart:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>
         <Route path='/checkout' exact component={memberAccess?Checkout:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>
 

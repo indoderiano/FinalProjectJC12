@@ -1,77 +1,69 @@
 import React, { Component } from 'react';
 import SidebarSeller from './componentseller/sidebar';
-import { Button, Menu, Icon, Label, Table, Pagination, Input, Grid, Image, Header, Form, TextArea, Segment } from 'semantic-ui-react'
+import { Button, Menu, Icon, Reveal, Table, Pagination, Input, Grid, Image, Header, Form, TextArea, Segment, RevealContent } from 'semantic-ui-react'
 import { NavLink } from 'react-router-dom';
 import SubNavigation from './componentseller/subnavigation';
 import _ from 'lodash'
 import Axios from 'axios'
 import { APIURL } from '../../supports/ApiUrl';
+import { useState } from 'react';
+import {connect} from 'react-redux'
+import { useEffect } from 'react';
 
 
-class StoreProfile extends Component {
-    state = { 
-        products:[],
-        category:[],
-        searchproducts:[],
-        activeItem:'',
-        column:'',
-        direction:''
-    }
-    
-    componentDidMount=()=>{
-        Axios.get(`${APIURL}/products/productseller`)
+const StoreProfile=(props)=>{
+    const [data,setdata]=useState({})
+
+    useEffect(()=>{
+        Axios.get(`${APIURL}/sellers/getseller?iduser=${props.auth.iduser}`)
         .then((res)=>{
-            this.setState({
-                products:res.data.product,
-                searchproducts:res.data.product,
-                category:res.data.category,
-            })
-            console.log(res.data)
+            setdata(res.data[0])
+            
         }).catch((err)=>{
             console.log(err)
         })
-    }
-
-   
+    },[])
 
     
-    render() { 
-        const { activeItem, column, direction } = this.state
-        return ( 
-            
-            <div  style={{display:'flex', paddingTop:50}}>
-                <div>
-                    <SidebarSeller/>
-                </div>
-                <div style={{backgroundColor:'#f6f6f6',padding: 10, width:'80%', display:'flex', flexDirection:'column'}}>                                               
-                    <div style={{paddingTop:'50px'}}>
-                        <Grid columns={3} style={{paddingLeft: 10, paddingRight: 10,}}>
-                            <Grid.Row stretched>
-                                <Grid.Column>
-                                    <Segment>
-                                        <Image src='https://image.flaticon.com/icons/png/512/1892/1892627.png' />
-                                    </Segment>
-                                </Grid.Column>
-                                <Grid.Column>
-                                    <Segment>
-                                        <h3>NAMA TOKO</h3>
-                                        <p>Join at <i>created at</i> </p>
-                                    </Segment>
-                                    <Segment>2</Segment>
-                                </Grid.Column>
-                                <Grid.Column>
-                                    <Segment>1</Segment>
-                                    <Segment>2</Segment>
-                                    <Segment>3</Segment>
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                    </div>
-                </div>
-
+    
+    return (
+        <div  style={{display:'flex', paddingTop:50}}>
+        <div>
+            <SidebarSeller/>
+        </div>
+        <div style={{backgroundColor:'#faf8ec',padding: 10, width:'80%', display:'flex', flexDirection:'column'}}>                                               
+            <div style={{paddingTop:'50px'}}>
+                <Grid columns={3} style={{paddingLeft: 10, paddingRight: 10,}}>
+                    <Grid.Row stretched>
+                        <Grid.Column>
+                            <Segment>
+                            <Image src={APIURL+data.imageprofile}/>
+                            </Segment>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <Segment>
+                                <h3  style={{letterSpacing:'8px', textTransform:'uppercase',fontWeight:'lighter'}}>{data.namatoko}</h3>
+                                <h4>Store Location: <i>{data.alamattoko}</i> </h4>
+                            </Segment>
+                            <Segment>2</Segment>
+                        </Grid.Column>
+                        <Grid.Column>
+                            <Segment>1</Segment>
+                            <Segment>2</Segment>
+                            <Segment>3</Segment>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
             </div>
-         );
-    }
+        </div>
+
+    </div>
+    )
 }
- 
-export default StoreProfile;
+const MapstatetoProps=(state)=>{
+    return  {
+      auth:state.Auth,
+      seller:state.Seller
+    }           
+  }
+export default connect(MapstatetoProps)(StoreProfile);

@@ -37,14 +37,18 @@ const getWidth = () => {
 const HomepageHeading = ({ mobile }) => (
   <Container text>
     <Header
-      as='h1'
-      content='Final Project JC 12'
+      as='h3'
+      content='Welcome to Popstore'
       inverted
       style={{
-        fontSize: mobile ? '2em' : '4em',
-        fontWeight: 'normal',
+        fontSize: '40px',
+        letterSpacing:'8px',
+        fontWeight: 100,
         marginBottom: 0,
         marginTop: mobile ? '1.5em' : '3em',
+        fontFamily:'muli,sans-serif',
+        textTransform:'uppercase',
+        color:'#eacae2'
       }}
     />
     <Header
@@ -53,7 +57,7 @@ const HomepageHeading = ({ mobile }) => (
       inverted
       style={{
         fontSize: mobile ? '1.5em' : '1.7em',
-        fontWeight: 'normal',
+        fontWeight: 'lighter',
         marginTop: mobile ? '0.5em' : '1.5em',
       }}
     />
@@ -92,7 +96,7 @@ class DesktopContainer extends Component {
           <Segment
             inverted
             textAlign='center'
-            style={{ minHeight: 700, padding: '1em 0em' }}
+            style={{ minHeight: 500, padding: '1em 0em' }}
             vertical
           >
             {/* <MainHeader 

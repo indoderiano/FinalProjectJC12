@@ -3,7 +3,7 @@ import Axios from 'axios'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import {connect} from 'react-redux'
 import { APIURL } from '../supports/ApiUrl'
-import { Button } from 'semantic-ui-react'
+import { Button,Table } from 'semantic-ui-react'
 import ProfileEdit from './../component/Profileedit'
 const Profile=(props)=>{
     const [data,setdata]=useState({})
@@ -21,36 +21,38 @@ const Profile=(props)=>{
     
     return(
         edit===false?
-        <div style={{width:'70%',
+        <div style={{width:'50%',
             marginLeft:'22%', 
             marginRight:'15%',
             marginTop:'5%'}}>
-        <table className="table table-borderless" >
-  <tbody >
-    <tr>
-      <tr scope="row">Username:</tr>
-        <td>{data.username}</td>
-    </tr>
-    <br/>
-    <tr>
-      <tr scope="row">Email:</tr>
-         <td>{data.email}</td>
-    </tr>
-    <br/>
-    <tr>
-      <tr scope="row">Address:</tr>
-        <td colSpan="2">{data.address}</td>
-    </tr>
-    <br/>
-    <tr>
-      <tr scope="row">Account Status:</tr>
-        <td>{data.isseller===1?'seller':'users'}</td>
-    </tr>
-  </tbody>
-        <Button style={{marginLeft:'50%', marginTop:'10%'}} onClick={()=>{setedit(true)}}>
+        <Table basic='very'>
+
+    <Table.Body>
+      <Table.Row>
+        <Table.Cell>Username:</Table.Cell>
+        <Table.Cell></Table.Cell>
+        <Table.Cell>{data.username}</Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Email:</Table.Cell>
+        <Table.Cell></Table.Cell>
+        <Table.Cell>Requires call</Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Address</Table.Cell>
+        <Table.Cell></Table.Cell>
+        <Table.Cell>{data.address}</Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Account Status:</Table.Cell>
+        <Table.Cell></Table.Cell>
+        <Table.Cell>{data.isseller===1?'seller':'users'}</Table.Cell>
+      </Table.Row>
+    </Table.Body>
+  </Table>
+        <Button style={{marginLeft:'30%'}} onClick={()=>{setedit(true)}}>
             Update Profile
         </Button>
-</table>
         </div>
         :
         <ProfileEdit/>

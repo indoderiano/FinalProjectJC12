@@ -1,17 +1,26 @@
 import React, { useState,useEffect } from 'react'
 import Axios from 'axios'
-// import 'bootstrap/dist/css/bootstrap.min.css';
+
 import {connect} from 'react-redux'
 import { APIURL } from './../supports/ApiUrl'
-import { Button,Input } from 'semantic-ui-react'
+import { Button,Input,Table } from 'semantic-ui-react'
 import {Redirect} from 'react-router-dom'
 const ProfileEdit=(props)=>{
 
     const [edit,setedit]=useState(false)
     const [editprofile,setprofile]=useState({username:'',address:'',iduser:`${props.iduser}`})
-
+    const [profileimage,setimage]=useState({image:undefined})
    const editSubmit=()=>{
-    Axios.put(`${APIURL}/users/editprofile`,editprofile)
+    var formData=new FormData()
+    var options={
+      headers:{
+       'Content-Type':'multipart/form-data',
+       'Authorization':`Bearer ${props.token}`
+      }
+  }
+  formData.append('image',profileimage.image)
+  formData.append('data',JSON.stringify(editprofile))
+    Axios.put(`${APIURL}/users/editprofile`,formData,options)
     .then((res)=>{
         console.log(res.data)
         console.log('berhasil')
@@ -35,47 +44,63 @@ const ProfileEdit=(props)=>{
             marginRight:'15%',
             marginTop:'5%'}}
            >
-        <table className="table table-borderless" >
-  
-  <tbody>
-    <tr>
-      <th scope="row">Username:</th>
-        <td class="ui transparent input">
-        <input type="text" 
+              <Table basic='very'>
+              <Table.Header>
+      
+       <h1>
+         Update Profile
+       </h1>
+      
+    </Table.Header>
+<Table.Body>
+  <Table.Row>
+    <Table.Cell>Username:     
+    <Input type="text" 
                placeholder='Username...' 
                name='username'
                value={editprofile.username}
                onChange={editChange}/>
-        </td>
-    </tr>
-    <br/>
-    <tr>
-      <th scope="row">Email:</th>
-         <td>
-         {props.email}
-         </td>
-    </tr>
-    <br/>
-    <tr>
-      <th scope="row">Address:</th>
-        <td class="ui transparent input">
-        <input type="text" 
+    </Table.Cell>
+    
+  </Table.Row>
+  <Table.Row>
+    <Table.Cell>Email: {props.email} </Table.Cell>
+    <Table.Cell></Table.Cell>
+    <Table.Cell></Table.Cell>
+  </Table.Row>
+  <Table.Row>
+    <Table.Cell>Address: <Input type="text" 
                placeholder='Address...' 
                name='address'
                value={editprofile.address} 
-               onChange={editChange}/>
-        </td>
-    </tr>
-    <br/>
-    <tr>
-      <th scope="row">Account Status:</th>
-        <td>{props.isseller===true?'seller':'users'}</td>
-    </tr>
-  </tbody>
-        <Button style={{marginLeft:'50%', marginTop:'10%'}} onClick={editSubmit} >
+               onChange={editChange}/></Table.Cell>
+    <Table.Cell></Table.Cell>
+    <Table.Cell></Table.Cell>
+  </Table.Row>
+  <Table.Row>
+    <Table.Cell>Account Status: {props.isseller===true?'seller':'users'}</Table.Cell>
+    <Table.Cell></Table.Cell>
+    <Table.Cell></Table.Cell>
+  </Table.Row>
+  <Table.Row>
+    <Table.Cell>Input Profile Image: <Input fluid
+                type='file'
+            multiple
+                icon='file image outline'
+                iconPosition='left'
+                name='image'
+                placeholder='Insert Store Profile'
+                onChange={(e)=>setimage({image:e.target.files[0]})}
+               /></Table.Cell>
+    <Table.Cell></Table.Cell>
+    <Table.Cell></Table.Cell>
+  </Table.Row>
+</Table.Body>
+</Table>
+      
+        <Button style={{marginLeft:'30%', }} onClick={editSubmit} >
             safe profile
         </Button>
-</table>
         </div>
     )
     }

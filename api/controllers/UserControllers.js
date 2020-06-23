@@ -3,7 +3,8 @@ const encrypt=require('../supports/crypto')
 const transporter=require('../supports/mailer')
 const {createJWTToken}=require('../supports/jwt')
 const jwt=require('jsonwebtoken')
-
+const {uploader}=require('../supports/uploader')
+const fs=require('fs')
 
 module.exports={
                    ////////// CREATE NEW USER ////////////////
@@ -234,15 +235,26 @@ module.exports={
         },
                            ////////// EDIT USERDATA ////////////////
         editProfile:(req,res)=>{
-            const {username,address,iduser}=req.body
-            var obj={
-                username,
-                address
-            }
+            const path = '/users'
+            const upload = uploader(path, 'USERS').fields([{ name: 'image'}]);
+            upload(req,res,(err)=>{
+                if(err){
+                    return res.status(500).json({ message: 'Upload files failed !',error: err.message })
+                }
+                const { image } = req.files
+                console.log(image);
+                
+                const imagePath= image ? path + '/' + image[0].filename : null
+                const data = JSON.parse(req.body.data);
+                data.image=imagePath
+                const {username,address,iduser}=data
+                
             var sql=`update users set ? where iduser=${iduser}`
-            db.query(sql, obj, (err,result)=>{
+            db.query(sql, data, (err,result)=>{
+                fs.unlinkSync('./public' + imagePath)
                 if(err) res.status(500).send(err)
                 res.status(200).send({message:'Profile Updated'})
+            })
             })
         },
 
