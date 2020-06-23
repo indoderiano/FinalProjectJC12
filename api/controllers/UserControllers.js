@@ -41,7 +41,7 @@ module.exports={
                     console.log(`account ${username} berhasil dibuat`)
                     console.log('sending email verification...')
                     // SEND EMAIL VERIFICATION
-                    var token=createJWTToken({userid:created.insertId})
+                    var token=createJWTToken({iduser:created.insertId})
                     var VerificationLink=`http://localhost:3000/verification/${token}`
                     var maildata={
                         from: 'Admin <mde50526@gmail.com>',
