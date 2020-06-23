@@ -14,8 +14,8 @@ module.exports={
             if(err) return res.status(500).send(err)
             console.log('succeed')
             console.log('')
-            sql=`UPDATE products SET isseen = isseen + 1 WHERE idproduct=${idproduct}`
-            db.query(sql,(err,isseen)=>{
+            sql=`UPDATE products SET seen = seen + 1 WHERE idproduct=${idproduct}`
+            db.query(sql,(err,seen)=>{
                 if(err) return res.status(500).send(err)
                 res.status(200).send(product[0])
             })
@@ -305,7 +305,7 @@ module.exports={
                     ///////////////// GET MOST VIEWED PRODUCT FOR HOMEPAGE /////////////////
     mostviewed:(req,res)=>{
         var sql= `  SELECT * FROM products
-                    ORDER BY isseen DESC
+                    ORDER BY seen DESC
                     LIMIT 0,4`
         db.query(sql,(err,homepageRes)=>{
             if(err) res.status(500).send({err,message:'error get product search'})

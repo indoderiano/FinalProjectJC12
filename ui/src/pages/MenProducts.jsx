@@ -139,7 +139,7 @@ class MenProducts extends Component {
         return ( 
             <div style={{ padding:20}} >
                 <div style={{
-                    backgroundColor:'linear-gradient(45deg, rgba(250,248,237,1) 0%, rgba(139,223,226,1) 46%)',
+                    backgroundImage:'linear-gradient(45deg, rgba(250,248,237,1) 0%, rgba(139,223,226,1) 46%)',
                     display:'flex', 
                     justifyContent:'space-between', 
                     height:400
@@ -147,7 +147,7 @@ class MenProducts extends Component {
                     <p style={{
                         fontSize:'100px', textAlign:"center", 
                         letterSpacing:'8px', textTransform:'uppercase',fontWeight:'100',
-                        fontFamily:'Helvetica, sans-serif', paddingLeft:100}}>
+                        fontFamily:'Leckerli One', paddingLeft:100}}>
                          Men <br/> Collection </p>
                     <Image src='/images/men-header3.png' style={{marginRight: 100, height:'400px'}} />
                 </div>
