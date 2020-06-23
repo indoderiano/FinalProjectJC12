@@ -66,6 +66,28 @@ app.get('/payment',(req,res)=>{
     })
 })
 
+// GET MAIN CATEGORY LIST
+app.get('/categories',(req,res)=>{
+    console.log('get categories')
+    var sql=`select * from categories`
+    db.query(sql,(err,categories)=>{
+        if(err) return res.status(500).send(err)
+
+        res.status(200).send(categories)
+    })
+})
+
+// GET MERK LIST
+app.get('/merk',(req,res)=>{
+    console.log('get merk list')
+    var sql=`select * from merk`
+    db.query(sql,(err,merk)=>{
+        if(err) return res.status(500).send(err)
+
+        res.status(200).send(merk)
+    })
+})
+
 
 app.listen(PORT,()=>console.log('API is online at port '+PORT))
 

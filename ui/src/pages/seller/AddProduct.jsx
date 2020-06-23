@@ -13,24 +13,28 @@ import {
     Input,
     TextArea,
     Checkbox,
-    Sidebar
+    Sidebar,
+    Dropdown
 } from 'semantic-ui-react'
 import {Redirect} from 'react-router-dom'
 import SidebarSeller from './componentseller/sidebar'
 import { connect } from 'react-redux'
+import { titleConstruct } from '../../supports/services'
 
 
 
 class AddProduct extends Component {
     state = { 
 
+        // REGISTER OPTIONS
+        maincategories:[],
+        merklist:[],
+
+        // INPUT
         fileImage:[],
-
         idcategory:0,
-
         category:'',
-        // sub1CategoryAdd:'',
-        // sub2CategoryAdd:'',
+        idmerk:99,
         productName:'',
         description:'',
         
@@ -39,7 +43,6 @@ class AddProduct extends Component {
         
         // such color or size
         varieties:[''],
-
 
         // such as red or large
         varietytypes:[[]],
@@ -50,15 +53,44 @@ class AddProduct extends Component {
         // priceAdd:0,
         // stockAdd:0,
 
+        // STATE
         message:'',
 
+        // FOR REDIRECT PAGE
         newidproduct:0,
 
+        // STATE
         loading: false
      }
 
     
     componentDidMount=()=>{
+
+        // GET MAIN CATEGORIES LIST
+        Axios.get(`${APIURL}/categories`)
+        .then((categories)=>{
+            console.log(categories.data)
+            this.setState({maincategories:categories.data})
+        }).catch((err)=>{
+            console.log(err)
+        })
+
+        // GET MERK LIST
+        Axios.get(`${APIURL}/merk`)
+        .then((merk)=>{
+            console.log(merk.data)
+            var list=merk.data.map((val,index)=>{
+                return {
+                    key: index,
+                    text: val.merk_name,
+                    value: val.idmerk,
+                }
+            })
+            this.setState({merklist:list})
+
+        }).catch((err)=>{
+            console.log(err)
+        })
         
     }
 
@@ -113,6 +145,7 @@ class AddProduct extends Component {
                 idseller: this.props.Seller.idseller,
                 idcategory: this.state.idcategory,
                 category: this.state.category,
+                idmerk: this.state.idmerk
             }
 
             formdata.append('data',JSON.stringify(product))
@@ -376,7 +409,23 @@ class AddProduct extends Component {
                         
                         <Segment style={{width:'100%'}}>
                             <Header as={'h3'}>Main Category</Header>
-                            <Checkbox 
+                            {
+                                this.state.maincategories.map((cat,index)=>{
+                                    return (
+                                        <Checkbox 
+                                            key={index}
+                                            label={titleConstruct(cat.category_name)}
+                                            style={{marginRight:'1.5em'}}
+                                            checked={this.state.idcategory==cat.idcategory}
+                                            onClick={()=>{
+                                                this.setState({idcategory:cat.idcategory})
+                                                // console.log('setstate to',cat.idcategory)
+                                            }}
+                                        />
+                                    )
+                                })
+                            }
+                            {/* <Checkbox 
                                 label='Men' 
                                 style={{marginRight:'1.5em'}}
                                 checked={this.state.idcategory==1}
@@ -399,7 +448,7 @@ class AddProduct extends Component {
                                 onClick={()=>{
                                     this.setState({idcategory:3})
                                 }}
-                            />
+                            /> */}
                         </Segment>
                         <Segment style={{width:'100%'}}>
                             <Header as={'h3'}>Category</Header>
@@ -407,6 +456,19 @@ class AddProduct extends Component {
                                 placeholder='Category'
                                 value={this.state.category}
                                 onChange={(e)=>{this.setState({category:e.target.value})}}
+                            />
+                        </Segment>
+                        <Segment style={{width:'100%'}}>
+                            <Header as={'h3'}>Merk</Header>
+                            <Dropdown
+                                placeholder='Select Product Merk'
+                                selection
+                                options={this.state.merklist}
+                                value={this.state.idmerk}
+                                onChange={(e,{value})=>{
+                                    // console.log(value)
+                                    this.setState({idmerk:value})
+                                }}
                             />
                         </Segment>
                         <Segment style={{width:'100%'}}>
@@ -428,6 +490,7 @@ class AddProduct extends Component {
                             <Header as={'h3'}>Product Name</Header>
                             <Input 
                                 placeholder='Product Name'
+                                style={{width:'400px'}}
                                 value={this.state.productName}
                                 onChange={(e)=>{this.setState({productName:e.target.value})}}
                             />
