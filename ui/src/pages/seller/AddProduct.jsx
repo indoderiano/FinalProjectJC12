@@ -29,6 +29,10 @@ class AddProduct extends Component {
         // REGISTER OPTIONS
         maincategories:[],
         merklist:[],
+        // ADD MERK
+        merk:'',
+        merkMessage:'',
+        ismerkadded:false,
 
         // INPUT
         fileImage:[],
@@ -61,6 +65,9 @@ class AddProduct extends Component {
 
         // STATE
         loading: false
+
+
+
      }
 
     
@@ -75,10 +82,15 @@ class AddProduct extends Component {
             console.log(err)
         })
 
+        this.getMerkList()
+        
+    }
+
+    getMerkList=()=>{
         // GET MERK LIST
         Axios.get(`${APIURL}/merk`)
         .then((merk)=>{
-            console.log(merk.data)
+            console.log('merk list',merk.data)
             var list=merk.data.map((val,index)=>{
                 return {
                     key: index,
@@ -91,7 +103,6 @@ class AddProduct extends Component {
         }).catch((err)=>{
             console.log(err)
         })
-        
     }
 
     combineVarieties=()=>{
@@ -470,6 +481,51 @@ class AddProduct extends Component {
                                     this.setState({idmerk:value})
                                 }}
                             />
+                            <Segment style={{marginTop:'2em'}}>
+                                <Message>
+                                    <div style={{fontWeight:'800'}}>Note to Seller</div>
+                                    <div>
+                                        You can add your merk if it is not on the list yet
+                                    </div>
+                                </Message>
+                                <Button
+                                    onClick={()=>{
+                                        if(!this.state.merk){
+                                            this.setState({merkMessage:'Fill The Column'})
+                                        }else{
+                                            Axios.post(`${APIURL}/merk`,{merk_name:this.state.merk})
+                                            .then((res)=>{
+                                                if(res.data.status){
+                                                    // reload merk list
+                                                    this.getMerkList()
+                                                    this.setState({ismerkadded:true})
+                                                }else{
+                                                    this.setState({merkMessage:res.data.message})
+                                                }
+                                            }).catch((err)=>{
+                                                console.log(err)
+                                            })
+                                        }
+                                    }}
+                                >
+                                    Add Merk
+                                </Button>
+                                <Input
+                                    placeholder='merk'
+                                    value={this.state.merk}
+                                    onChange={(e)=>{this.setState({merk:e.target.value,merkMessage:''})}}
+                                />
+                                {
+                                    this.state.merkMessage?
+                                    <span style={{color:'red',marginLeft:'2em'}}>{this.state.merkMessage}</span>
+                                    : null
+                                }
+                                {
+                                    this.state.ismerkadded?
+                                    <Message style={{color:'rgba(0,0,0,.65)'}}>Your Merk is Added, You Can Select It On The List</Message>
+                                    : null
+                                }
+                            </Segment>
                         </Segment>
                         <Segment style={{width:'100%'}}>
                             <Header as={'h3'}>Cover Photo</Header>
