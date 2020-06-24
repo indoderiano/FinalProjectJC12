@@ -5,7 +5,8 @@ import {
     Header,
     Menu,
     Icon,
-    Label
+    Label,
+    Dropdown
   } from 'semantic-ui-react'
 import { connect } from "react-redux";
 import {Link} from 'react-router-dom'
@@ -13,8 +14,15 @@ import {isLogout} from './../redux/actions'
 import Axios from 'axios';
 import { APIURL } from '../supports/ApiUrl';
 
+
 class MainHeader extends Component {
-    state = {  }
+    state = { 
+      useroptions : [
+        { key: 1, text: 'Logout', value: 1 ,onClick:()=>{this.props.isLogout()}},
+        { key: 2, text: 'Profile', value: 2 },
+        // { key: 3, text: 'Items are kept within view', value: 3 },
+      ]
+     }
     render() { 
         return ( 
             <Menu
@@ -47,10 +55,10 @@ class MainHeader extends Component {
                         Sign Up
                       </Button>
                     </>
-                    :  
-                    <Button as={Link} to='/' inverted onClick={()=>{this.props.isLogout()}}>
-                      Log out
-                    </Button>
+                    :  null
+                    // <Button as={Link} to='/' inverted onClick={()=>{this.props.isLogout()}}>
+                    //   Log out
+                    // </Button>
                   }
                 </Menu.Item>
                 
@@ -61,7 +69,25 @@ class MainHeader extends Component {
                       as='span' 
                       style={style.menuRight}
                     >
-                      Hi, {this.props.User.username}
+                      {/* Hi, {this.props.User.username} */}
+                      {/* <Menu> */}
+                        <Dropdown
+                          item
+                          simple
+                          text={`Hi, ${this.props.User.username}`}
+                          style={{
+                            padding:'0',
+                            margin:'0',
+                            display:'flex',
+                            alignItems:'center',
+                            height:'100%',
+                            borderBottom:'4px solid rgba(0,0,0,0)'
+                          }}
+                          className='header-dropdown'
+                          // direction=''
+                          options={this.state.useroptions}
+                        />
+                      {/* </Menu> */}
                     </Menu.Item>
                     {// CART
                       this.props.User.isuser?
@@ -182,7 +208,8 @@ const style={
   menuRight:{
     display:'inline-block',
     marginTop:'5px',
-    float:'right'
+    float:'right',
+    height:'100%'
   }
 }
 

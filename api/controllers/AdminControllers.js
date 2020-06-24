@@ -12,9 +12,14 @@ module.exports={
     },
 
     getSalesCount:(req,res)=>{
-        var sql=`
-        select m.merk_name
-        ,count(c.category_name) as total
+        console.log('get list count data sales')
+        // console.log('get sales',req.query)
+        const {method}=req.query
+
+        var merk=`
+        select m.merk_name as title,
+        count(m.merk_name) as totalcount,
+        sum(td.checkout_price) as totalprice
         from transactiondetails td
         join items i on i.iditem=td.iditem
         join products p on p.idproduct=i.idproduct
@@ -23,11 +28,33 @@ module.exports={
         join transactionsellers ts on ts.idtransactionseller=td.idtransactionseller
         join transactions t on t.idtransaction=ts.idtransaction
         -- where td.idorderstatus=4
-        -- group by p.product_name
-        -- group by c.category_name
         group by m.merk_name
         -- order by p.idproduct
         `
+
+        var category=`
+        select c.category_name as title,
+        count(c.category_name) as totalcount,
+        sum(td.checkout_price) as totalprice
+        from transactiondetails td
+        join items i on i.iditem=td.iditem
+        join products p on p.idproduct=i.idproduct
+        join merk m on m.idmerk=p.idmerk
+        join categories c on c.idcategory=p.idcategory
+        join transactionsellers ts on ts.idtransactionseller=td.idtransactionseller
+        join transactions t on t.idtransaction=ts.idtransaction
+        -- where td.idorderstatus=4
+        group by c.category_name
+        -- order by p.idproduct
+        `
+
+        if(method=='merk'){
+            console.log('by merk')
+            var sql=merk
+        }else if(method=='category'){
+            console.log('by category')
+            var sql=category
+        }
         db.query(sql,(err,result)=>{
             if(err) return res.status(500).send(err)
 

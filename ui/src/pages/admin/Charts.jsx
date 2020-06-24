@@ -29,50 +29,93 @@ import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../../
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 
-
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
- 
+
+var methods=[
+    {
+        key: 1,
+        text: 'Category',
+        value: 'category'
+    },
+    {
+        key: 2,
+        text: 'Merk',
+        value: 'merk'
+    },
+]
+
+var units=[
+    {
+        key: 1,
+        text: 'Product',
+        value: 'item'
+    },
+    {
+        key:2,
+        text: 'Price',
+        value: 'price'
+    }
+]
+
+
 class PieChart extends Component {
     state = { 
-        list:[]
+        listdata:[],
+        listchart:[],
+        by:'category',
+        unit:'item',
      }
 
     componentDidMount=()=>{
-        Axios.get(`${APIURL}/admin/sales/count`)
+        this.getSalesCount(this.state.by,this.state.unit)
+    }
+
+    getSalesCount=(method,unit)=>{
+        Axios.get(`${APIURL}/admin/sales/count?method=${method}`)
         .then((list)=>{
             console.log(list.data)
             var dataPoints=list.data.map((val,index)=>{
                 return {
-                    y: val.total,
-                    label: val.merk_name
+                    y: this.state.unit==units[0].value?val.totalcount:this.state.unit==units[1].value?val.totalprice:null,
+                    label: val.title
                 }
             })
-            this.setState({list:dataPoints})
-            console.log(dataPoints)
-
+            this.setState({listdata:list.data,listchart:dataPoints})
 
         }).catch((err)=>{
             console.log(err)
         })
     }
 
+    changeUnit=(unit)=>{
+        console.log('change unit')
+        var dataPoints=this.state.listdata.map((val,index)=>{
+            return {
+                y: unit=='item'?val.totalcount:unit=='price'?val.totalprice:null,
+                label: val.title
+            }
+        })
+        this.setState({listchart:dataPoints})
+    }
+
 
 	render() {
+        // this.getSalesCount(this.state.by,this.state.unit)
 		const options = {
 			exportEnabled: false,
 			animationEnabled: true,
 			title: {
-				text: "Website Traffic Sources"
+				text: `Sales By ${titleConstruct(this.state.by)} (${this.state.unit==units[0].value?'unit sold':this.state.unit==units[1].value?'total price':null})`
 			},
 			data: [{
 				type: "pie",
 				startAngle: 75,
-				toolTipContent: "<b>{label}</b>: {y}%",
+				toolTipContent: "<b>{label}</b>: {y}",
 				showInLegend: "true",
 				legendText: "{label}",
 				indexLabelFontSize: 16,
-                indexLabel: "{label} - {y}%",
-                dataPoints: this.state.list
+                indexLabel: "{label} - {y}",
+                dataPoints: this.state.listchart
 				// dataPoints: [
 				// 	{ y: 18, label: "Direct" },
 				// 	{ y: 49, label: "Organic Search" },
@@ -84,13 +127,48 @@ class PieChart extends Component {
 		}
 		
 		return (
-		<div>
-			<h1>React Pie Chart</h1>
-			<CanvasJSChart options = {options} 
-				/* onRef={ref => this.chart = ref} */
-			/>
-			{/*You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
-		</div>
+            <Grid>
+                <Grid.Row>
+                    <Grid.Column width={3}>
+                        <h1>Pie Chart</h1>
+                        <div style={{marginBottom:'1em'}}>
+                            <div>Method</div>
+                            <Dropdown 
+                                placeholder='Method' 
+                                search 
+                                selection 
+                                style={{display:'inline-block'}}
+                                options={methods} 
+                                value={this.state.by}
+                                onChange={(e,{value})=>{
+                                    this.setState({list:[],by:value})
+                                    this.getSalesCount(value,this.state.unit)
+                                }}
+                            />
+                        </div>
+                        <div>Unit</div>
+                        <Dropdown 
+                            placeholder='Unit' 
+                            search 
+                            selection 
+                            options={units} 
+                            value={this.state.unit}
+                            onChange={(e,{value})=>{
+                                this.setState({list:[],unit:value})
+                                this.changeUnit(value)
+                            }}
+                        />
+                    </Grid.Column>
+                    <Grid.Column width={10}>
+                        <CanvasJSChart options = {options} 
+                            /* onRef={ref => this.chart = ref} */
+                        />
+                    </Grid.Column>
+                    <Grid.Column width={3}>
+
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
 		);
 	}
 }

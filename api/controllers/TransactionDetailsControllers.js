@@ -166,7 +166,7 @@ module.exports={
     onCartDetails:(req,res)=>{
         console.log('finding items on cart...')
 
-        console.log(req.query)
+        // console.log(req.query)
 
         const {iduser}=req.query
 
@@ -186,10 +186,10 @@ module.exports={
     edit:(req,res)=>{
         console.log('editing transaction details...')
 
-        console.log(req.params)
+        // console.log(req.params)
         const {idtransactiondetail} = req.params
 
-        console.log(req.body)
+        // console.log(req.body)
 
         // CHECK ORDER IF IT IS ON CART
         // IN NOT ON CART, CANNOT EDIT
