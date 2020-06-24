@@ -78,7 +78,7 @@ class MainHeader extends Component {
                           style={{
                             paddingTop:'0px',
                             // paddingBottom:'1px',
-                            marginTop:'.5px',
+                            marginTop:'0px',
                             display:'flex',
                             alignItems:'center',
                             height:'100%',
