@@ -13,7 +13,7 @@ export const LoadInvoices=(iduser)=>{
 
         Axios.get(`${APIURL}/transactions/admin?idstatus=2`)
         .then((res)=>{
-            console.log(res.data)
+            // console.log(res.data)
 
 
             // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER

@@ -11,7 +11,7 @@ export const LoadPayment=(iduser)=>{
     return(dispatch)=>{
         Axios.get(`${APIURL}/transactions/user?iduser=${iduser}&idstatus=1`)
         .then((res)=>{
-            console.log(res.data)
+            // console.log(res.data)
 
 
             // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER

@@ -39,7 +39,7 @@ class Cart extends Component {
         // this.props.LoadCart()
 
         // DONT FORGET TO CHECK IF STOCK IS GOOD BEFORE CHECKOUT
-        console.log('cart componentdidmount')
+        // console.log('cart componentdidmount')
 
         this.checkStock()
         
