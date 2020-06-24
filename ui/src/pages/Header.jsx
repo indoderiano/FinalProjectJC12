@@ -76,12 +76,12 @@ class MainHeader extends Component {
                           simple
                           text={`Hi, ${this.props.User.username}`}
                           style={{
-                            paddingTop:'.5px',
-                            margin:'0',
+                            paddingTop:'0px',
+                            // paddingBottom:'1px',
+                            marginTop:'.5px',
                             display:'flex',
                             alignItems:'center',
                             height:'100%',
-                            // borderBottom:'9px solid rgba(0,0,0,0)'
                           }}
                           className='header-dropdown'
                           // direction=''
@@ -204,12 +204,12 @@ const style={
   menu:{
     display:'inline-block',
     marginTop:'5px',
-    padding:'.2em .5em'
+    padding:'.6em 1em'
   },
   menuRight:{
     display:'inline-block',
     marginTop:'5px',
-    padding:'.2em .5em',
+    padding:'.6em 1em',
     float:'right',
     height:'100%'
   }
