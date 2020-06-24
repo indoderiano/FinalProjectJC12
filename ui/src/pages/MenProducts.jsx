@@ -44,7 +44,7 @@ class MenProducts extends Component {
     getpaginationdata=(val)=>{
         this.setState({
             page:val*this.state.cardperPage,        //dikali jumlah card per page
-            currentPage:val===0?1:val,
+            currentPage:val,
             isLoading:true}, function(){
             this.getData(this.state.searchKeyword)
         })
@@ -139,17 +139,18 @@ class MenProducts extends Component {
         return ( 
             <div style={{ padding:20}} >
                 <div style={{
-                    backgroundImage:'linear-gradient(45deg, rgba(250,248,237,1) 0%, rgba(139,223,226,1) 46%)',
+                    backgroundImage:'radial-gradient(circle, rgba(24,72,241,0.5718662464985995) 0%, rgba(255,255,255,1) 100%)',
                     display:'flex', 
                     justifyContent:'space-between', 
-                    height:400
+                    height:400, alignItems:'center'
                     }}>
                     <p style={{
-                        fontSize:'100px', textAlign:"center", 
-                        letterSpacing:'8px', textTransform:'uppercase',fontWeight:'100',
-                        fontFamily:'Leckerli One', paddingLeft:100}}>
+                       fontSize:'100px',  
+                       textAlign:"center", alignSelf:'center',
+                       letterSpacing:'8px', textTransform:'uppercase',fontWeight:'100',
+                       fontFamily:'Leckerli One', paddingLeft:80, paddingTop:20}}>
                          Men <br/> Collection </p>
-                    <Image src='/images/men-header3.png' style={{marginRight: 100, height:'400px'}} />
+                    <Image src='/images/men-header3.png' style={{marginRight: 100, height:400}} />
                 </div>
                 <div style={{display:'flex', flexDirection:'column', alignItems:'center', padding:50 }}>
                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'80%' }}>

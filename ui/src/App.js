@@ -112,6 +112,7 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/seller/product/myproduct' exact component={MyProducts}/>
         <Route path='/seller/myorder' exact component={MyOrders}/>
         <Route path='/seller/profile' exact component={StoreProfile}/>
+        <Route path='/seller' exact component={StoreProfile}/>
         <Route path='/allproducts/women' exact component={WomenProducts}/>
         <Route path='/allproducts/men' exact component={MenProducts}/>
         {/*  */}

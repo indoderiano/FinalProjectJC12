@@ -16,6 +16,7 @@ module.exports={
             console.log('')
             sql=`UPDATE products SET seen = seen + 1 WHERE idproduct=${idproduct}`
             db.query(sql,(err,seen)=>{
+                console.log(seen)
                 if(err) return res.status(500).send(err)
                 res.status(200).send(product[0])
             })
@@ -189,63 +190,69 @@ module.exports={
     },
                   ////////////// SHOWING ALL PRODUCT TO USER //////////////
     allproducts:(req,res)=>{
-        const {search, page}=req.query
-        console.log(
-            search,'search160',
-            page, 'page162'
-        )
-        const limit=1       //ini jumlah produk per page
+        const {search,category, pmin, pmax, page}=req.query
+        console.log(search,'search160',page, 'page162',pmin, 'hargamin',pmax, 'hargamax')
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        const limit=5       //ini jumlah produk per page
         const offset=page
         console.log(offset, 'dipsy')
-        if(search){
-            // var sql= `  SELECT p.*,c.idcategory AS idcat,c.name AS catnama
-            //             FROM products p 
-            //                 JOIN categories c 
-            //                 ON p.idcategory=c.idcategory
-            //             WHERE p.isdeleted=0 AND p.product_name LIKE '%${search}%'
-            //             LIMIT ${offset},${limit}`
-            var sql=`SELECT * FROM products
-                        WHERE isdeleted=0 AND product_name LIKE '%${search}%'
-                     LIMIT ${offset},${limit}`
-            db.query(sql,(err,result)=>{
+        if(search||pricemin||pricemax||category){
+            var sql=`SELECT p.* ,i.iditem, i.price as price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                    WHERE p.isdeleted=0 AND p.isblocked=0 
+                        ${search? `AND p.product_name like '%${search}%' ` : ''}
+                        ${category?`AND p.category like '%${category}%' ` : '' }
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}
+                    GROUP BY i.idproduct
+                    LIMIT ${offset},${limit}`
+        db.query(sql,(err,result)=>{
+                        console.log(sql , 'ALLPRODUCTS')
                 if(err) res.status(500).send({err,message:'error get product search'})
                 return res.send(result)
             })
         }else{
-            // var sql= `  SELECT p.*,c.idcategory AS idcat,c.name AS catnama
-            //             FROM products p 
-            //                 JOIN categories c 
-            //                 ON p.idcategory=c.idcategory
-            //             WHERE p.isdeleted=0
-            //             LIMIT ${offset},${limit}`
-            var sql=`SELECT * FROM products
-                        WHERE isdeleted=0
-                     LIMIT ${offset},${limit}`
+            var sql=`SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                    WHERE p.isdeleted=0 AND p.isblocked=0
+                    GROUP BY i.idproduct
+                    LIMIT ${offset},${limit}`
             db.query(sql,(err,result)=>{
                 if(err) res.status(500).send({err,message:'error get total product'})
                 return res.send(result)
             })
         }
     },
-
     getTotalProduct:(req,res)=>{
-        const {search, filter}=req.query
-        if(search){
-            console.log('masuk search')
-            var sql= `  SELECT COUNT(idproduct) AS total
-                        FROM products 
-                        WHERE isdeleted=0 AND product_name LIKE '%${search}%'`
+        const {search, pmin, pmax}=req.query
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        if(search ||pmin ||pmax){
+            console.log('masuk total search', search, pmin, pmax)
+            var sql= `  SELECT COUNT(DISTINCT(p.idproduct)) AS total
+                            FROM products p 
+                            JOIN items i ON i.idproduct=p.idproduct
+                        WHERE p.isdeleted=0 AND p.isblocked=0 
+                        ${search != '' ? `AND p.product_name like '%${search}%' ` : ''}
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}`
             db.query(sql,(err,result)=>{
                 if(err) res.status(500).send({err,message:'error get total product'})
                 console.log(result)
-                console.log(search)
+                console.log(sql)
                 return res.send(result[0])
             })
         }else{
             var sql= `  SELECT COUNT(idproduct) AS total
                         FROM products 
-                        WHERE isdeleted=0`
+                        WHERE isdeleted=0 AND isblocked=0 `
             db.query(sql,(err,result)=>{
+                console.log('total', sql, result)
                 if(err) res.status(500).send({err,message:'error get total product'})
                 return res.send(result[0])
             })
@@ -264,6 +271,7 @@ module.exports={
                             ON p.idcategory=c.idcategory
                         WHERE p.isdeleted=0 AND p.idseller=req.query.'
                         LIMIT ${offset},${limit}`
+                    
         db.query(sql,(err,product)=>{
             // console.log(product)
             if (err) res.status(500).send(err)
@@ -316,9 +324,14 @@ module.exports={
     },
                     ///////////////// GET MOST VIEWED PRODUCT FOR HOMEPAGE /////////////////
     mostviewed:(req,res)=>{
-        var sql= `  SELECT * FROM products
-                    ORDER BY seen DESC
-                    LIMIT 0,4`
+        var sql= `  SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                        WHERE p.isdeleted=0 AND p.isblocked=0
+                    GROUP BY i.idproduct  
+                    ORDER BY seen desc
+                    LIMIT 0,4;`
         db.query(sql,(err,homepageRes)=>{
             if(err) res.status(500).send({err,message:'error get product search'})
             return res.send(homepageRes)

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Image, Button, Segment, Header, Card, Icon } from 'semantic-ui-react';
+import { Grid, Image, Button, Segment, Header, Card, Icon, Rating } from 'semantic-ui-react';
 import { NavLink, Link } from 'react-router-dom';
 import Axios from 'axios';
 import { APIURL } from '../supports/ApiUrl';
@@ -28,19 +28,17 @@ class Home extends Component {
       return this.state.mostViewedProducts.map((val,index)=>{
           return (                  
               <div key={index} style={{width:'22%', marginLeft:12, marginRight:12, marginBottom:20}}>
-                  <Link to={`/product/${val.idproduct}`} 
-                  onClick={()=>{
-                    Axios.get()
-                  }}>
+                  <Link to={`/product/${val.idproduct}`}>
                       <Card raised style={{ paddingTop:5, height:'100%'}}>
                           <a style={{alignSelf:'center'}}>
                               <Image src={APIURL+ JSON.parse(val.imagecover)[0]} style={{height:'150px' }}/>
                           </a>
                           <Card.Content style={{borderColor: 'transparent',}} >
                           <Card.Header style={{display:'block', overflow: 'hidden',}}>{val.product_name}</Card.Header>
-                          <Card.Meta>PRIA/WANITA</Card.Meta>
+                          <Card.Meta>{val.maincategory}</Card.Meta>
                           <Card.Description >
-                              Rp.{val.price},-
+                              Rp.{val.price} <br/>
+                              <Rating icon='star' defaultRating={0} rating={val.rating} maxRating={5} />
                           </Card.Description>
                           </Card.Content>
                           <Card.Content style={{textAlign:'center',alignSelf:'center'}} extra>
