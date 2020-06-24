@@ -7,7 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register'
 import Verification from './pages/Verification'
 import ManageProduct from './pages/ManageProduct'
-import AddProduct from './pages/seller/AddProduct' // NOT FINISH: category, protection, sellerid
+import AddProduct from './pages/seller/AddProduct'
 import AllProducts from './pages/AllProducts'
 import ProductItems from './pages/seller/ProductItems'
 import Product from './pages/Product'
@@ -21,6 +21,7 @@ import Forgotpass from './pages/Forgotpass'
 import Profile from './pages/Profile'
 import Sellerregis from './pages/Sellerregis'
 import Admintable from './pages/Admin'
+import Chart from './pages/admin/Charts'
 import { KeepLogin, KeepSeller, LoadCart, LoadPayment, LoadInvoices, LoadOrders } from './redux/actions'
 import { APIURL } from './supports/ApiUrl';
 import { connect } from 'react-redux';
@@ -49,7 +50,7 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
       .then(res=>{
         KeepLogin(res.data)
         if(res.data.isseller){
-          console.log('line 40')
+          // console.log('line 40')
           KeepSeller(res.data.iduser)
         }
         LoadCart(res.data.iduser)
@@ -135,7 +136,12 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/managetransactions' exact component={adminAccess?ManageTransactions:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>
         <Route path='/manageorders' exact component={sellerAccess?ManageOrders:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         
+        <Route path='/admin/sales' exact component={Chart}/>
 
+
+
+
+        <Route path='/*' exact component={()=><Redirect to='/'/>}/>
 
       </Switch>
 

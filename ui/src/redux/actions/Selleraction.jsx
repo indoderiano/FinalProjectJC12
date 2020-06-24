@@ -25,12 +25,12 @@ export const SellerRegister=(dataseller)=>{
     }
 }
 export const KeepSeller=(iduser)=>{
-  console.log('line 29 seller action')
+  // console.log('line 29 seller action')
   return(dispatch)=>{
-    console.log('line 30 seller action')
+    // console.log('line 30 seller action')
     Axios.get(`${APIURL}/sellers/getseller?iduser=${iduser}`)
     .then((res)=>{
-      console.log(res.data[0])
+      // console.log(res.data[0])
       dispatch({type: SELLER_REGISTER_SUCCESS,payload:res.data[0]})
       console.log('line 35 seller action')
     }).catch((err)=>{

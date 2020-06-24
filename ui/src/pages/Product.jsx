@@ -517,6 +517,12 @@ class Product extends Component {
                             </Grid.Column>
                         </Grid.Row>
 
+                        <Grid.Row style={{paddingTop:'.5em'}}>
+                            <Grid.Column width={4}>
+                                seen()
+                            </Grid.Column>
+                        </Grid.Row>
+
                         {this.renderTypes()}
 
                         {this.renderDetails()}
@@ -619,7 +625,7 @@ class Product extends Component {
                         </Grid.Row>
 
                         <Grid.Row>
-                            <Grid.Column style={{height:'50px',display:'flex',justifyContent:'flex-end',alignItems:'center'}}>
+                            <Grid.Column style={{display:'flex',justifyContent:'flex-end',alignItems:'center'}}>
                                 {
                                     this.state.err?
                                     <Message style={{color:'red',display:'inline-block',margin:'0'}}>
@@ -629,9 +635,25 @@ class Product extends Component {
                                 }
                                 {
                                     this.props.User.islogin?
+                                    <Button 
+                                        icon 
+                                        basic
+                                        // style={{padding:'0',width:'',height:''}}
+                                    >
+                                        <Icon 
+                                            name='heart outline' 
+                                            size='large'
+                                            // style={{fontSize:'21px',verticalAlign:'-5px'}}
+                                            style={{marginLeft:'2em'}}
+                                        />
+                                    </Button>
+                                    : null
+                                }
+                                {
+                                    this.props.User.islogin?
                                     <Button
                                         primary
-                                        style={{marginLeft:'2em'}}
+                                        style={{marginLeft:'1em',height:'100%'}}
                                         onClick={this.onAddToCart}
                                     >
                                         Add to Cart
