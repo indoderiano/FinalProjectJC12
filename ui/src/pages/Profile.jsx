@@ -19,6 +19,8 @@ const Profile=(props)=>{
         })
     },[])
     
+    console.log(data.username);
+    
     return(
         edit===false?
         <div style={{width:'50%',
@@ -36,7 +38,7 @@ const Profile=(props)=>{
       <Table.Row>
         <Table.Cell>Email:</Table.Cell>
         <Table.Cell></Table.Cell>
-        <Table.Cell>Requires call</Table.Cell>
+        <Table.Cell>{data.email}</Table.Cell>
       </Table.Row>
       <Table.Row>
         <Table.Cell>Address</Table.Cell>

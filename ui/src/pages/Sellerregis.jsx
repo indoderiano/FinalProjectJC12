@@ -25,7 +25,6 @@ const Sellerregis = (props) => {
   const testmasuk=()=>{
     return(
       props.SellerRegister(data)
-
     )
   }
   

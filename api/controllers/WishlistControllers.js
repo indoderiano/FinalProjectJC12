@@ -6,11 +6,15 @@ const { json } = require('body-parser')
 module.exports={
     ///// SHOW DATA WISHLIST KE PAGES WISHLIST FRONT END /////
     showWishlist:(req,res)=>{
-        const {iduser}=req.params
-        var sql=`select  w.iduser,p.* from wishlist w join products p on w.idproduct = p.idproduct where iduser=${iduser}`
+        const {iduser}=req.query
+        var sql=`select  w.iduser , p.* , i.price 
+                 from wishlist w 
+                 join products p on w.idproduct = p.idproduct 
+                 join items i on p.idproduct = i.idproduct
+                 where iduser=${iduser}`
         db.query(sql,(err,result)=>{
             if(err) res.status(500).send(err)
-            res.status(200).send(result,{message:'show all wishlist'})
+           return res.status(200).send(result)
         })
     },
 
@@ -25,6 +29,15 @@ module.exports={
         db.query(sql,isitable,(err,result)=>{
             if(err) res.status(500).send(err,{message:'error line 24'})
             res.status(200).send(result)
+        })
+    },
+    /////// GET WISHLIST DATABASE ////
+    getAllWishlist:(req,res)=>{
+        const {iduser}=req.query
+        var sql=`select * from wishlist where iduser=${iduser}`
+        db.query(sql,(err,result)=>{
+            if(err) res.status(500).send(err,{message:'error line 24'})
+            return res.status(200).send(result)
         })
     },
 

@@ -45,6 +45,7 @@ const AdminTable = () => {
 
     
     console.log(seller);
+    
     const renderseller=()=>{
         return seller.map((val,index)=>{
             return (

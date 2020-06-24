@@ -23,6 +23,8 @@ import Profile from './pages/Profile'
 import Sellerregis from './pages/Sellerregis'
 import Admintable from './pages/Admin'
 import Testimage from './pages/aaaaa'
+import WishlistPage from './pages/Wishlist'
+import CommentSection from './component/Comment'
 import { KeepLogin,KeepSeller, LoadCart, LoadPayment,LoadInvoices, LoadOrders } from './redux/actions'
 import { APIURL } from './supports/ApiUrl';
 import { connect } from 'react-redux';
@@ -106,7 +108,8 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/forgotpassword/:token' exact component={memberAccess?ChangePass:Loading?Home:()=><Redirect to='/'/>}/>
         <Route path='/verifyseller' exact component={VerifyTable}/>
         <Route path='/testimage' exact component={Testimage}/>
-        
+        <Route path='/wishlist' exact component={WishlistPage}/>
+        <Route path='/comment' exact component={CommentSection}/>
         
         {/* SELY */}
         <Route path='/allproducts' exact component={AllProducts}/>
