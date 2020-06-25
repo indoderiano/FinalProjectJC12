@@ -28,6 +28,7 @@ class AddProduct extends Component {
 
         // REGISTER OPTIONS
         maincategories:[],
+        loadingmaincategories:true,
         merklist:[],
         // ADD MERK
         merk:'',
@@ -77,7 +78,7 @@ class AddProduct extends Component {
         Axios.get(`${APIURL}/categories`)
         .then((categories)=>{
             console.log(categories.data)
-            this.setState({maincategories:categories.data})
+            this.setState({maincategories:categories.data,loadingmaincategories:false})
         }).catch((err)=>{
             console.log(err)
         })
@@ -417,7 +418,10 @@ class AddProduct extends Component {
                 <Grid style={{marginBottom:'3em'}}>
                     <Grid.Row>
                         
-                        <Segment style={{width:'100%'}}>
+                        <Segment 
+                            style={{width:'100%'}}
+                            loading={this.state.loadingmaincategories}
+                        >
                             <Header as={'h3'}>Main Category</Header>
                             {
                                 this.state.maincategories.map((cat,index)=>{
