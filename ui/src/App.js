@@ -85,28 +85,37 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
 
   if(Loading){
     return (
-      <div style={{
-        position:'absolute',
-        top:'50%',
-        left:'50%',
-        transform:'translate(-50%,-50%)',
-        paddingTop:'5em',
-        height:'100%',
-        overflow:'hidden',
-      }}>
-        <Header as={'h1'} style={{textAlign:'center',marginTop:'0',fontSize:'39px',letterSpacing:'8px'}}>Popstore</Header>
-        <div><center><h3>Loading...</h3><img width="400px" src="https://static.boredpanda.com/blog/wp-content/uploads/2016/07/totoro-exercising-100-days-of-gifs-cl-terryart-2-578f80ec7f328__605.gif"/></center></div>
-        {/* <Segment 
-          basic 
-          loading={true} 
-          style={{
-            width:'100%',
-            display:'flex',
-            alignItems:'center',
-          }}
-        >
-          Loading
-        </Segment> */}
+      <div>
+        <MainHeader 
+          // fixed={fixed ? 'top' : null}
+          inverted
+          pointing
+          secondary
+          size='large'
+        />
+        <div style={{
+          position:'absolute',
+          top:'50%',
+          left:'50%',
+          transform:'translate(-50%,-50%)',
+          paddingTop:'5em',
+          height:'100%',
+          overflow:'hidden',
+        }}>
+          <Header as={'h1'} style={{textAlign:'center',marginTop:'0',fontSize:'39px',letterSpacing:'8px'}}>Popstore</Header>
+          <div><center><h3>Loading...</h3><img width="400px" src="https://static.boredpanda.com/blog/wp-content/uploads/2016/07/totoro-exercising-100-days-of-gifs-cl-terryart-2-578f80ec7f328__605.gif"/></center></div>
+          {/* <Segment 
+            basic 
+            loading={true} 
+            style={{
+              width:'100%',
+              display:'flex',
+              alignItems:'center',
+            }}
+          >
+            Loading
+          </Segment> */}
+        </div>
       </div>
     )
     return <div><center><h3>Loading...</h3><img width="400px" src="https://static.boredpanda.com/blog/wp-content/uploads/2016/07/totoro-exercising-100-days-of-gifs-cl-terryart-2-578f80ec7f328__605.gif"/></center></div>
@@ -115,10 +124,10 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
   return (
     <div>
       <MainHeader 
-        fixed={fixed ? 'top' : null}
-        inverted={!fixed}
-        pointing={!fixed}
-        secondary={!fixed}
+        // fixed={fixed ? 'top' : null}
+        inverted
+        pointing
+        secondary
         size='large'
       />
       <Switch>
