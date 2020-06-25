@@ -14,11 +14,11 @@ module.exports={
             if(err) return res.status(500).send(err)
             console.log('succeed')
             console.log('')
-            sql=`UPDATE products SET isseen = isseen + 1 WHERE idproduct=${idproduct}`
-            db.query(sql,(err,isseen)=>{
-                if(err) return res.status(500).send(err)
-                res.status(200).send(product[0])
-            })
+            res.status(200).send(product[0])
+            // sql=`UPDATE products SET isseen = isseen + 1 WHERE idproduct=${idproduct}`
+            // db.query(sql,(err,isseen)=>{
+            //     if(err) return res.status(500).send(err)
+            // })
             
         })
     },

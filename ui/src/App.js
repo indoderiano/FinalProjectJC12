@@ -116,6 +116,7 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/allproducts/women' exact component={WomenProducts}/>
         <Route path='/allproducts/men' exact component={MenProducts}/>
         {/*  */}
+        {/* <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:()=><Redirect to='/'/>}/> */}
         
         
         
@@ -123,7 +124,6 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
 
 
         {/* INDO */}
-        <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:()=><Redirect to='/'/>}/>
         <Route path='/verification' exact component={User.islogin?Verification:Loading?Verification:()=><Redirect to='/'/>}/>
         <Route path='/verification/:token' exact component={User.islogin?Verification:Loading?Verification:()=><Redirect to='/'/>}/>
         
