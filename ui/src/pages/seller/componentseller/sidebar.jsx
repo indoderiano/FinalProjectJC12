@@ -17,10 +17,7 @@ class SidebarSeller extends Component {
                     <Menu.Header>Products</Menu.Header>
                     <Menu.Menu>
                         <Menu.Item>
-                            <NavLink to='/seller' exact style={{color:'black'}} activeStyle={{color:'red'}}> Product </NavLink>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <NavLink to='/seller/product/myproduct' style={{color:'black'}} activeStyle={{color:'red'}}> My Product </NavLink>
+                            <NavLink to='/seller/product' style={{color:'black'}} activeStyle={{color:'red'}}> My Product </NavLink>
                         </Menu.Item>
                         <Menu.Item>
                             <NavLink to='/seller/product/add' style={{color:'black'}} activeStyle={{color:'red'}}> Add Product </NavLink>
