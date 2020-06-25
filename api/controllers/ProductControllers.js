@@ -189,91 +189,80 @@ module.exports={
     },
                   ////////////// SHOWING ALL PRODUCT TO USER //////////////
     allproducts:(req,res)=>{
-        const {search, page}=req.query
-        console.log(
-            search,'search160',
-            page, 'page162'
-        )
-        const limit=1       //ini jumlah produk per page
+        const {search,category, pmin, pmax, sort, page}=req.query
+        console.log(search,'search160',page, 'page162',pmin, 'hargamin',pmax, 'hargamax', sort, 'sortinglala')
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        const limit=4       //ini jumlah produk per page
         const offset=page
-        console.log(offset, 'dipsy')
-        if(search){
-            // var sql= `  SELECT p.*,c.idcategory AS idcat,c.name AS catnama
-            //             FROM products p 
-            //                 JOIN categories c 
-            //                 ON p.idcategory=c.idcategory
-            //             WHERE p.isdeleted=0 AND p.product_name LIKE '%${search}%'
-            //             LIMIT ${offset},${limit}`
-            var sql=`SELECT * FROM products
-                        WHERE isdeleted=0 AND product_name LIKE '%${search}%'
-                     LIMIT ${offset},${limit}`
-            db.query(sql,(err,result)=>{
+        console.log(offset, 'dipsy', sort)
+        if(search||pricemin||pricemax||category||sort){
+            var sql=`SELECT p.* ,i.iditem, i.price as price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                    WHERE p.isdeleted=0 AND p.isblocked=0 
+                        ${search? `AND p.product_name LIKE '%${search}%' ` : ''}
+                        ${category?`AND p.category LIKE '%${category}%' ` : '' }
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}
+                    GROUP BY i.idproduct
+                    ${sort === 'priceasc'? `ORDER BY price ASC`: sort ==='pricedesc'? `ORDER BY price DESC`:`ORDER BY sold DESC`}
+                    LIMIT ${offset},${limit}`
+        db.query(sql,(err,result)=>{
+                console.log(sql)
                 if(err) res.status(500).send({err,message:'error get product search'})
                 return res.send(result)
             })
         }else{
-            // var sql= `  SELECT p.*,c.idcategory AS idcat,c.name AS catnama
-            //             FROM products p 
-            //                 JOIN categories c 
-            //                 ON p.idcategory=c.idcategory
-            //             WHERE p.isdeleted=0
-            //             LIMIT ${offset},${limit}`
-            var sql=`SELECT * FROM products
-                        WHERE isdeleted=0
-                     LIMIT ${offset},${limit}`
+            var sql=`SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                    WHERE p.isdeleted=0 AND p.isblocked=0
+                    GROUP BY i.idproduct
+                    ORDER BY sold DESC
+                    LIMIT ${offset},${limit}`
             db.query(sql,(err,result)=>{
                 if(err) res.status(500).send({err,message:'error get total product'})
                 return res.send(result)
             })
         }
     },
-
     getTotalProduct:(req,res)=>{
-        const {search, filter}=req.query
-        if(search){
-            console.log('masuk search')
-            var sql= `  SELECT COUNT(idproduct) AS total
-                        FROM products 
-                        WHERE isdeleted=0 AND product_name LIKE '%${search}%'`
+        const {search, category, pmin, pmax}=req.query
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        if(search ||pricemin ||pricemax||category){
+            console.log('masuk total search', search, pmin, pmax)
+            var sql= `  SELECT COUNT(DISTINCT(p.idproduct)) AS total
+                            FROM products p 
+                            JOIN items i ON i.idproduct=p.idproduct
+                            JOIN categories c ON p.idcategory=c.idcategory
+                        WHERE p.isdeleted=0 AND p.isblocked=0 
+                        ${search? `AND p.product_name like '%${search}%' ` : ''}
+                        ${category?`AND p.category like '%${category}%' ` : '' }
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}`
+            console.log(sql) 
+            console.log('teletubies')
             db.query(sql,(err,result)=>{
                 if(err) res.status(500).send({err,message:'error get total product'})
                 console.log(result)
-                console.log(search)
+                console.log(sql)
                 return res.send(result[0])
             })
         }else{
             var sql= `  SELECT COUNT(idproduct) AS total
                         FROM products 
-                        WHERE isdeleted=0`
+                        WHERE isdeleted=0 AND isblocked=0 `
             db.query(sql,(err,result)=>{
+                console.log('total', sql, result)
                 if(err) res.status(500).send({err,message:'error get total product'})
                 return res.send(result[0])
             })
         }
-    },
-
-
-                    ///////////////// GET PRODUCT SELLER ///////////////// ==> NOT YET FINISHED
-    productseller:(req,res)=>{
-        var sql=`select p.*,c.isdeleted, c.name as namecategory
-        from products p join categories c on p.idcategory=c.idcategory
-        where c.isdeleted=0`
-        var sql= `  SELECT p.*,c.idcategory AS idcat,c.name AS catnama
-                        FROM products p 
-                            JOIN categories c 
-                            ON p.idcategory=c.idcategory
-                        WHERE p.isdeleted=0 AND p.idseller=req.query.'
-                        LIMIT ${offset},${limit}`
-        db.query(sql,(err,product)=>{
-            // console.log(product)
-            if (err) res.status(500).send(err)
-            sql=`select * from products order by price asc;`
-            db.query(sql,(err,category)=>{
-                if (err) res.status(500).send(err)
-                return res.send({product,category})
-            })
-        })
-    },
+    },                    
                     ///////////////// GET PRODUCT BY SEARCH KEYWORD ///////////////// ==> NOT YET FINISHED
     searchproduct:(req,res)=>{
         const {keyword, filter, page}=req.query
@@ -316,9 +305,14 @@ module.exports={
     },
                     ///////////////// GET MOST VIEWED PRODUCT FOR HOMEPAGE /////////////////
     mostviewed:(req,res)=>{
-        var sql= `  SELECT * FROM products
-                    ORDER BY isseen DESC
-                    LIMIT 0,4`
+        var sql= `  SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                        WHERE p.isdeleted=0 AND p.isblocked=0
+                    GROUP BY i.idproduct  
+                    ORDER BY seen desc
+                    LIMIT 0,4;`
         db.query(sql,(err,homepageRes)=>{
             if(err) res.status(500).send({err,message:'error get product search'})
             return res.send(homepageRes)
@@ -347,5 +341,241 @@ module.exports={
             })
         })
     },
-
+    ////////////// SHOWING MEN CATEGORY PRODUCT TO USER //////////////
+    menProducts:(req,res)=>{
+        const {search,category, pmin, pmax, sort, page}=req.query
+        console.log(search,'search160',page, 'page162',pmin, 'hargamin',pmax, 'hargamax', sort, 'sortinglala')
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        const limit=4       //ini jumlah produk per page
+        const offset=page
+        console.log(offset, 'dipsy', sort)
+        if(search||pricemin||pricemax||category||sort){
+            var sql=`SELECT p.* ,i.iditem, i.price as price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                    WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=1 OR p.idcategory=3
+                        ${search? `AND p.product_name LIKE '%${search}%' ` : ''}
+                        ${category?`AND p.category LIKE '%${category}%' ` : '' }
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}
+                    GROUP BY i.idproduct
+                    ${sort === 'priceasc'? `ORDER BY price ASC`: sort ==='pricedesc'? `ORDER BY price DESC`:`ORDER BY sold DESC`}
+                    LIMIT ${offset},${limit}`
+        db.query(sql,(err,result)=>{
+                console.log(sql)
+                if(err) res.status(500).send({err,message:'error get product search'})
+                return res.send(result)
+            })
+        }else{
+            var sql=`SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                    WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=1 OR p.idcategory=3
+                    GROUP BY i.idproduct
+                    ORDER BY sold DESC
+                    LIMIT ${offset},${limit}`
+            db.query(sql,(err,result)=>{
+                console.log(sql , 'getproductman')
+                if(err) res.status(500).send({err,message:'error get total product'})
+                return res.send(result)
+            })
+        }
+    },
+    totalMenProducts:(req,res)=>{
+        const {search, category, pmin, pmax}=req.query
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        if(search ||pricemin ||pricemax||category){
+            console.log('masuk total search', search, pmin, pmax)
+            var sql= `  SELECT COUNT(DISTINCT(p.idproduct)) AS total
+                            FROM products p 
+                            JOIN items i ON i.idproduct=p.idproduct
+                            JOIN categories c ON p.idcategory=c.idcategory
+                        WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=1 OR p.idcategory=3
+                        ${search? `AND p.product_name like '%${search}%' ` : ''}
+                        ${category?`AND p.category like '%${category}%' ` : '' }
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}`
+            console.log(sql) 
+            console.log('teletubies TOTAL MENPRODUCT')
+            db.query(sql,(err,result)=>{
+                if(err) res.status(500).send({err,message:'error get total product'})
+                console.log(result)
+                console.log(sql)
+                return res.send(result[0])
+            })
+        }else{
+            var sql= `  SELECT COUNT(idproduct) AS total
+                        FROM products 
+                        WHERE isdeleted=0 AND isblocked=0 AND idcategory=1 OR idcategory=3 `
+            db.query(sql,(err,result)=>{
+                console.log('total', sql, result)
+                if(err) res.status(500).send({err,message:'error get total product'})
+                return res.send(result[0])
+            })
+        }
+    },
+     ////////////// SHOWING Women CATEGORY PRODUCT TO USER //////////////
+     womenProducts:(req,res)=>{
+        const {search,category, pmin, pmax, sort, page}=req.query
+        console.log(search,'search160',page, 'page162',pmin, 'hargamin',pmax, 'hargamax', sort, 'sortinglala')
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        const limit=4       //ini jumlah produk per page
+        const offset=page
+        console.log(offset, 'dipsy', sort)
+        if(search||pricemin||pricemax||category||sort){
+            var sql=`SELECT p.* ,i.iditem, i.price as price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                    WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=2 OR p.idcategory=3
+                        ${search? `AND p.product_name LIKE '%${search}%' ` : ''}
+                        ${category?`AND p.category LIKE '%${category}%' ` : '' }
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}
+                    GROUP BY i.idproduct
+                    ${sort === 'priceasc'? `ORDER BY price ASC`: sort ==='pricedesc'? `ORDER BY price DESC`:`ORDER BY sold DESC`}
+                    LIMIT ${offset},${limit}`
+        db.query(sql,(err,result)=>{
+                console.log(sql)
+                if(err) res.status(500).send({err,message:'error get product search'})
+                return res.send(result)
+            })
+        }else{
+            var sql=`SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                    WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=2 OR p.idcategory=3
+                    GROUP BY i.idproduct
+                    ORDER BY sold DESC
+                    LIMIT ${offset},${limit}`
+            db.query(sql,(err,result)=>{
+                console.log(sql , 'getproductman')
+                if(err) res.status(500).send({err,message:'error get total product'})
+                return res.send(result)
+            })
+        }
+    },
+    totalWomenProducts:(req,res)=>{
+        const {search, category, pmin, pmax}=req.query
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        if(search ||pricemin ||pricemax||category){
+            console.log('masuk total search', search, pmin, pmax)
+            var sql= `  SELECT COUNT(DISTINCT(p.idproduct)) AS total
+                            FROM products p 
+                            JOIN items i ON i.idproduct=p.idproduct
+                            JOIN categories c ON p.idcategory=c.idcategory
+                        WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=2 OR p.idcategory=3
+                        ${search? `AND p.product_name like '%${search}%' ` : ''}
+                        ${category?`AND p.category like '%${category}%' ` : '' }
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}`
+            console.log(sql) 
+            console.log('teletubies TOTAL WomenPRODUCT')
+            db.query(sql,(err,result)=>{
+                if(err) res.status(500).send({err,message:'error get total product'})
+                console.log(result)
+                console.log(sql)
+                return res.send(result[0])
+            })
+        }else{
+            var sql= `  SELECT COUNT(idproduct) AS total
+                        FROM products 
+                        WHERE isdeleted=0 AND isblocked=0 AND idcategory=2 OR idcategory=3 `
+            db.query(sql,(err,result)=>{
+                console.log('total', sql, result)
+                if(err) res.status(500).send({err,message:'error get total product'})
+                return res.send(result[0])
+            })
+        }
+    },
+                 ///////////////// GET PRODUCT SELLER ///////////////// 
+    sellerProducts:(req,res)=>{
+        const {search,category, pmin, pmax, sort, page}=req.query
+        console.log(search,'search160',page, 'page162',pmin, 'hargamin',pmax, 'hargamax', sort, 'sortinglala')
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        const limit=4       //ini jumlah produk per page
+        const offset=page
+        console.log(offset, 'dipsy', sort)
+        if(search||pricemin||pricemax||category||sort){
+            var sql=`SELECT p.* ,i.iditem, i.price as price, i.stock as stock,  c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                        JOIN seller s ON p.idseller=s.idseller
+                    WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=2 OR p.idcategory=3
+                        AND idseller={idseller}
+                        ${search? `AND p.product_name LIKE '%${search}%' ` : ''}
+                        ${category?`AND p.category LIKE '%${category}%' ` : '' }
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}
+                    GROUP BY i.idproduct
+                    ${sort === 'priceasc'? `ORDER BY price ASC`: sort ==='pricedesc'? `ORDER BY price DESC`:`ORDER BY sold DESC`}
+                    LIMIT ${offset},${limit}`
+        db.query(sql,(err,result)=>{
+                console.log(sql)
+                if(err) res.status(500).send({err,message:'error get product search'})
+                return res.send(result)
+            })
+        }else{
+            var sql=`SELECT p.* ,i.iditem, i.price, i.stock as stock, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                        JOIN seller s ON p.idseller=s.idseller
+                    WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=2 OR p.idcategory=3
+                        AND idseller={idseller}
+                    GROUP BY i.idproduct
+                    ORDER BY sold DESC
+                    LIMIT ${offset},${limit}`
+            db.query(sql,(err,result)=>{
+                console.log(sql , 'getproductman')
+                if(err) res.status(500).send({err,message:'error get total product'})
+                return res.send(result)
+            })
+        }
+    },
+    totalSellerProducts:(req,res)=>{
+        const {search, category, pmin, pmax}=req.query
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        if(search ||pricemin ||pricemax||category){
+            console.log('masuk total search', search, pmin, pmax)
+            var sql= `  SELECT COUNT(DISTINCT(p.idproduct)) AS total
+                            FROM products p 
+                            JOIN items i ON i.idproduct=p.idproduct
+                            JOIN categories c ON p.idcategory=c.idcategory
+                            JOIN seller s ON p.idseller=s.idseller
+                        WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=2 OR p.idcategory=3
+                        ${search? `AND p.product_name like '%${search}%' ` : ''}
+                        ${category?`AND p.category like '%${category}%' ` : '' }
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}`
+            console.log(sql) 
+            console.log('teletubies TOTAL WomenPRODUCT')
+            db.query(sql,(err,result)=>{
+                if(err) res.status(500).send({err,message:'error get total product'})
+                console.log(result)
+                console.log(sql)
+                return res.send(result[0])
+            })
+        }else{
+            var sql= `  SELECT COUNT(idproduct) AS total
+                        FROM products 
+                        WHERE isdeleted=0 AND isblocked=0 AND idcategory=2 OR idcategory=3
+                            AND idseller={} `
+            db.query(sql,(err,result)=>{
+                console.log('total', sql, result)
+                if(err) res.status(500).send({err,message:'error get total product'})
+                return res.send(result[0])
+            })
+        }
+    },
 }
