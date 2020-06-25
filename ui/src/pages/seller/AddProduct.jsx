@@ -188,14 +188,13 @@ class AddProduct extends Component {
                 .then((newitems)=>{
                     console.log('upload item berhasil')
                     console.log(newitems.data)
-                    this.setState({newidproduct:newproduct.data.insertId})
                     this.setState({loading:false})
+                    this.setState({newidproduct:newproduct.data.insertId})
                 }).catch((err)=>{
                     console.log(err)
                 })
             }).catch((err)=>{
                 console.log(err)
-            }).finally(()=>{
             })
         }
     }

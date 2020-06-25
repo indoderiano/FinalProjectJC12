@@ -11,6 +11,7 @@ import {
 import { connect } from "react-redux";
 import {Link} from 'react-router-dom'
 import {isLogout} from './../redux/actions'
+import {titleConstruct} from '../supports/services'
 import Axios from 'axios';
 import { APIURL } from '../supports/ApiUrl';
 
@@ -19,8 +20,8 @@ class MainHeader extends Component {
     state = { 
       useroptions : [
         { key: 1, text: 'Logout', value: 1 ,onClick:()=>{this.props.isLogout()}},
-        { key: 2, text: 'Profile', value: 2 },
-        // { key: 3, text: 'Items are kept within view', value: 3 },
+        { key: 2, text: 'Profile', value: 2, as:Link, to:'/profile' },
+        { key: 3, text: 'Become A Seller', value: 3, as:Link, to:'/Sellerregister' },
       ]
      }
     render() { 
@@ -74,11 +75,11 @@ class MainHeader extends Component {
                         <Dropdown
                           item
                           simple
-                          text={`Hi, ${this.props.User.username}`}
+                          text={`Hi, ${titleConstruct(this.props.User.username)}`}
                           style={{
                             paddingTop:'0px',
                             // paddingBottom:'1px',
-                            marginTop:'.5px',
+                            marginTop:'0px',
                             display:'flex',
                             alignItems:'center',
                             height:'100%',
