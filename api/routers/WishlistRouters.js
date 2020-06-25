@@ -10,6 +10,7 @@ Router.get('/getwishlist',WishlistControllers.showWishlist)
 /////// untuk post data dari product detail to wishlist database /////////
 Router.post('/getproduct',WishlistControllers.getidProduct)
 ////////////////////////////////
+Router.delete('/deletewishlist',WishlistControllers.deleteWishlist)
 
 
 

@@ -7,11 +7,11 @@ module.exports={
     ///// SHOW DATA WISHLIST KE PAGES WISHLIST FRONT END /////
     showWishlist:(req,res)=>{
         const {iduser}=req.query
-        var sql=`select  w.iduser , p.* , i.price 
-                 from wishlist w 
+        var sql=`select  w.* , p.* , i.price from wishlist w 
                  join products p on w.idproduct = p.idproduct 
                  join items i on p.idproduct = i.idproduct
-                 where iduser=${iduser}`
+                 where iduser=${iduser}
+                 group by w.idproduct `
         db.query(sql,(err,result)=>{
             if(err) res.status(500).send(err)
            return res.status(200).send(result)
@@ -40,7 +40,15 @@ module.exports={
             return res.status(200).send(result)
         })
     },
-
+    ///// DELETE WISHLIST DATA ////
+    deleteWishlist:(req,res)=>{
+        const {idwishlist}=req.query
+        var sql=`delete from wishlist where idwishlist=${idwishlist}`
+        db.query(sql,(err,result)=>{
+            if(err) res.status(500).send(err.message)
+            return res.status(200).send(result)
+        })
+    },
 
     postimage:(req,res)=>{
         const path = '/products'
