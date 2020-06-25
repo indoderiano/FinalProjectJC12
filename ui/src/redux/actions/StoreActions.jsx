@@ -19,7 +19,7 @@ export const LoadOrders=(iduser)=>{
             Axios.get(`${APIURL}/transactions/seller?idseller=${idseller}&idpackagestatus=2`)
             .then((res)=>{
                 console.log('orders list loaded')
-                console.log(res.data)
+                // console.log(res.data)
                 
                 // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
                 var listByTransaction=ListByStoreTransaction(res.data)

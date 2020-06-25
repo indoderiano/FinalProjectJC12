@@ -23,6 +23,8 @@ import {Redirect} from 'react-router-dom'
 
 class ProductItems extends Component {
     state = { 
+        coverloading:true,
+        itemloading:true,
 
         // Product
         product:{
@@ -30,10 +32,12 @@ class ProductItems extends Component {
         },
         deletecoverimageindex:-1,
         coverimage:[],
+        loadingcoveradd:false,
         editproduct:false,
         deleteproduct:false,
         newproductname:'',
         newdescription:'',
+        loadingeditproduct:false,
 
         errorcover:'',
 
@@ -43,6 +47,8 @@ class ProductItems extends Component {
         price:0,
         stock:0,
         image:[],
+        loadingimageaddid:0,
+        loadingedit:false,
 
         deleteimageiditem:-1,
         deleteimageindex:-1,
@@ -64,7 +70,7 @@ class ProductItems extends Component {
         Axios.get(`${APIURL}/products/get/${this.props.match.params.idproduct}`)
         .then((res)=>{
             console.log(res.data)
-            this.setState({product:res.data})
+            this.setState({product:res.data,coverloading:false})
         }).catch((err)=>{
             console.log(err)
         })
@@ -76,16 +82,17 @@ class ProductItems extends Component {
         Axios.get(`${APIURL}/items?idproduct=${this.props.match.params.idproduct}`)
         .then((res)=>{
             console.log(res.data)
-            this.setState({items:res.data})
+            this.setState({items:res.data,itemloading:false})
         }).catch((err)=>{
             console.log(err)
         })
     }
 
     onAddCover=()=>{
+        this.setState({loadingcoveradd:true})
         if(this.state.image.length>5){
             // error message
-            this.setState({errorcover:'Jumlah upload image tidak bisa lebih dari 5'})
+            this.setState({errorcover:'Jumlah upload image tidak bisa lebih dari 5',loadingcoveradd:false})
         }else{
             console.log('add cover image')
 
@@ -103,7 +110,7 @@ class ProductItems extends Component {
                 }
             }).then((res)=>{
                 console.log('berhasil update cover image')
-                this.setState({coverimage:[]})
+                this.setState({coverimage:[],loadingcoveradd:false})
                 document.getElementById('cover').value='' // clear input file image
                 this.getProduct()
             }).catch((err)=>{
@@ -126,7 +133,7 @@ class ProductItems extends Component {
     }
 
     onSubmitProduct=()=>{
-
+        this.setState({loadingeditproduct:true})
         var edit={
             product_name: this.state.newproductname,
             description: this.state.newdescription
@@ -136,7 +143,7 @@ class ProductItems extends Component {
         .then((res)=>{
             console.log('berhasil update product')
             this.getProduct()
-            this.setState({editproduct:false})
+            this.setState({editproduct:false,loadingeditproduct:false})
         }).catch((err)=>{
             console.log(err)
         })
@@ -176,10 +183,10 @@ class ProductItems extends Component {
     }
 
     onAddPhoto=(iditem,oldimage)=>{
-
+        this.setState({loadingimageaddid:iditem})
         if(this.state.image.length>5){
             // error message
-            this.setState({errorimage:'Jumlah upload image tidak bisa lebih dari 5'})
+            this.setState({errorimage:'Jumlah upload image tidak bisa lebih dari 5',loadingimageaddid:0})
         }else{
             console.log('add image')
 
@@ -197,7 +204,7 @@ class ProductItems extends Component {
                 }
             }).then((res)=>{
                 console.log('berhasil update item')
-                this.setState({image:[]})
+                this.setState({image:[],loadingimageaddid:0})
                 document.getElementById(iditem).value=''
                 this.getItems()
             }).catch((err)=>{
@@ -220,7 +227,7 @@ class ProductItems extends Component {
     }
 
     onSubmit=()=>{
-
+        this.setState({loadingedit:true})
         var edit={
             price:this.state.price?this.state.price:0,
             stock:this.state.stock?this.state.stock:0
@@ -229,7 +236,7 @@ class ProductItems extends Component {
         Axios.put(`${APIURL}/items/${this.state.editid}`,edit)
         .then((res)=>{
             console.log('berhasil update item')
-            this.setState({editid:0,stock:0,price:0})
+            this.setState({editid:0,stock:0,price:0,loadingedit:false})
             this.getItems()
         }).catch((err)=>{
             console.log(err)
@@ -260,7 +267,7 @@ class ProductItems extends Component {
         if(this.state.product.imagecover){
             // console.log(this.state.product.imagecover)
             var coverimages=this.isJson(this.state.product.imagecover)
-            // console.log(coverimages)
+            // console.log('cover images',coverimages)
         }
 
         return (
@@ -273,17 +280,23 @@ class ProductItems extends Component {
                     </Grid.Row>
                     <Grid.Row style={{padding:'0 1rem'}}>
                         {
-                            coverimages?
+                            // OPTIONAL CHAINING OPERATOR
+                            coverimages?.length?
+                            // Array.isArray(coverimages)&&coverimages.length?
                             coverimages.map((image,index)=>{
                                 // console.log(image)
                                 return (
                                     <Grid.Column key={index} width={4} style={{padding:'.5em 1em .5em 0'}}>
-                                        <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                        <Segment 
+                                            style={{padding:'.5em',width:'100%',textAlign:'center'}}
+                                            loading={this.state.coverloading}
+                                        >
                                             <div 
                                                 style={{
                                                     paddingTop:'80%',
                                                     backgroundImage:`url('${APIURL+image}')`,
-                                                    backgroundSize:'cover',
+                                                    backgroundSize:'contain',
+                                                    backgroundRepeat:'no-repeat',
                                                     backgroundPosition:'center',
                                                     marginBottom:'1em'
                                                 }}
@@ -312,12 +325,16 @@ class ProductItems extends Component {
                             })
                             : 
                             <Grid.Column width={4} style={{padding:'.5em 1em .5em 0'}}>
-                                <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                <Segment 
+                                    style={{padding:'.5em',width:'100%',textAlign:'center'}}
+                                    loading={this.state.coverloading}    
+                                >
                                     <div 
                                         style={{
                                             paddingTop:'80%',
                                             backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
-                                            backgroundSize:'cover',
+                                            backgroundSize:'contain',
+                                            backgroundRepeat:'no-repeat',
                                             backgroundPosition:'center',
                                             marginBottom:'1em'
                                         }}
@@ -343,6 +360,7 @@ class ProductItems extends Component {
                             <Button
                                 basic
                                 primary
+                                loading={this.state.loadingcoveradd}
                                 style={{height:'100%'}}
                                 onClick={()=>{this.onAddCover()}}
                             >
@@ -386,6 +404,8 @@ class ProductItems extends Component {
                             <Grid.Column width={16} style={{textAlign:'right'}}>
                                 <Button
                                     primary
+                                    loading={this.state.loadingeditproduct}
+                                    disabled={this.state.loadingeditproduct}
                                     onClick={this.onSubmitProduct}
                                 >
                                     Submit
@@ -488,7 +508,8 @@ class ProductItems extends Component {
                     </Grid.Row>
                     <Grid.Row style={{padding:'0 1rem'}}>
                         {
-                            coverimages?
+                            // OPTIONAL CHAINING OPERATOR
+                            coverimages?.length?
                             coverimages.map((image,index)=>{
                                 // console.log(image)
                                 return (
@@ -498,7 +519,8 @@ class ProductItems extends Component {
                                                 style={{
                                                     paddingTop:'80%',
                                                     backgroundImage:`url('${APIURL+image}')`,
-                                                    backgroundSize:'cover',
+                                                    backgroundSize:'contain',
+                                                    backgroundRepeat:'no-repeat',
                                                     backgroundPosition:'center',
                                                     marginBottom:'1em'
                                                 }}
@@ -528,12 +550,16 @@ class ProductItems extends Component {
                             })
                             : 
                             <Grid.Column width={4} style={{padding:'.5em 1em .5em 0'}}>
-                                <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                <Segment 
+                                    style={{padding:'.5em',width:'100%',textAlign:'center'}}
+                                    loading={this.state.coverloading}    
+                                >
                                     <div 
                                         style={{
                                             paddingTop:'80%',
                                             backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
-                                            backgroundSize:'cover',
+                                            backgroundSize:'contain',
+                                            backgroundRepeat:'no-repeat',
                                             backgroundPosition:'center',
                                             marginBottom:'1em'
                                         }}
@@ -727,7 +753,9 @@ class ProductItems extends Component {
                                 }}
                             > */}
                                 {
-                                    Array.isArray(image)&&image.length?
+                                    // Array.isArray(image)&&image.length?
+                                    // OPTIONAL CHAINING OPERATOR
+                                    image?.length?
                                     image.map((path,index)=>{
                                         return (
                                                 
@@ -744,12 +772,16 @@ class ProductItems extends Component {
                                             //     }}
                                             // >   
                                             <Grid.Column key={index} width={4} style={{padding:'.5em 1em .5em 0'}}>
-                                                <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                                <Segment 
+                                                    style={{padding:'.5em',width:'100%',textAlign:'center'}}
+                                                    loading={this.state.itemloading}
+                                                >
                                                     <div 
                                                         style={{
                                                             paddingTop:'80%',
                                                             backgroundImage:`url('${APIURL+path}')`,
-                                                            backgroundSize:'cover',
+                                                            backgroundSize:'contain',
+                                                            backgroundRepeat:'no-repeat',
                                                             backgroundPosition:'center',
                                                             marginBottom:'1em'
                                                         }}
@@ -780,12 +812,16 @@ class ProductItems extends Component {
                                     :
                                     <>
                                     <Grid.Column key={index} width={4} style={{padding:'.5em 1em .5em 0'}}>
-                                        <Segment style={{padding:'.5em',width:'100%',textAlign:'center'}}>
+                                        <Segment 
+                                            style={{padding:'.5em',width:'100%',textAlign:'center'}}
+                                            loading={this.state.itemloading}    
+                                        >
                                             <div 
                                                 style={{
                                                     paddingTop:'80%',
                                                     backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
-                                                    backgroundSize:'cover',
+                                                    backgroundSize:'contain',
+                                                    backgroundRepeat:'no-repeat',
                                                     backgroundPosition:'center',
                                                     marginBottom:'1em'
                                                 }}
@@ -818,7 +854,8 @@ class ProductItems extends Component {
                                             style={{
                                                 paddingTop:'80%',
                                                 backgroundImage:`url(https://react.semantic-ui.com/images/wireframe/image.png)`,
-                                                backgroundSize:'cover',
+                                                backgroundSize:'contain',
+                                                backgroundRepeat:'no-repeat',
                                                 backgroundPosition:'center',
                                                 marginBottom:'1em'
                                             }}
@@ -844,6 +881,7 @@ class ProductItems extends Component {
                                 <Button
                                     basic
                                     primary
+                                    loading={item.iditem==this.state.loadingimageaddid}
                                     style={{height:'100%'}}
                                     onClick={()=>{this.onAddPhoto(item.iditem,item.image)}}
                                 >
@@ -885,6 +923,8 @@ class ProductItems extends Component {
                                     <Grid.Column width={16} style={{textAlign:'right'}}>
                                         <Button
                                             primary
+                                            loading={item.iditem==this.state.editid&&this.state.loadingedit}
+                                            disabled={item.iditem==this.state.editid&&this.state.loadingedit}
                                             // style={{marginLeft:'auto'}}
                                             onClick={this.onSubmit}
                                         >

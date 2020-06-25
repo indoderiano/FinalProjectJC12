@@ -35,16 +35,17 @@ class TransactionList extends Component {
     state = { 
         historyList:[],
         ismodal:false,
-        modaltransaction:{}
+        modaltransaction:{},
+        israted:false,
+        timeout:''
      }
-
-    // DONT FORGET TO ADD RATING ITEMS
 
     componentDidMount=()=>{
         this.getList()
     }
 
     getList=()=>{
+        // GET LIST WHERE IDUSER, AND 
         Axios.get(`${APIURL}/transactions/user?iduser=${this.props.User.iduser}&idstatus=${[2,3,4,5,6]}`)
         .then((res)=>{
             // console.log('get list',res.data)
@@ -59,14 +60,42 @@ class TransactionList extends Component {
         })
     }
 
-    onRating=(idtransactiondetail,rating)=>{
-        Axios.put(`${APIURL}/transactiondetails/${idtransactiondetail}`,{rating})
+    onRating=(idtransactiondetail,rating,idproduct)=>{
+        // CHANGE ORDER STATUS TO COMPLETE
+        // UPDATE RATING IN TRANSACTION DETAIL AND PRODUCT
+        
+        Axios.put(`${APIURL}/transactiondetails/${idtransactiondetail}`,{rating,idorderstatus:4})
         .then((updated)=>{
             console.log('rating success')
+
+            // RECOUNT PRODUCT_RATING
+            this.countRating(idproduct)
+
+            // RECOUNT PRODUCT SOLD
+            this.countSold(idproduct)
+
+            // MESSAGE
+            var timeout=setTimeout(()=>{
+                this.setState({israted:false})
+            },2000)
+            this.setState({timeout,israted:true})
             this.getList()
         }).catch((err)=>{
             console.log(err)
         })
+
+
+    }
+
+    // COUNT RATING PRODUCT
+    countRating=(idproduct)=>{
+        Axios.put(`${APIURL}/products/rating/${idproduct}`)
+            .then((res)=>{
+                console.log('product rating updated')
+                // console.log(res.data)
+            }).catch((err)=>{
+                console.log(err)
+            })
     }
 
     // COUNT SOLD WHEN ORDERSTATUS IS COMPLETED
@@ -93,7 +122,8 @@ class TransactionList extends Component {
                                     style={{
                                         paddingTop:'80%',
                                         backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                         position:'relative'
                                     }}
@@ -256,13 +286,13 @@ class TransactionList extends Component {
             // return (
             //     <p>asdf</p>
             // )
-            console.log(rating)
+            // console.log(rating)
             var stars=[]
             for(var i=1;i<=rating;i++){
-                stars[i]=(<Icon name='star'/>)
+                stars[i]=(<Icon key={i} name='star'/>)
             }
 
-            console.log(stars)
+            // console.log(stars)
             return (
                 <div style={{textAlign:'right'}}>
                     {stars}
@@ -273,19 +303,19 @@ class TransactionList extends Component {
                 <div style={{textAlign:'right'}}>
                     <span style={{marginRight:'.5em'}}>Rate Order </span>
                     <Icon name='star outline' style={{cursor:'pointer'}} onClick={()=>{
-                        this.onRating(idtransactiondetail,1)
+                        this.onRating(idtransactiondetail,1,item.idproduct)
                     }}/>
                     <Icon name='star outline' style={{cursor:'pointer'}} onClick={()=>{
-                        this.onRating(idtransactiondetail,2)
+                        this.onRating(idtransactiondetail,2,item.idproduct)
                     }}/>
                     <Icon name='star outline' style={{cursor:'pointer'}} onClick={()=>{
-                        this.onRating(idtransactiondetail,3)
+                        this.onRating(idtransactiondetail,3,item.idproduct)
                     }}/>
                     <Icon name='star outline' style={{cursor:'pointer'}} onClick={()=>{
-                        this.onRating(idtransactiondetail,4)
+                        this.onRating(idtransactiondetail,4,item.idproduct)
                     }}/>
                     <Icon name='star outline' style={{cursor:'pointer'}} onClick={()=>{
-                        this.onRating(idtransactiondetail,5)
+                        this.onRating(idtransactiondetail,5,item.idproduct)
                     }}/>
                 </div>
             )
@@ -306,7 +336,8 @@ class TransactionList extends Component {
                                     style={{
                                         paddingTop:'80%',
                                         backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                         position:'relative'
                                     }}
@@ -326,8 +357,8 @@ class TransactionList extends Component {
                                 </div>
                             </Grid.Column>
                             <Grid.Column width={4} style={{display:'flex',flexDirection:'column'}}>
-                                <Header as={'h4'} style={{marginBottom:'0em',flexBasis:'1em',opacity:item.isselected?'1':'.8'}}>{item.product_name}</Header>
-                                <p style={{margin:'0 0 .5em',fontSize:'12px',flexBasis:'.8em',opacity:item.isselected?'1':'.8'}}>
+                                <Header as={'h4'} style={{marginBottom:'0em',flexBasis:'1em'}}>{item.product_name}</Header>
+                                <p style={{margin:'0 0 .5em',fontSize:'12px',flexBasis:'.8em'}}>
                                     {
                                         typeArr.map((type,j)=>{
                                             return (
@@ -367,6 +398,19 @@ class TransactionList extends Component {
                                     this.renderRating(item.idtransactiondetail,item.rating,item)
                                     : null
                                 }
+                                {/* <Button
+                                    onClick={()=>{
+                                        Axios.put(`${APIURL}/products/rating/${item.idproduct}`)
+                                        .then((res)=>{
+                                            console.log('berhasil')
+                                            console.log(res.data)
+                                        }).catch((err)=>{
+                                            console.log(err)
+                                        })
+                                    }}
+                                    >
+                                    test
+                                </Button> */}
                                 {/* <div style={{textAlign:'right',marginTop:'auto'}}>
                                     <Header 
                                         as={'span'} 
@@ -511,6 +555,23 @@ class TransactionList extends Component {
                     </Modal.Description>
                     </Modal.Content>
                 </Modal>
+
+                {
+                    this.state.israted?
+                    <Message 
+                        style={{
+                            position:'fixed',
+                            top:'50%',
+                            left:'50%',
+                            transform: 'translate(-50%,-50%)',
+                            // color:'green'
+                        }}
+                        color='blue'
+                    >
+                        Thank you for your rating<Icon name='check'/>
+                    </Message>
+                    : null
+                }
                 
             </Container>
         );

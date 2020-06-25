@@ -8,5 +8,8 @@ Router.get('/unverified', AdminControllers.GetUnverified)
 Router.put('/blocked/:idseller',AdminControllers.BlockSeller)
 Router.put('/unblocked/:idseller',AdminControllers.UnblockSeller)
 Router.put('/verifyseller/:idseller',AdminControllers.VerifySeller)
+// INDO
+Router.get('/sales/count',AdminControllers.getSalesCount)
+
 module.exports=Router
 

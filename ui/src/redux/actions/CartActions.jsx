@@ -12,7 +12,7 @@ import { APIURL } from '../../supports/ApiUrl';
 
 
 export const LoadCart=(iduser)=>{
-    console.log('Load Cart Action',iduser)
+    console.log('Load Cart')
     return (dispatch)=>{
 
         // GET TRANSACTION DETAILS JOIN ITEMS JOIN PRODUCT
@@ -25,20 +25,20 @@ export const LoadCart=(iduser)=>{
         
             var stock=true
             var id=0
-            console.log('cartlist',cartlist)
+            // console.log('cartlist',cartlist)
 
             if(cartlist.length==0){
                 dispatch({type:CART_EMPTY})
             }
     
             cartlist.forEach((td,cartlistindex)=>{
-                console.log(td)
+                // console.log(td)
                 // iditem
                 // qty
 
                 Axios.put(`${APIURL}/items/checkstock/${td.iditem}`,{qty:td.qty})
                 .then((newstock)=>{
-                    console.log(`item id ${td.iditem} newstock is ${newstock.data.stock}`)
+                    // console.log(`item id ${td.iditem} newstock is ${newstock.data.stock}`)
                     if(newstock.data.stock<0){
                         stock=false
                         id=td.iditem
@@ -55,7 +55,7 @@ export const LoadCart=(iduser)=>{
                         // STOCK IS CHECKED
                         // RECONSTRUCT LIST, ITEMS BY SELLER
                         console.log('stock is checked')
-                        console.log(cartlist)
+                        // console.log(cartlist)
                         var listBySeller=[]
                         for(let item of cartlist){
                             // check if seller data already in array
@@ -80,7 +80,7 @@ export const LoadCart=(iduser)=>{
                         }
             
                         // console.log('list by seller')
-                        console.log('cart list action',listBySeller)
+                        // console.log('cart list action',listBySeller)
                         dispatch({type:CART_LIST,payload:listBySeller})
             
             
@@ -124,7 +124,7 @@ export const LoadCart=(iduser)=>{
                         }
             
                         // console.log('list by seller')
-                        console.log('cart checkout action',listCheckout)
+                        // console.log('cart checkout action',listCheckout)
                         dispatch({type:CART_CHECKOUT,payload:listCheckout})
             
             

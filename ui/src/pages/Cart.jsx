@@ -39,7 +39,7 @@ class Cart extends Component {
         // this.props.LoadCart()
 
         // DONT FORGET TO CHECK IF STOCK IS GOOD BEFORE CHECKOUT
-        console.log('cart componentdidmount')
+        // console.log('cart componentdidmount')
 
         this.checkStock()
         
@@ -137,7 +137,8 @@ class Cart extends Component {
                                                 style={{
                                                     paddingTop:'80%',
                                                     backgroundImage:`url('https://react.semantic-ui.com/images/wireframe/image.png')`,
-                                                    backgroundSize:'cover',
+                                                    backgroundSize:'contain',
+                                                    backgroundRepeat:'no-repeat',
                                                     backgroundPosition:'center',
                                                     position:'relative'
                                                 }}
@@ -212,7 +213,8 @@ class Cart extends Component {
                                                 style={{
                                                     paddingTop:'80%',
                                                     backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                                    backgroundSize:'cover',
+                                                    backgroundSize:'contain',
+                                                    backgroundRepeat:'no-repeat',
                                                     backgroundPosition:'center',
                                                     position:'relative',
                                                     opacity:typeof item.qtyshort !== 'undefined'?'.7':'1'

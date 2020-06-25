@@ -53,7 +53,7 @@ class DeliveryList extends Component {
                 console.log(res.data)
                 
                 // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
-                var listByTransaction=ListByStoreTransaction(res.data,'store').reverse()
+                var listByTransaction=ListByStoreTransaction(res.data,'store')
                 console.log(listByTransaction)
                 this.setState({deliveryList:listByTransaction})
             }).catch((err)=>{
@@ -81,7 +81,8 @@ class DeliveryList extends Component {
                                     style={{
                                         paddingTop:'80%',
                                         backgroundImage:`url(${APIURL+isJson(item.imagecover)[0]})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                         position:'relative'
                                     }}

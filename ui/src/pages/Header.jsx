@@ -5,14 +5,25 @@ import {
     Header,
     Menu,
     Icon,
-    Label
+    Label,
+    Dropdown
   } from 'semantic-ui-react'
 import { connect } from "react-redux";
 import {Link} from 'react-router-dom'
 import {isLogout} from './../redux/actions'
+import {titleConstruct} from '../supports/services'
+import Axios from 'axios';
+import { APIURL } from '../supports/ApiUrl';
+
 
 class MainHeader extends Component {
-    state = {  }
+    state = { 
+      useroptions : [
+        { key: 1, text: 'Logout', value: 1 ,onClick:()=>{this.props.isLogout()}},
+        { key: 2, text: 'Profile', value: 2, as:Link, to:'/profile' },
+        { key: 3, text: 'Become A Seller', value: 3, as:Link, to:'/Sellerregister' },
+      ]
+     }
     render() { 
         return ( 
             <Menu
@@ -21,18 +32,19 @@ class MainHeader extends Component {
               pointing={!this.props.fixed}
               secondary={!this.props.fixed}
               size={this.props.size}
-              style={{backgroundColor:'#2d2b36',margin:'0',padding:'14px 0 14px'}}
+              style={{backgroundColor:'rgb(27, 28, 29)',margin:'0',padding:'14px 0 0px'}}
             >
               <Container style={{display:'block'}}>
                 <Menu.Item as={Link} to='/' style={style.menu} active>
                   Home                 
                 </Menu.Item>
                 <Menu.Item as={Link} to='/seller' style={style.menu}>Seller</Menu.Item>
+        {/* <span style={{color:'white'}}>{this.props.Seller.idseller}</span> */}
                 <Menu.Item as='a' style={style.menu}>Company</Menu.Item>
-                <Menu.Item as='a' style={style.menu}>Careers</Menu.Item>
+                {/* <Menu.Item as='a' style={style.menu}>Careers</Menu.Item> */}
                 
 
-                <Menu.Item style={{float:'right'}}>
+                <Menu.Item style={{float:'right',padding:'16px 0 18px'}}>
                   
                   {
                     !this.props.User.islogin?
@@ -44,10 +56,10 @@ class MainHeader extends Component {
                         Sign Up
                       </Button>
                     </>
-                    :  
-                    <Button as={Link} to='/' inverted onClick={()=>{this.props.isLogout()}}>
-                      Log out
-                    </Button>
+                    :  null
+                    // <Button as={Link} to='/' inverted onClick={()=>{this.props.isLogout()}}>
+                    //   Log out
+                    // </Button>
                   }
                 </Menu.Item>
                 
@@ -58,7 +70,25 @@ class MainHeader extends Component {
                       as='span' 
                       style={style.menuRight}
                     >
-                      Hi, {this.props.User.username}
+                      {/* Hi, {this.props.User.username} */}
+                      {/* <Menu> */}
+                        <Dropdown
+                          item
+                          simple
+                          text={`Hi, ${titleConstruct(this.props.User.username)}`}
+                          style={{
+                            paddingTop:'0px',
+                            // paddingBottom:'1px',
+                            marginTop:'0px',
+                            display:'flex',
+                            alignItems:'center',
+                            height:'100%',
+                          }}
+                          className='header-dropdown'
+                          // direction=''
+                          options={this.state.useroptions}
+                        />
+                      {/* </Menu> */}
                     </Menu.Item>
                     {// CART
                       this.props.User.isuser?
@@ -175,12 +205,14 @@ const style={
   menu:{
     display:'inline-block',
     marginTop:'5px',
-    color:'black'
+    padding:'.6em 1em'
   },
   menuRight:{
     display:'inline-block',
     marginTop:'5px',
-    float:'right'
+    padding:'.6em 1em',
+    float:'right',
+    height:'100%'
   }
 }
 
@@ -190,7 +222,8 @@ const MapstatetoProps=(state)=>{
         Cart: state.Cart,
         Payment: state.Payment,
         Store: state.Store,
-        Invoices: state.Invoices
+        Invoices: state.Invoices,
+        Seller: state.Seller,
     }
 }
  

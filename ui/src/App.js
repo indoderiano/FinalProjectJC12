@@ -2,12 +2,17 @@ import React, {useState,useEffect,Fragment} from 'react';
 import './App.css';
 import Home from './pages/Home'
 import { Switch, Route, Redirect } from 'react-router-dom';
+import {
+  Grid,
+  Header,
+  Segment,
+} from 'semantic-ui-react'
 import MainHeader from './pages/Header'
 import Login from './pages/Login';
 import Register from './pages/Register'
 import Verification from './pages/Verification'
 import ManageProduct from './pages/ManageProduct'
-import AddProduct from './pages/seller/AddProduct' // NOT FINISH: category, protection, sellerid
+import AddProduct from './pages/seller/AddProduct'
 import AllProducts from './pages/AllProducts'
 import ProductItems from './pages/seller/ProductItems'
 import Product from './pages/Product'
@@ -26,13 +31,16 @@ import Testimage from './pages/aaaaa'
 import WishlistPage from './pages/Wishlist'
 import CommentSection from './component/Comment'
 import { KeepLogin,KeepSeller, LoadCart, LoadPayment,LoadInvoices, LoadOrders } from './redux/actions'
+import Chart from './pages/admin/Charts'
 import { APIURL } from './supports/ApiUrl';
 import { connect } from 'react-redux';
-import HomeSeller from './pages/seller/HomeSeller';
 import MyProducts from './pages/seller/MyProduct';
 import MyOrders from './pages/seller/MyOrder';
 import Axios from'axios'
 import StoreProfile from './pages/seller/StoreProfile';
+import SearchProducts from './pages/SearchProducts';
+import WomenProducts from './pages/WomenProducts';
+import MenProducts from './pages/MenProducts';
 
 
 function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSeller}) {
@@ -79,16 +87,50 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
   
 
   if(Loading){
+    return (
+      <div>
+        <MainHeader 
+          // fixed={fixed ? 'top' : null}
+          inverted
+          pointing
+          secondary
+          size='large'
+        />
+        <div style={{
+          position:'absolute',
+          top:'50%',
+          left:'50%',
+          transform:'translate(-50%,-50%)',
+          paddingTop:'5em',
+          height:'100%',
+          overflow:'hidden',
+        }}>
+          <Header as={'h1'} style={{textAlign:'center',marginTop:'0',fontSize:'39px',letterSpacing:'8px'}}>Popstore</Header>
+          <div><center><h3>Loading...</h3><img width="400px" src="https://static.boredpanda.com/blog/wp-content/uploads/2016/07/totoro-exercising-100-days-of-gifs-cl-terryart-2-578f80ec7f328__605.gif"/></center></div>
+          {/* <Segment 
+            basic 
+            loading={true} 
+            style={{
+              width:'100%',
+              display:'flex',
+              alignItems:'center',
+            }}
+          >
+            Loading
+          </Segment> */}
+        </div>
+      </div>
+    )
     return <div><center><h3>Loading...</h3><img width="400px" src="https://static.boredpanda.com/blog/wp-content/uploads/2016/07/totoro-exercising-100-days-of-gifs-cl-terryart-2-578f80ec7f328__605.gif"/></center></div>
   }
   
   return (
     <div>
       <MainHeader 
-        fixed={fixed ? 'top' : null}
-        inverted={!fixed}
-        pointing={!fixed}
-        secondary={!fixed}
+        // fixed={fixed ? 'top' : null}
+        inverted
+        pointing
+        secondary
         size='large'
       />
       <Switch>
@@ -113,15 +155,19 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         
         {/* SELY */}
         <Route path='/allproducts' exact component={AllProducts}/>
-        <Route path='/seller' exact component={HomeSeller}/>
-        <Route path='/seller/product/myproduct' exact component={MyProducts}/>
+        <Route path='/search/:keyword' exact component={SearchProducts}/>
+        <Route path='/seller/product' exact component={MyProducts}/>
         <Route path='/seller/myorder' exact component={MyOrders}/>
         <Route path='/seller/profile' exact component={StoreProfile}/>
         <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
-        
-
-       
+               
         {/*  */}
+        <Route path='/seller' exact component={StoreProfile}/>
+        <Route path='/allproducts/women' exact component={WomenProducts}/>
+        <Route path='/allproducts/men' exact component={MenProducts}/>
+        {/*  */}
+        {/* <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:()=><Redirect to='/'/>}/> */}
+        
         
         
         
@@ -143,7 +189,12 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/managetransactions' exact component={adminAccess?ManageTransactions:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>
         <Route path='/manageorders' exact component={sellerAccess?ManageOrders:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         
+        <Route path='/admin/sales' exact component={Chart}/>
 
+
+
+
+        <Route path='/*' exact component={()=><Redirect to='/'/>}/>
 
       </Switch>
 

@@ -114,7 +114,14 @@ class Register extends Component {
                             value={this.state.address}
                         />
 
-                        <Button color='teal' fluid size='large' disabled={this.state.loading} onClick={this.onRegister}>
+                        <Button 
+                            color='blue' 
+                            fluid 
+                            size='large' 
+                            disabled={this.state.loading}  
+                            loading={this.state.loading}
+                            onClick={this.onRegister}
+                        >
                             Register
                         </Button>
                     </Segment>

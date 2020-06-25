@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SidebarSeller from './componentseller/sidebar';
-import { Button, Menu, Icon, Label, Table, Pagination, Input, Grid, Image, Header, Form, TextArea } from 'semantic-ui-react'
+import { Button, Menu, Icon, Label, Table, Pagination, Input, Grid, Image, Header, Form, TextArea, Dropdown } from 'semantic-ui-react'
 import { NavLink } from 'react-router-dom';
 import SubNavigation from './componentseller/subnavigation';
 import _ from 'lodash'
@@ -10,23 +10,40 @@ import { APIURL } from '../../supports/ApiUrl';
 
 class MyProducts extends Component {
     state = { 
+        isloading:false,
         products:[],
-        category:[],
-        searchproducts:[],
+        page:0,
+        totalProduct:0,
+        cardperPage:4,                   //jumlah card per page
+        currentPage:0,
+        search:'',
+        minprice:null,
+        maxprice:null,
+        searchCategory:'',
+        sorting:'',
         activeItem:'',
         column:'',
         direction:''
     }
     
-    componentDidMount=()=>{
-        Axios.get(`${APIURL}/products/productseller`)
-        .then((res)=>{
-            this.setState({
-                products:res.data.product,
-                searchproducts:res.data.product,
-                category:res.data.category,
-            })
-            console.log(res.data)
+    componentDidMount(){
+        console.log('masuk componentDidMount')
+        this.getData()
+    }
+    
+    getData=(search, searchCategory, minprice, maxprice, sorting)=>{
+        Axios.get(  
+            search||searchCategory||minprice||maxprice||sorting?`${APIURL}/products/totalproduct?search=${search}&category=${searchCategory}&pmin=${minprice}&pmax=${maxprice}`:
+            `${APIURL}/products/totalproduct`
+        ).then((res)=>{
+            Axios.get(search||searchCategory||minprice||maxprice||sorting?`${APIURL}/products/allproducts?search=${search}&category=${searchCategory}&pmin=${minprice}&pmax=${maxprice}&sort=${this.state.sorting}&page=${this.state.page}`:
+                    `${APIURL}/products/allproducts?page=${this.state.page}`
+                ).then((res1)=>{
+                    this.setState({products:res1.data, isLoading:false, totalProduct:res.data.total, })
+                    console.log(this.state.products, 'ALLPRODUCT')
+                }).catch((err)=>{
+                    console.log(err)
+                })
         }).catch((err)=>{
             console.log(err)
         })
@@ -34,16 +51,16 @@ class MyProducts extends Component {
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
-    onchangesearch=(e)=>{       
-        var inputName=e.target.value
-        console.log(inputName)
-        var dataFilter=this.state.products.filter((product)=>{
-            return (
-                product.product_name.toLowerCase().includes(inputName.toLowerCase())                
-            )
-        })        
-        this.setState({searchproducts:dataFilter})
+    onChangeSearch=(e, {name,value})=>{    
+        this.setState(
+            {page:0,[name]:value})
     }
+
+    sortOptions = [
+        { key: 1, text: 'Lowest Price', value: 'priceasc' },
+        { key: 2, text: 'Highest Price', value: 'pricedesc' },
+        { key: 3, text: 'Best Seller', value: 'bestsellerdesc' },
+    ]
 
     handleSort = (clickedColumn) => () => {
         const { column, searchproducts, direction } = this.state
@@ -80,62 +97,38 @@ class MyProducts extends Component {
 
     // === Handle Table ===
     renderProducts=()=>{
-        const {searchproducts}=this.state
-        console.log(searchproducts)
-        if(this.state.searchproducts.length){
-            return searchproducts.map((val, index)=>{
+        if(this.state.products.length){
+            return this.state.products.map((val,index)=>{
                 return (
-                    // <Table.Row >
-                    //     <Table.Cell style={{flexDirection: 'column',}}>
-                    //         <img src={val.imagecover} alt={val.product_name}  height='100px' />
-                    //         <div>
-                    //             <strong>{val.product_name}</strong><br/>
-                    //             {val.namecategory}
-                    //         </div>
-                    //     </Table.Cell>
-                    //     <Table.Cell><center><img src={val.imagecover} alt={val.product_name}  height='100px' /></center> </Table.Cell> 
-                    //     <Table.Cell>{val.namecategory}</Table.Cell>
-                    //     <Table.Cell>{val.price}</Table.Cell>
-                    //     <Table.Cell>{val.stock}</Table.Cell>
-                    //     <Table.Cell>jumlah terjual</Table.Cell>
-                    //     <Table.Cell>
-                    //         {val.isarchived==0?'LIVE':'ARCHIVED'}
-                    //     </Table.Cell>
-                    // </Table.Row>
-                    // <Grid inverted>
-                        <Grid.Row style={{backgroundColor:index%2===0?'white':'#f5deb3'}} >
-                            <Grid.Column width={1}>
-                                {index+1} 
-                            </Grid.Column>
-                            <Grid.Column width={2}>
-                                <Image src={val.imagecover}/>
-                            </Grid.Column>
-                            <Grid.Column width={2}>
-                                <Header as={'h4'}>
-                                    {val.product_name}
-                                </Header>
-                            </Grid.Column>
-                            <Grid.Column width={3}>
-                                <p>
-                                {val.description}
-                                </p>
-                            </Grid.Column>
-                            <Grid.Column width={2}>
-                                {val.price}
-                            </Grid.Column>
-                            <Grid.Column width={2}>
-                                {val.stock}
-                            </Grid.Column>
-                            <Grid.Column width={3}>
-                                <Button 
-                                    primary 
-                                    style={{margin:'0 .5em .5em 0'}}
-                                    onClick={()=>{this.setState({idproductedit:1})}}
-                                >Edit</Button>
-                                <Button color='red'>Delete</Button>
-                            </Grid.Column>
-                        </Grid.Row>
-                    // </Grid>
+                    <Grid.Row style={{backgroundColor:index%2===0?'white':'#f5deb3'}} >
+                        <Grid.Column width={1}>
+                            {index+1} 
+                        </Grid.Column>
+                        <Grid.Column width={4}>
+                            <Image src={APIURL+ JSON.parse(val.imagecover)[0]} style={{height:'100px' }}/>
+                            <Header as={'h4'}>
+                                {val.product_name}
+                                <Header.Subheader>
+                                    {val.description}
+                                </Header.Subheader>
+                            </Header>
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+                            {val.price}
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+                            {val.stock}
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+                            {val.sold}
+                        </Grid.Column>
+                        <Grid.Column width={2}>
+                            lorem ipsum
+                        </Grid.Column>
+                    </Grid.Row>
                 )
             })
         }else{
@@ -146,9 +139,54 @@ class MyProducts extends Component {
         }
     }
 
+    renderHeadTable=()=>{
+        const { activeItem, column, direction } = this.state
+        return(
+            // <Grid style={{paddingLeft: 10, paddingRight: 10,}}>
+                <Grid.Row style={{ backgroundColor:'white',}}>
+                    <Grid.Column width={1}>
+                        No
+                    </Grid.Column >
+                    <Grid.Column width={4}>
+                        Product Name
+                        <Icon name={direction==='ascending'&&column=='product_name'?'angle double down':'angle double up'} />
+                    </Grid.Column>
+
+                    <Grid.Column width={2}
+                    sorted={column === 'product_name' ? direction : null}
+                    onClick={this.handleSort('product_name')}>
+                        Variation
+                    </Grid.Column>
+
+                    <Grid.Column width={2}
+                    sorted={column === 'price]' ? direction : null}
+                    onClick={this.handleSort('price')}>
+                        Price
+                        <Icon name={direction==='ascending'&&column=='price'?'angle double down':'angle double up'} />
+                    
+                    </Grid.Column>
+
+                    <Grid.Column width={2}
+                    sorted={column === 'stock]' ? direction : null}
+                    onClick={this.handleSort('stock')}>
+                        Stock 
+                        <Icon name={direction==='ascending'&&column=='stock'?'angle double down':'angle double up'} />
+                    </Grid.Column>
+
+                    <Grid.Column width={2}>
+                        Sold
+                        <Icon name={direction==='ascending'&&column=='sold?'?'angle double down':'angle double up'} />
+                    </Grid.Column>
+
+                    <Grid.Column width={2}>
+                        Status
+                    </Grid.Column>
+                </Grid.Row>
+        )
+    }
     
     render() { 
-        const { activeItem, column, direction } = this.state
+        const { activeItem,search, searchCategory, column, direction,minprice, maxprice, cardperPage, page, totalProduct } = this.state
         return ( 
             
             <div  style={{display:'flex', paddingTop:50}}>
@@ -186,196 +224,52 @@ class MyProducts extends Component {
                         </Menu>
                     </div>
                     <div style={{marginBottom: 20,}} >
-                        <Input
-                            action='Search'
-                            placeholder='Search Products...'
-                            onChange={this.onchangesearch}
-                        />
-                        <Input
-                            action='Search'
-                            placeholder='Search Products...'
-                            onChange={this.onchangesearch}
-                        />
+                        <Form onSubmit={()=>{this.getData(search,searchCategory,minprice,maxprice)}}>
+                            <Form.Group>
+                                <Form.Field width={5}>
+                                    <label><h4>Search Product</h4></label>
+                                    <Input  placeholder='Search Product...' name='search' value={this.state.search} onChange={this.onChangeSearch} />
+                                </Form.Field>
+                                <Form.Field width={5}>
+                                    <label><h4>Search Category</h4></label>
+                                    <Input placeholder='Search Product...' name='searchCategory' value={this.state.searchCategory} onChange={this.onChangeSearch}  />
+                                </Form.Field>
+                                <Form.Field width={5}>
+                                    <label><h4>Sorted By</h4></label>
+                                    <Dropdown name='sorting' clearable options={this.sortOptions} value={this.state.sorting} selection 
+                                        onChange={this.onChangeSearch} />
+                                </Form.Field>
+                            </Form.Group>
+                            <Form.Group inline>
+                                {/* <Form.Field width={8}> */}
+                                    <label><h4>Filter By Price</h4></label>
+                                    <Form.Input type='number' placeholder='Minimum Price' name='minprice' value={this.state.minprice} onChange={this.onChangeSearch} />
+                                    <Form.Input type='number' placeholder='Maximum Price' name='maxprice' value={this.state.maxprice} onChange={this.onChangeSearch} />
+                                {/* </Form.Field> */}
+                            </Form.Group>
+                            <Form.Group>
+                                
+                            </Form.Group>
+                            <Button color='green' onClick={()=>{this.getData(search,searchCategory,minprice,maxprice)}} type='submit'>
+                                Submit
+                            </Button>
+                            <Button color='yellow' onClick={()=>{this.setState({page:0, currentPage:0, search:'', searchCategory:'', minprice:'', maxprice:'', sorting:''})}}>
+                                Reset
+                            </Button>
+                        </Form>
                     </div>
-                    <div>
-                        {/* <Table celled>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.HeaderCell 
-                                        sorted={column === 'product_name' ? direction : null}
-                                        onClick={this.handleSort('product_name')}
-                                    >
-                                        Name
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell >
-                                        Image
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell
-                                        sorted={column === 'namecategory' ? direction : null}
-                                        onClick={this.handleSort('namecategory')}
-                                    >
-                                        Category
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell
-                                         sorted={column === 'price' ? direction : null}
-                                        onClick={this.handleSort('price')}
-                                    >
-                                        Price
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell
-                                         sorted={column === 'stock' ? direction : null}
-                                        onClick={this.handleSort('stock')}
-                                    >
-                                        Stock
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell>
-                                        Sold
-                                    </Table.HeaderCell>
-                                    <Table.HeaderCell >
-                                        Status
-                                    </Table.HeaderCell>
-                                </Table.Row>
-                            </Table.Header>
 
-                            <Table.Body>
-                            
-                                {this.renderProducts()}
-                            </Table.Body>
-
-                            <Table.Footer>
-                            <Table.Row>
-                                <Table.HeaderCell colSpan='7'>
-                                <Menu floated='right' pagination>
-                                    <Pagination
-                                        boundaryRange={0}
-                                        defaultActivePage={1}
-                                        ellipsisItem={null}
-                                        firstItem={null}
-                                        lastItem={null}
-                                        siblingRange={1}
-                                        totalPages={10}
-                                    />
-                                </Menu>
-                                </Table.HeaderCell>
-                            </Table.Row>
-                            </Table.Footer>
-                        </Table> */}
-                    </div>
                     <div style={{paddingTop:'50px'}}>
                         <Grid style={{paddingLeft: 10, paddingRight: 10,}}>
-                            <Grid.Row style={{border:'1px solid gray',borderRadius:'5px', backgroundColor:'white',}}>
-                                <Grid.Column width={1}>
-                                    No
-                                </Grid.Column>
-                                <Grid.Column width={2}>
-                                    Image
-                                </Grid.Column>
-                                <Grid.Column width={2}
-                                sorted={column === 'product_name' ? direction : null}
-                                onClick={this.handleSort('product_name')}>
-                                    Name<Icon name={direction==='ascending'&&column=='product_name'?'angle double down':'angle double up'} />
-                                </Grid.Column>
-                                <Grid.Column width={3}>
-                                    Description
-                                </Grid.Column>
-                                <Grid.Column width={2}
-                                sorted={column === 'price]' ? direction : null}
-                                onClick={this.handleSort('price')}>
-                                    Price <Icon name={direction==='ascending'&&column=='price'?'angle double down':'angle double up'} />
-                                </Grid.Column>
-                                <Grid.Column width={2}>
-                                    Stock
-                                </Grid.Column>
-                                <Grid.Column width={3}>
-                                    Action
-                                </Grid.Column>
-                            </Grid.Row>
 
-                            {
-                                this.state.idproductedit?
-                                <Grid.Row style={{border:'1px solid gray',borderRadius:'5px'}}>
-                                    <Grid.Column width={1}>
-                                        1
-                                    </Grid.Column>
-                                    <Grid.Column width={3}>
-                                        <Image src={this.state.imageEdit}/>
-                                        <Input 
-                                            placeholder='image...' 
-                                            style={{width:'100%'}}
-                                            onChange={(e)=>{this.setState({imageEdit:e.target.value})}}
-                                        />
-                                    </Grid.Column>
-                                    <Grid.Column width={2}>
-                                        <Header as={'h4'}>
-                                            <Input
-                                                placeholder='Product Name'
-                                                style={{width:'100%'}}
-                                                value=''
-                                                onChange={(e)=>{this.setState({productNameEdit:e.target.value})}}
-                                            />
-                                        </Header>
-                                    </Grid.Column>
-                                    <Grid.Column width={3}>
-                                        <Form>
-                                            <TextArea 
-                                                placeholder='Tell us more' 
-                                                style={{width:'100%'}}
-                                                value=''
-                                                onChange={(e)=>{this.setState({descriptionEdit:e.target.value})}}
-                                            />
-                                        </Form>
-                                    </Grid.Column>
-                                    <Grid.Column width={2}>
-                                        Rp70000,00
-                                    </Grid.Column>
-                                    <Grid.Column width={2}>
-                                        30
-                                    </Grid.Column>
-                                    <Grid.Column width={3}>
-                                        <Button 
-                                            primary 
-                                            style={{margin:'0 .5em .5em 0'}}
-                                            onClick={()=>{this.setState({idproductedit:1})}}
-                                        >Edit</Button>
-                                        <Button color='red'>Delete</Button>
-                                    </Grid.Column>
-                                </Grid.Row>
-                                :
-                                // <Grid.Row style={{border:'1px solid gray',borderRadius:'5px'}}>
-                                //     <Grid.Column width={1}>
-                                //         1
-                                //     </Grid.Column>
-                                //     <Grid.Column width={2}>
-                                //         <Image src='https://s.blanja.com/picspace/392/241032/1250.1346_2dd6e3ef13f14da9b8e8f400c464ff5a.jpg'/>
-                                //     </Grid.Column>
-                                //     <Grid.Column width={2}>
-                                //         <Header as={'h4'}>
-                                //             Product Name
-                                //         </Header>
-                                //     </Grid.Column>
-                                //     <Grid.Column width={3}>
-                                //         <p>
-                                //         Quisque venenatis in arcu sit amet aliquam. Donec volutpat, ipsum pretium luctus accumsan, dolor mi pulvinar lorem, a pulvinar arcu ipsum
-                                //         </p>
-                                //     </Grid.Column>
-                                //     <Grid.Column width={2}>
-                                //         Rp70000,00
-                                //     </Grid.Column>
-                                //     <Grid.Column width={2}>
-                                //         30
-                                //     </Grid.Column>
-                                //     <Grid.Column width={3}>
-                                //         <Button 
-                                //             primary 
-                                //             style={{margin:'0 .5em .5em 0'}}
-                                //             onClick={()=>{this.setState({idproductedit:1})}}
-                                //         >Edit</Button>
-                                //         <Button color='red'>Delete</Button>
-                                //     </Grid.Column>
-                                // </Grid.Row>
-                                this.renderProducts()
-                            }
+                        {this.renderHeadTable()}
                         </Grid>
+
+                    </div>
+                    <div style={{paddingTop:'30px'}}>
+                    <Grid style={{paddingLeft: 10, paddingRight: 10,}}>
+                        {this.renderProducts()}
+                    </Grid>
                     </div>
                 </div>
 

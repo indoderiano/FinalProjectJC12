@@ -15,6 +15,7 @@ import {
     Checkbox,
     Icon,
     Divider,
+    Rating,
 } from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
 import {titleConstruct} from '../supports/services'
@@ -87,7 +88,7 @@ class Product extends Component {
 
         Axios.get(`${APIURL}/items?idproduct=${this.props.match.params.idproduct}`)
         .then((res)=>{
-            console.log(res.data)
+            // console.log(res.data)
             this.setState({items:res.data})
             this.constructImageList()
             // IF ONLY SINGLE TYPE PRODUCT
@@ -231,17 +232,20 @@ class Product extends Component {
         // }
 
         for(var i=0;i<this.state.items.length;i++){
+            var image=this.isJson(this.state.items[i].image)
 
+            
             // get image item order
             var order={
                 iditem: this.state.items[i].iditem,
-                index: imagecover.length+itemimages.length
+                index: image.length?imagecover.length+itemimages.length:0
             }
             itemimageorder.push(order)
 
             // merge image
-            var image=this.isJson(this.state.items[i].image)
             itemimages=itemimages.concat(image)
+
+            // console.log('itemimages',itemimages)
 
         }
 
@@ -257,6 +261,8 @@ class Product extends Component {
         //counting maxorder
         var maxorder=imageList.length-slidercount
 
+        // console.log('itemimageorder',itemimageorder)
+
         this.setState({
             imageList:imageList,
             maxorder:maxorder<0?0:maxorder,
@@ -269,7 +275,7 @@ class Product extends Component {
         var imageselectorder=index
         var order=index>=this.state.maxorder?this.state.maxorder:index
 
-        console.log(index)
+        // console.log(index)
         this.setState({
             imageshow:this.state.imageList[index],
             imageselectorder:index,
@@ -339,7 +345,8 @@ class Product extends Component {
                             width:'100%',
                             paddingTop:'80%',
                             backgroundImage:`url(${APIURL+image})`,
-                            backgroundSize:'cover',
+                            backgroundSize:'contain',
+                            backgroundRepeat:'no-repeat',
                             backgroundPosition:'center',
                             borderRadius:'4px',
                             // border:
@@ -446,7 +453,8 @@ class Product extends Component {
                                         width:'100%',
                                         paddingTop:'75%',
                                         backgroundImage:`url(${APIURL+this.state.imageshow})`,
-                                        backgroundSize:'cover',
+                                        backgroundSize:'contain',
+                                        backgroundRepeat:'no-repeat',
                                         backgroundPosition:'center',
                                     }}
                                 />
@@ -508,6 +516,23 @@ class Product extends Component {
                                     />
                                 </div>
                             </Grid.Column>
+                        </Grid.Row>
+
+                        <Grid.Row style={{paddingTop:'.5em'}}>
+                            <Grid.Column width={16}>
+                                <div style={{display:'inline-block',marginRight:'1em'}}>
+                                    <Rating 
+                                        icon='star' 
+                                        style={{marginRight:'.5em'}}
+                                        defaultRating={this.state.product.product_rating} 
+                                        maxRating={5} 
+                                        disabled
+                                    />
+                                    <span>({this.state.product.product_rating?this.state.product.product_rating:'no rating'})</span>
+                                </div>
+                                seen({this.state.product.seen})
+                            </Grid.Column>
+                            
                         </Grid.Row>
 
                         {this.renderTypes()}
@@ -612,7 +637,7 @@ class Product extends Component {
                         </Grid.Row>
 
                         <Grid.Row>
-                            <Grid.Column style={{height:'50px',display:'flex',justifyContent:'flex-end',alignItems:'center'}}>
+                            <Grid.Column style={{display:'flex',justifyContent:'flex-end',alignItems:'center'}}>
                                 {
                                     this.state.err?
                                     <Message style={{color:'red',display:'inline-block',margin:'0'}}>
@@ -622,9 +647,25 @@ class Product extends Component {
                                 }
                                 {
                                     this.props.User.islogin?
+                                    <Button 
+                                        icon 
+                                        basic
+                                        // style={{padding:'0',width:'',height:''}}
+                                    >
+                                        <Icon 
+                                            name='heart outline' 
+                                            size='large'
+                                            // style={{fontSize:'21px',verticalAlign:'-5px'}}
+                                            style={{marginLeft:'2em'}}
+                                        />
+                                    </Button>
+                                    : null
+                                }
+                                {
+                                    this.props.User.islogin?
                                     <Button
                                         primary
-                                        style={{marginLeft:'2em'}}
+                                        style={{marginLeft:'1em',height:'100%'}}
                                         onClick={this.onAddToCart}
                                     >
                                         Add to Cart

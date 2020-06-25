@@ -12,7 +12,7 @@ class Verification extends Component {
     state = { 
         message: 'wait...',
         redirect: false,
-        loading: false,
+        loading: true,
      }
 
     componentDidMount=()=>{
@@ -23,14 +23,20 @@ class Verification extends Component {
             var token=this.props.match.params.token
 
             if(!token){
-                this.setState({message:'An Email verification has been sent to your email, click the verification link to verify your account'})
+                this.setState({
+                    message:'An Email verification has been sent to your email, click the verification link to verify your account',
+                    loading:false
+                })
             }else{
                 Axios.put(`${APIURL}/users/verify`,{token})
                 .then((res)=>{
 
                     // ACTION KEEPLOGIN
                     this.props.KeepLogin(res.data.update)
-                    this.setState({message:'Your Account Has been verified, Enjoy our product'})
+                    this.setState({
+                        message:'Your Account Has been verified, Enjoy our product',
+                        loading:false
+                    })
 
                 }).catch((err)=>{
                     console.log(err)
