@@ -58,7 +58,7 @@ class Home extends Component {
 
   render() { 
     return ( 
-          <Grid style={{padding:50, }}>
+          <Grid style={{padding:50 }}>
                   <Grid.Row columns={2} >
                       <Grid.Column style={{marginRight:0, paddingRight: 0,}}>
                           <Image src='/images/men.jpg'/>
@@ -66,21 +66,21 @@ class Home extends Component {
                       <Grid.Column style={{marginLeft:0, paddingLeft: 0}}>
                         <Image src='/images/women.jpg' />
                       </Grid.Column>
-                      <div style={{position:"absolute",width:'100%',alignSelf:'center', }}>
+                      <div style={{position:"absolute",width:'100%',alignSelf:'center', fontFamily:'muli,sans-serif', fontWeight:'100'}}>
                         <center>
-                          <Segment circular style={{width: 150, height: 150, backgroundColor: '#898989'}}>
+                          <Segment circular style={{width: 200, height: 200, backgroundColor: '#898989'}}>
                             <Header as='h2'>
                               Men
                               <Link to='/allproducts/men'>
-                                  <Button inverted style={{padding:10}}>Shop Now</Button>
+                                  <Button inverted className='btn-shopnow' style={{padding:20, marginTop:10, borderWidth:'0.5px',fontWeight:100, textTransform:'uppercase', fontSize:'16px'}}>Shop Now</Button>
                               </Link>
                             </Header>
                           </Segment>
-                          <Segment circular inverted style={{width: 150, height: 150}}>
+                          <Segment circular inverted style={{width: 200, height: 200}}>
                             <Header as='h2' inverted>
                               Women
                               <Link to='/allproducts/women'>
-                                  <Button inverted style={{padding:10}}>Shop Now</Button>
+                                  <Button inverted className='btn-shopnow' style={{padding:20, marginTop:10, borderWidth:'0.5px',fontWeight:100, textTransform:'uppercase', fontSize:'16px'}}>Shop Now</Button>
                               </Link>
                             </Header>
                           </Segment>
