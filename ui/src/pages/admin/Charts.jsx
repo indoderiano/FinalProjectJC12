@@ -64,6 +64,7 @@ class PieChart extends Component {
         listchart:[],
         by:'category',
         unit:'item',
+        loading:true
      }
 
     componentDidMount=()=>{
@@ -71,16 +72,18 @@ class PieChart extends Component {
     }
 
     getSalesCount=(method,unit)=>{
+        this.setState({loading:true})
         Axios.get(`${APIURL}/admin/sales/count?method=${method}`)
         .then((list)=>{
-            console.log(list.data)
+            // console.log('sales list',list.data)
             var dataPoints=list.data.map((val,index)=>{
                 return {
                     y: this.state.unit==units[0].value?val.totalcount:this.state.unit==units[1].value?val.totalprice:null,
                     label: val.title
                 }
             })
-            this.setState({listdata:list.data,listchart:dataPoints})
+            this.setState({listdata:list.data,listchart:dataPoints,loading:false})
+            // console.log('datapoints',dataPoints)
 
         }).catch((err)=>{
             console.log(err)
@@ -95,7 +98,7 @@ class PieChart extends Component {
                 label: val.title
             }
         })
-        this.setState({listchart:dataPoints})
+        this.setState({listchart:dataPoints,loading:false})
     }
 
 
@@ -160,9 +163,11 @@ class PieChart extends Component {
                         />
                     </Grid.Column>
                     <Grid.Column width={10}>
-                        <CanvasJSChart options = {options} 
-                            /* onRef={ref => this.chart = ref} */
-                        />
+                        <Segment basic loading={this.state.loading}>
+                            <CanvasJSChart options = {options} 
+                                /* onRef={ref => this.chart = ref} */
+                            />
+                        </Segment>
                     </Grid.Column>
                     <Grid.Column width={3}>
 

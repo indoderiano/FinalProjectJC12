@@ -15,6 +15,7 @@ import {
     Checkbox,
     Icon,
     Divider,
+    Rating,
 } from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
 import {titleConstruct} from '../supports/services'
@@ -87,7 +88,7 @@ class Product extends Component {
 
         Axios.get(`${APIURL}/items?idproduct=${this.props.match.params.idproduct}`)
         .then((res)=>{
-            console.log(res.data)
+            // console.log(res.data)
             this.setState({items:res.data})
             this.constructImageList()
             // IF ONLY SINGLE TYPE PRODUCT
@@ -244,7 +245,7 @@ class Product extends Component {
             // merge image
             itemimages=itemimages.concat(image)
 
-            console.log('itemimages',itemimages)
+            // console.log('itemimages',itemimages)
 
         }
 
@@ -260,7 +261,7 @@ class Product extends Component {
         //counting maxorder
         var maxorder=imageList.length-slidercount
 
-        console.log('itemimageorder',itemimageorder)
+        // console.log('itemimageorder',itemimageorder)
 
         this.setState({
             imageList:imageList,
@@ -274,7 +275,7 @@ class Product extends Component {
         var imageselectorder=index
         var order=index>=this.state.maxorder?this.state.maxorder:index
 
-        console.log(index)
+        // console.log(index)
         this.setState({
             imageshow:this.state.imageList[index],
             imageselectorder:index,
@@ -518,9 +519,20 @@ class Product extends Component {
                         </Grid.Row>
 
                         <Grid.Row style={{paddingTop:'.5em'}}>
-                            <Grid.Column width={4}>
-                                seen()
+                            <Grid.Column width={16}>
+                                <div style={{display:'inline-block',marginRight:'1em'}}>
+                                    <Rating 
+                                        icon='star' 
+                                        style={{marginRight:'.5em'}}
+                                        defaultRating={this.state.product.product_rating} 
+                                        maxRating={5} 
+                                        disabled
+                                    />
+                                    <span>({this.state.product.product_rating?this.state.product.product_rating:'no rating'})</span>
+                                </div>
+                                seen({this.state.product.seen})
                             </Grid.Column>
+                            
                         </Grid.Row>
 
                         {this.renderTypes()}
