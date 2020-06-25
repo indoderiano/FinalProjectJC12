@@ -83,14 +83,14 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
   const adminAccess=!Loading&&User.islogin&&User.isseller&&User.isadmin&&User.isverified
   
 
-  if(true){
+  if(Loading){
     return (
       <div style={{
         position:'absolute',
         top:'50%',
         left:'50%',
         transform:'translate(-50%,-50%)',
-        paddingTop:'9em',
+        paddingTop:'5em',
         height:'100%',
         overflow:'hidden',
       }}>
