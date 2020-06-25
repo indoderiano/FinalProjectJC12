@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { Card, Icon, Image,  Input } from 'semantic-ui-react';
+import { Card, Icon, Image,  Input, Rating, Button, Grid, Segment, Form, Label, Dropdown } from 'semantic-ui-react';
 import Axios from 'axios';
 import {APIURL} from './../supports/ApiUrl';
-import _, { orderBy } from 'lodash'
 import { Link, NavLink } from 'react-router-dom';
-import Search from '../component/Search';
 
 class MenProducts extends Component {
     state = { 
@@ -12,9 +10,13 @@ class MenProducts extends Component {
         products:[],
         page:0,
         totalProduct:0,
-        cardperPage:1,                   //jumlah card per page
+        cardperPage:4,                   //jumlah card per page
         currentPage:0,
-        searchKeyword:''
+        search:'',
+        minprice:null,
+        maxprice:null,
+        searchCategory:'',
+        sorting:''
     }
 
     componentDidMount(){
@@ -22,17 +24,16 @@ class MenProducts extends Component {
         this.getData()
     }
     
-    getData=(search,filter)=>{
+    getData=(search, searchCategory, minprice, maxprice, sorting)=>{
         Axios.get(  
-            search?`${APIURL}/products/totalproduct?search=${search}`:
-            `${APIURL}/products/totalproduct`,{}
+            search||searchCategory||minprice||maxprice||sorting?`${APIURL}/products/totalmenproducts?search=${search}&category=${searchCategory}&pmin=${minprice}&pmax=${maxprice}`:
+            `${APIURL}/products/totalmenproducts`
         ).then((res)=>{
-            this.setState({totalProduct:res.data.total})
-            Axios.get(search?`${APIURL}/products/allproducts?search=${search}&page=${this.state.page}`:
-                    `${APIURL}/products/allproducts?page=${this.state.page}`
+            Axios.get(search||searchCategory||minprice||maxprice||sorting?`${APIURL}/products/menproducts?search=${search}&category=${searchCategory}&pmin=${minprice}&pmax=${maxprice}&sort=${this.state.sorting}&page=${this.state.page}`:
+                    `${APIURL}/products/menproducts?page=${this.state.page}`
                 ).then((res1)=>{
-                    this.setState({products:res1.data, isLoading:false})
-                    console.log(this.state.products, 'ALLPRODUCT')
+                    this.setState({products:res1.data, isLoading:false, totalProduct:res.data.total, })
+                    console.log(this.state.products, 'MENPRODUCT')
                 }).catch((err)=>{
                     console.log(err)
                 })
@@ -42,11 +43,12 @@ class MenProducts extends Component {
     }
 
     getpaginationdata=(val)=>{
+        var {search, searchCategory, minprice, maxprice, sorting}= this.state
         this.setState({
             page:val*this.state.cardperPage,        //dikali jumlah card per page
             currentPage:val,
             isLoading:true}, function(){
-            this.getData(this.state.searchKeyword)
+            this.getData(search, searchCategory, minprice, maxprice, sorting)
         })
         console.log(val,this.state.page, 'LINE50')
     }
@@ -61,38 +63,24 @@ class MenProducts extends Component {
         }
         return arr.map((val,index)=>{
             return(
-                <div className="pagination p8" style={{backgroundColor:val===(currentPage)?'#f8e211':null}} key={index} onClick={()=>this.getpaginationdata(val)}>                    
-                    <p>{val+1}</p>
+                <div className="pagination p8" style={{backgroundColor:val===(currentPage)?'#f8e211':null}} key={index} onClick={()=>this.getpaginationdata(index)}>                    
+                    <p>{index+1}</p>
                 </div>
             )
         })
     }   
 
-    onChangeSearch=(e)=>{    
-        var search=e.target.value
+    onChangeSearch=(e, {name,value})=>{    
         this.setState(
-            {page:0, searchKeyword:search}
-        )
-        this.getData(search)
+            {page:0,[name]:value})
     }
     
-    handleSort = (e) => {
-        const {products } = this.state
-            console.log('sorting sorting euy')
-            if (e.target.value === 'priceasc') {
-                return(
-                    this.setState({
-                    products: _.sortBy(products, 'price')
-                    })
-                )
-            } else if (e.target.value === 'pricedesc'){
-                return(
-                    this.setState({
-                        products: _.sortBy(products, 'price').reverse()
-                    })
-                )
-            }
-    }
+    sortOptions = [
+        { key: 1, text: 'Lowest Price', value: 'priceasc' },
+        { key: 2, text: 'Highest Price', value: 'pricedesc' },
+        { key: 3, text: 'Best Seller', value: 'bestsellerdesc' },
+    ]
+
 
     renderCardProduct=()=>{      
         if(this.state.products.length){
@@ -103,17 +91,17 @@ class MenProducts extends Component {
                             <Card raised style={{ paddingTop:5, height:'100%'}}>
                                 <a style={{alignSelf:'center'}}>
                                     <Image src={APIURL+ JSON.parse(val.imagecover)[0]} style={{height:'150px' }}/>
-
                                 </a>
                                 <Card.Content style={{borderColor: 'transparent',}} >
                                 <Card.Header style={{display:'block', overflow: 'hidden',}}>{val.product_name}</Card.Header>
-                                <Card.Meta>PRIA/WANITA</Card.Meta>
+                                <Card.Meta>{val.maincategory}</Card.Meta>
                                 <Card.Description >
-                                    Rp.{val.price}.-
+                                    Rp.{val.price} <br/>
+                                    <Rating icon='star' defaultRating={0} rating={val.product_rating} maxRating={5} />
                                 </Card.Description>
                                 </Card.Content>
                                 <Card.Content style={{textAlign:'center',alignSelf:'center'}} extra>
-                                <a style={{fontSize:'20px', width:'100%'}} >
+                                <a style={{fontSize:'18px', width:'100%'}} >
                                     <Icon name='cart' />
                                     Detail
                                 </a>
@@ -133,8 +121,9 @@ class MenProducts extends Component {
     }
 
 
+
     render() { 
-        const {totalProduct, page, cardperPage}=this.state
+        const {search, searchCategory, minprice, maxprice, cardperPage, page, totalProduct}=this.state
 
         return ( 
             <div style={{ padding:20}} >
@@ -152,37 +141,68 @@ class MenProducts extends Component {
                          Men <br/> Collection </p>
                     <Image src='/images/men-header3.png' style={{marginRight: 100, height:400}} />
                 </div>
-                <div style={{display:'flex', flexDirection:'column', alignItems:'center', padding:50 }}>
-                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'80%' }}>
-                        <div >
-                            {/* <Search /> */}
-                            <Input label="Search" labelPosition='right' placeholder='Search Product' onChange={this.onChangeSearch} />
-                            <br/>
-                            <p style={{color:'blue'}}>Hasil pencarian: &ensp;
-                            <span style={{fontSize:16, fontWeight:'bolder'}}>{this.state.totalProduct}</span> 
-                            &ensp; product</p>
-                        </div>
-                        <div style={{fontSize:20, fontWeight:'3px'}}>
-                            {this.state.searchKeyword?
-                            `Search for: ${this.state.searchKeyword}`
-                            :
-                            null}
-                        </div>
-                    </div>
-                    <div style={{display:'flex', flexWrap:'wrap',  padding:20, width:'80%'}}>
+                <Grid padded style={{padding:20}}>
+                    <Grid.Column width={4} style={{backgroundColor:'BC9E82', padding:10}}>
+                        <Form onSubmit={()=>{this.getData(search,searchCategory,minprice,maxprice)}}>
+                            <Form.Field>
+                                <label><h4>Search Product</h4></label>
+                                <Input  placeholder='Search Product...' name='search' value={this.state.search} onChange={this.onChangeSearch} />
+                            </Form.Field>
+                            <Form.Field>
+                                <label><h4>Search Category</h4></label>
+                                <Input icon placeholder='Search Product...' name='searchCategory' value={this.state.searchCategory} onChange={this.onChangeSearch}  />
+                            </Form.Field>
+                            <Form.Field>
+                                <label><h4>Filter By Price</h4></label>
+                                <Input type='number' placeholder='Minimum Price' name='minprice' value={this.state.minprice} onChange={this.onChangeSearch} style={{marginBottom:10}} > 
+                                    <Label basic>Rp</Label>
+                                    <input />
+                                    <Label>.00</Label>
+                                </Input>
+                                <br/>
+                                <Input type='number' placeholder='Maximum Price' name='maxprice' value={this.state.maxprice} onChange={this.onChangeSearch} >
+                                    <Label basic>Rp</Label>
+                                    <input />
+                                    <Label>.00</Label>
+                                </Input>
+                            </Form.Field>
+                            <Form.Field>
+                                <label><h4>Sorted By</h4></label>
+                                <Dropdown name='sorting' clearable options={this.sortOptions} value={this.state.sorting} selection 
+                                    onChange={this.onChangeSearch} />
+                            </Form.Field>
+                            <Button color='green' onClick={()=>{this.getData(search,searchCategory,minprice,maxprice)}} type='submit'>
+                                Submit
+                            </Button>
+                            <Button color='yellow' onClick={()=>{this.setState({page:0, currentPage:0, search:'', searchCategory:'', minprice:'', maxprice:'', sorting:''})}}>
+                                Reset
+                            </Button>
+                            {search?<p><h3>Search for : {search} </h3></p>:null}
+                            {<p><h3>Total Product : {totalProduct} </h3></p>}
+                        </Form>
+                    </Grid.Column>
+                    <Grid.Column width={12}>
+                        {/* <p><h1>Menampilkan {this.state.totalProduct} products</h1></p>
+                        <p><h1>Menampilkan {this.state.search} search product</h1></p>
+                        <p><h1>Menampilkan {this.state.searchCategory} search category</h1></p>
+                        <p><h1>Menampilkan {this.state.minprice} minprice</h1></p>
+                        <p><h1>Menampilkan {this.state.maxprice} maxprice</h1></p>
+                        <p><h1>Menampilkan {this.state.sorting} sorting</h1></p> */}
+
+                        <div style={{display:'flex', flexWrap:'wrap',  padding:10, width:'100%'}}>
                         {this.renderCardProduct()}
-                    </div>
-                    <div style={{padding:0, textAlign:'center',display:'flex'}}>
-                        Total Product={totalProduct}
-                        <div className="pagination p8">
-                            <Icon name='angle left' disabled={this.state.page===0} onClick={()=>this.getpaginationdata((page/cardperPage)-1)} />                                
                         </div>
-                        {this.renderpagination()}
-                        <div className="pagination p8">
-                            <Icon name='angle right' disabled={Math.ceil(totalProduct/cardperPage)===(page/cardperPage)+1} onClick={()=>this.getpaginationdata((page/cardperPage)+1)} />                             
+                        <div style={{padding:0, textAlign:'center',justifyContent:'center', display:'flex'}}>
+                            <div className="pagination p8">
+                                <Icon name='angle left' disabled={this.state.page===0} onClick={()=>this.getpaginationdata((page/cardperPage)-1)} />                                
+                            </div>
+                            {this.renderpagination()}
+                            <div className="pagination p8">
+                                <Icon name='angle right' disabled={Math.ceil(totalProduct/cardperPage)===(page/cardperPage)+1} onClick={()=>this.getpaginationdata((page/cardperPage)+1)} />                             
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </Grid.Column>
+                </Grid>
             </div>
          );
     }

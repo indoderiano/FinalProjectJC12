@@ -38,7 +38,7 @@ class Home extends Component {
                           <Card.Meta>{val.maincategory}</Card.Meta>
                           <Card.Description >
                               Rp.{val.price} <br/>
-                              <Rating icon='star' defaultRating={0} rating={val.rating} maxRating={5} />
+                              <Rating icon='star' defaultRating={0} rating={val.product_rating} maxRating={5} />
                           </Card.Description>
                           </Card.Content>
                           <Card.Content style={{textAlign:'center',alignSelf:'center'}} extra>
