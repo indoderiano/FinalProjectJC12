@@ -61,5 +61,52 @@ module.exports={
             if(err) res.status(500).send(err)
             res.status(200).send(result)
         })
+    },
+    //////////// GET PRODUCT SELLER ////////
+    productSeller:(req,res)=>{
+        const {idseller}=req.query
+        var sql=`select * from products where idseller=${idseller}`
+        db.query(sql,(err,result)=>{
+            if(err) res.status(500).send(err)
+            res.status(200).send(result)
+        })
+    },
+    //////////// UPLOAD GAMBAR SELLER //////
+    uploadImageSeller:(req,res)=>{
+        const path='/sellers'
+        const upload=uploader(path,'SLR').fields([{name:'imageprofile'}])
+        upload(req,res,(err)=>{
+            if(err){
+                return res.status(500).json({message:'upload fail in line 71', error: err.message})
+            }
+            const {imageprofile}=req.files
+            
+            
+            const imagePath=imageprofile ? path + '/' + imageprofile[0].filename : null
+
+    
+            
+            const data= JSON.parse(req.body.data)
+         
+            const {idseller}=req.query
+            var obj={
+                imageprofile:imagePath
+            }
+            console.log(obj);
+            
+            var sql=`insert into seller set ? where idseller=${idseller}`
+            db.query(sql,obj,(err,result)=>{
+                if(err){
+                    fs.unlinkSync('./public' + imagePath)
+                    res.status(500).json({message:'failed to upload image'})
+                }else{
+                    var sql1=`select imageprofile from seller where idseller=${idseller}`
+                    db.query(sql1,(err,result1)=>{
+                        if(err) res.status(500).send(err)
+                        return res.status(200).send({...result1[0]})
+                    })
+                }
+            })
+        })
     }
 }

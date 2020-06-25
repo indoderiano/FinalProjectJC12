@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SidebarSeller from './componentseller/sidebar';
-import { Button, Menu, Icon, Reveal, Table, Pagination, Input, Grid, Image, Header, Form, TextArea, Segment, RevealContent } from 'semantic-ui-react'
+import { Button, Menu, Icon, Card, Table, Pagination, Input, Grid, Image, Header, Form, TextArea, Segment, RevealContent } from 'semantic-ui-react'
 import { NavLink } from 'react-router-dom';
 import SubNavigation from './componentseller/subnavigation';
 import _ from 'lodash'
@@ -13,19 +13,55 @@ import { useEffect } from 'react';
 
 const StoreProfile=(props)=>{
     const [data,setdata]=useState({})
-
+    const [product,setproduct]=useState({})
+    const [imagedata,setimagedata]=useState({
+        imageprofile:undefined
+    })
+    const [editpicture,setpicture]=useState(true)
     useEffect(()=>{
         Axios.get(`${APIURL}/sellers/getseller?iduser=${props.auth.iduser}`)
         .then((res)=>{
             setdata(res.data[0])
+            console.log(res.data[0].idseller);
             
+            Axios.get(`${APIURL}/sellers/productseller?idseller=${res.data[0].idseller}`)
+            .then((res)=>{
+                setproduct(res.data)
+            }).catch((err)=>{
+                console.log(err);
+            })
         }).catch((err)=>{
             console.log(err)
         })
     },[])
 
+
+    console.log(product);
     
     
+    const uploadImage=()=>{
+        var formData=new FormData()
+        var options={
+            headers:{
+             'Content-Type':'multipart/form-data',
+             'Authorization':`Bearer ${props.token}`  
+            }
+        }
+        var idseller=data.idseller
+        var obj={
+            idseller
+        }
+        formData.append('imageprofile',imagedata.imageprofile)
+        formData.append('data', JSON.stringify(obj))
+        Axios.post(`${APIURL}/sellers/uploadimage?idseller=${data.idseller}`,formData,options)
+        .then((res)=>{
+            setdata({...data,imageprofile:res.data[0]})
+        }).catch((err)=>{
+            console.log(err);
+        })
+    }
+
+
     return (
         <div  style={{display:'flex', paddingTop:50}}>
         <div>
@@ -36,21 +72,56 @@ const StoreProfile=(props)=>{
                 <Grid columns={3} style={{paddingLeft: 10, paddingRight: 10,}}>
                     <Grid.Row stretched>
                         <Grid.Column>
-                            <Segment>
-                            <Image src={APIURL+data.imageprofile}/>
-                            </Segment>
+                          <div>
+                                {
+                                    data.imageprofile?  <Image src={APIURL+data.imageprofile}/> :  <Image src='https://react.semantic-ui.com/images/wireframe/image.png' size='large' disabled />
+                                }
+                                {
+                                    editpicture?<Button onClick={()=>{setpicture(!editpicture)}}>Change Profile Picture</Button>: 
+                                    <div>
+                                        <Form.Input
+                                    fluid
+                                    type='file'
+                                    multiple
+                                    icon='file image outline'
+                                    iconPosition='left'
+                                    placeholder='Insert Store Profile'
+                                    onChange={(e)=>{setimagedata({imageprofile:e.target.files[0]})}}/>
+                                    </div>
+                                }
+                                 <Button onClick={uploadImage}>Upload Picture</Button>
+                          </div>
+              
+                
+                          
                         </Grid.Column>
                         <Grid.Column>
-                            <Segment>
-                                <h3  style={{letterSpacing:'8px', textTransform:'uppercase',fontWeight:'lighter'}}>{data.namatoko}</h3>
+                            <div style={{height:'20%'}}>
+                                <h3  style={{letterSpacing:'8px', textTransform:'uppercase',fontWeight:'lighter',fontSize:40}}>{data.namatoko}</h3>
                                 <h4>Store Location: <i>{data.alamattoko}</i> </h4>
-                            </Segment>
-                            <Segment>2</Segment>
+                            </div>
+                            <br/>
+                            <br/>
+                            <div style={{width:'100%', marginTop:'5%'}}>
+                            <h2 style={{letterSpacing:'8px', textTransform:'uppercase',fontWeight:'lighter',fontSize:20}}>Top 3 Picks</h2>
+
+                            </div>
+                            <div style={{height:'50%'}}>
+                            <Card style={{height:'50%'}}>
+                                <Card.Content>
+                                    <Card.Header>
+                                        HELLO
+                                    </Card.Header>
+                                    <Card.Meta>
+                                        World
+                                    </Card.Meta>
+                                </Card.Content>
+                            </Card>
+                            </div>
+                            
                         </Grid.Column>
                         <Grid.Column>
-                            <Segment>1</Segment>
-                            <Segment>2</Segment>
-                            <Segment>3</Segment>
+                          
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
