@@ -10,7 +10,7 @@ class MenProducts extends Component {
         products:[],
         page:0,
         totalProduct:0,
-        cardperPage:4,                   //jumlah card per page
+        cardperPage:8,                   //jumlah card per page
         currentPage:0,
         search:'',
         minprice:null,

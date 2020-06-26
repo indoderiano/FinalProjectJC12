@@ -19,6 +19,9 @@ Router.get('/menproducts',ProductControllers.menProducts)
 Router.get('/totalmenproducts',ProductControllers.totalMenProducts)
 Router.get('/womenproducts',ProductControllers.womenProducts)
 Router.get('/totalwomenproducts',ProductControllers.totalWomenProducts)
+Router.get('/getseen/:idproduct',ProductControllers.getseen)
+Router.get('/sellerproducts',ProductControllers.sellerProducts)
+Router.get('/totalsellerproducts',ProductControllers.totalSellerProducts)
 /////////////////////////////////////////////////////////
 // NOTE IMPORTANT
 // Router.get('/:idproduct',ProductControllers.get)

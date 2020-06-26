@@ -193,7 +193,7 @@ module.exports={
         console.log(search,'search160',page, 'page162',pmin, 'hargamin',pmax, 'hargamax', sort, 'sortinglala')
         const pricemin=parseInt(pmin)
         const pricemax=parseInt(pmax)
-        const limit=4       //ini jumlah produk per page
+        const limit=8       //ini jumlah produk per page
         const offset=page
         console.log(offset, 'dipsy', sort)
         if(search||pricemin||pricemax||category||sort){
@@ -347,7 +347,7 @@ module.exports={
         console.log(search,'search160',page, 'page162',pmin, 'hargamin',pmax, 'hargamax', sort, 'sortinglala')
         const pricemin=parseInt(pmin)
         const pricemax=parseInt(pmax)
-        const limit=4       //ini jumlah produk per page
+        const limit=8       //ini jumlah produk per page
         const offset=page
         console.log(offset, 'dipsy', sort)
         if(search||pricemin||pricemax||category||sort){
@@ -424,7 +424,7 @@ module.exports={
         console.log(search,'search160',page, 'page162',pmin, 'hargamin',pmax, 'hargamax', sort, 'sortinglala')
         const pricemin=parseInt(pmin)
         const pricemax=parseInt(pmax)
-        const limit=4       //ini jumlah produk per page
+        const limit=8       //ini jumlah produk per page
         const offset=page
         console.log(offset, 'dipsy', sort)
         if(search||pricemin||pricemax||category||sort){
@@ -497,11 +497,11 @@ module.exports={
     },
                  ///////////////// GET PRODUCT SELLER ///////////////// 
     sellerProducts:(req,res)=>{
-        const {search,category, pmin, pmax, sort, page}=req.query
+        const {search,category, pmin, pmax, sort, page, idseller}=req.query
         console.log(search,'search160',page, 'page162',pmin, 'hargamin',pmax, 'hargamax', sort, 'sortinglala')
         const pricemin=parseInt(pmin)
         const pricemax=parseInt(pmax)
-        const limit=4       //ini jumlah produk per page
+        const limit=5       //ini jumlah produk per page
         const offset=page
         console.log(offset, 'dipsy', sort)
         if(search||pricemin||pricemax||category||sort){
@@ -510,8 +510,7 @@ module.exports={
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
                         JOIN seller s ON p.idseller=s.idseller
-                    WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=2 OR p.idcategory=3
-                        AND idseller={idseller}
+                    WHERE p.idseller=${idseller}
                         ${search? `AND p.product_name LIKE '%${search}%' ` : ''}
                         ${category?`AND p.category LIKE '%${category}%' ` : '' }
                         ${pricemin? `AND price >=${pricemin}` : ''}
@@ -530,20 +529,19 @@ module.exports={
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
                         JOIN seller s ON p.idseller=s.idseller
-                    WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=2 OR p.idcategory=3
-                        AND idseller={idseller}
+                    WHERE p.idseller=${idseller}
                     GROUP BY i.idproduct
                     ORDER BY sold DESC
                     LIMIT ${offset},${limit}`
             db.query(sql,(err,result)=>{
-                console.log(sql , 'getproductman')
+                console.log(sql , 'getproductseller')
                 if(err) res.status(500).send({err,message:'error get total product'})
                 return res.send(result)
             })
         }
     },
     totalSellerProducts:(req,res)=>{
-        const {search, category, pmin, pmax}=req.query
+        const {search, category, pmin, pmax, idseller}=req.query
         const pricemin=parseInt(pmin)
         const pricemax=parseInt(pmax)
         if(search ||pricemin ||pricemax||category){
@@ -553,7 +551,7 @@ module.exports={
                             JOIN items i ON i.idproduct=p.idproduct
                             JOIN categories c ON p.idcategory=c.idcategory
                             JOIN seller s ON p.idseller=s.idseller
-                        WHERE p.isdeleted=0 AND p.isblocked=0 AND p.idcategory=2 OR p.idcategory=3
+                        WHERE p.idseller=${idseller}
                         ${search? `AND p.product_name like '%${search}%' ` : ''}
                         ${category?`AND p.category like '%${category}%' ` : '' }
                         ${pricemin? `AND price >=${pricemin}` : ''}
@@ -569,13 +567,23 @@ module.exports={
         }else{
             var sql= `  SELECT COUNT(idproduct) AS total
                         FROM products 
-                        WHERE isdeleted=0 AND isblocked=0 AND idcategory=2 OR idcategory=3
-                            AND idseller={} `
+                        WHERE idseller=${idseller} `
             db.query(sql,(err,result)=>{
                 console.log('total', sql, result)
                 if(err) res.status(500).send({err,message:'error get total product'})
                 return res.send(result[0])
             })
         }
+    },
+    getseen:(req,res)=>{
+        console.log(' adding seen...')
+        console.log(req.params)
+        const {idproduct}=req.params
+        console.log('succeed seen +1')
+        sql=`UPDATE products SET seen = seen + 1 WHERE idproduct=${idproduct}`
+        db.query(sql,(err,isseen)=>{
+            if(err) return res.status(500).send(err)
+            res.status(200).send(isseen)
+        })
     },
 }

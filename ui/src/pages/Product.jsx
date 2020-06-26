@@ -58,12 +58,23 @@ class Product extends Component {
      }
 
      componentDidMount=()=>{
+        this.handleseen()
         this.getProduct()
         this.getItems()
     }
 
     componentWillUnmount=()=>{
         clearTimeout(this.state.timeout)
+    }
+
+    handleseen=()=>{
+        console.log(this.props.match.params.idproduct)
+        Axios.get(`${APIURL}/products/getseen/${this.props.match.params.idproduct}`)
+        .then((res)=>{
+            console.log(res)
+        }).catch((err)=>{
+            console.log(err)
+        })
     }
 
     getProduct=()=>{
