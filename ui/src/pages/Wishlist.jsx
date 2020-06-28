@@ -6,9 +6,12 @@ import Axios from 'axios'
 import {connect} from 'react-redux'
 import { isJson } from '../supports/services'
 import Slide from 'react-reveal/Fade'
+import {Redirect} from 'react-router-dom'
+
 const WishlistPage = (props) => {
     const [wishlist,setwishlist]=useState([])
   const [message,setmessage]=useState(false)
+    const [productpage,setpage]=useState(0)
     useEffect(()=>{
       
         Axios.get(`${APIURL}/wishlist/getwishlist?iduser=${props.iduser}`)
@@ -34,7 +37,17 @@ const WishlistPage = (props) => {
      )
     }
 
-   
+   const prodetail=(idproduct)=>{
+      return(
+        setpage(idproduct)
+      )
+   }
+
+   if(productpage){
+     return(
+       <Redirect to={`/product/${productpage}`}/>
+     )
+   }
     
     const ShowCardWishlist=()=>{
         return wishlist.map((val,index)=>{
@@ -54,7 +67,7 @@ const WishlistPage = (props) => {
             </Card.Content>
             <Card.Content extra  style={{backgroundColor:'#FAF8ED'}}>
               <a>
-                <Button>add to cart</Button>
+                <Button onClick={()=>prodetail(val.idproduct)}>Product Detail</Button>
                 <Button style={{marginLeft:'1px'}} onClick={()=>removeWishlist(val.idwishlist)}>remove</Button>
               </a>
             </Card.Content>
