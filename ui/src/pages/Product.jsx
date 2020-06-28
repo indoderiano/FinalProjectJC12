@@ -64,7 +64,8 @@ class Product extends Component {
         flashsaleprice:0
 
      }
-
+     
+     
      componentDidMount=()=>{
         this.handleseen()
         this.getProduct()
@@ -806,7 +807,8 @@ class Product extends Component {
                             </Grid.Column>
                         </Grid.Row>
 
-<CommentSection idproduct={this.state.product.idproduct}/>
+                    <CommentSection idproduct={this.state.product.idproduct}/>
+
                     </Grid>
                 </Segment>
                 

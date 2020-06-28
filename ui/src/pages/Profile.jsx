@@ -3,7 +3,8 @@ import Axios from 'axios'
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import {connect} from 'react-redux'
 import { APIURL } from '../supports/ApiUrl'
-import { Button,Table } from 'semantic-ui-react'
+import { Button,Table,Image } from 'semantic-ui-react'
+import { isJson } from '../supports/services'
 import ProfileEdit from './../component/Profileedit'
 const Profile=(props)=>{
     const [data,setdata]=useState({})
@@ -30,6 +31,7 @@ const Profile=(props)=>{
         <Table basic='very'>
 
     <Table.Body>
+      <Image src={APIURL+ data.image}/>
       <Table.Row>
         <Table.Cell>Username:</Table.Cell>
         <Table.Cell></Table.Cell>

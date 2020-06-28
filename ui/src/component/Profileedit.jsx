@@ -3,7 +3,7 @@ import Axios from 'axios'
 
 import {connect} from 'react-redux'
 import { APIURL } from './../supports/ApiUrl'
-import { Button,Input,Table } from 'semantic-ui-react'
+import { Button,Input,Table, Message } from 'semantic-ui-react'
 import {Redirect} from 'react-router-dom'
 const ProfileEdit=(props)=>{
 
@@ -101,6 +101,13 @@ const ProfileEdit=(props)=>{
         <Button style={{marginLeft:'30%', }} onClick={editSubmit} >
             safe profile
         </Button>
+        {
+          edit? <Message >
+          <Message.Header style={{fontFamily:'muli,sans-serif', textTransform:'uppercase',fontWeight:100, letterSpacing:'8px',alignItems:'center',width:'100%'}}>
+            Update Profile Success</Message.Header>
+        </Message>:
+        null
+        }
         </div>
     )
     }

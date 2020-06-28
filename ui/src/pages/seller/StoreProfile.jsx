@@ -11,6 +11,7 @@ import {connect} from 'react-redux'
 import { useEffect } from 'react';
 import Slide from 'react-reveal/Fade'
 import { isJson } from './../../supports/services'
+import {Redirect} from 'react-router-dom'
 const StoreProfile=(props)=>{
     const [data,setdata]=useState({})
     const [product,setproduct]=useState([])
@@ -18,7 +19,7 @@ const StoreProfile=(props)=>{
         imageprofile:undefined
     })
     const [editpicture,setpicture]=useState(true)
-
+    const [productpage,setpage]=useState(0)
 
     useEffect(()=>{
         Axios.get(`${APIURL}/sellers/getseller?iduser=${props.auth.iduser}`)
@@ -38,30 +39,45 @@ const StoreProfile=(props)=>{
     },[])
 
    
-    
+    const prodetail=(idproduct)=>{
+        return(
+          setpage(idproduct)
+        )
+     }
+  
+     if(productpage){
+       return(
+         <Redirect to={`/product/${productpage}`}/>
+       )
+     }
 
     const renderProduct=()=>{
         console.log(product)
         
         return product.map((val,index)=>{
             return(
-            <div key={index} style={{marginLeft:'20%', }}>
-                
-                <Slide>
-                <Card style={{height:'100%',display:'flex', flexDirection:'column'}}>
-                                    <Image src={APIURL+isJson(val.imagecover)[0]} style={{height:'40%'}} wrapped ui={false} />
-                                <Card.Content>
-                                    <Card.Header style={{ fontFamily:'muli,sans-serif', fontWeight: 400}}>{val.product_name}</Card.Header>
-                                    <Card.Meta>{val.category}</Card.Meta>
-                                    <Card.Description>
-                                        {val.description}
-                                    </Card.Description>
-                                        <br/>
-                                    <Card.Header>Rp.{val.price },00 </Card.Header>
-                                </Card.Content>
-                            </Card>
+                <div key={index} style={{width:'100%', marginLeft:12, marginRight:12, marginBottom:20}}>
+                <Slide left>
+            <Card raised style={{ paddingTop:5, height:'100%'}} >
+            <Image src={APIURL+isJson(val.imagecover)[0]} style={{height:'40%'}} wrapped ui={false} />
+            <Card.Content style={{backgroundColor:'#FAF8ED'}}>
+              <Card.Header style={{ fontFamily:'muli,sans-serif', fontWeight: 400}}>{val.product_name}</Card.Header>
+              <Card.Meta>{val.category}</Card.Meta>
+              <Card.Description>
+                {val.description}
+              </Card.Description>
+              <br/>
+              <Card.Header>Rp.{val.price },00 </Card.Header>
+            </Card.Content>
+            <Card.Content extra  style={{backgroundColor:'#FAF8ED'}}>
+              <a>
+                <Button onClick={()=>prodetail(val.idproduct)}>Product Detail</Button>
+               
+              </a>
+            </Card.Content>
+          </Card>
                 </Slide>
-            </div>
+              </div>
             )
         })
     }
@@ -98,8 +114,8 @@ const StoreProfile=(props)=>{
         <div style={{backgroundColor:'#faf8ec',padding: 10, width:'80%', display:'flex', flexDirection:'column'}}>                                               
             <div style={{paddingTop:'50px'}}>
                 <Grid columns={3} style={{paddingLeft: 10, paddingRight: 10,}}>
-                    <Grid.Row stretched>
-                        <Grid.Column>
+                    <Grid.Row stretched widht={5}>
+                        <Grid.Column style={{backgroundColor:'black', height:'20%'}}>
                           <div>
                                 {
                                     data.imageprofile?  <Image src={APIURL+data.imageprofile}/> :  <Image src='https://react.semantic-ui.com/images/wireframe/image.png' size='large' disabled />
@@ -123,7 +139,7 @@ const StoreProfile=(props)=>{
                 
                           
                         </Grid.Column>
-                        <Grid.Column>
+                        <Grid.Column style={{ widht:'100%',  display:'flex', flexDirection:'column'}}>
                             <div style={{height:'20%'}}>
                                 <h3  style={{letterSpacing:'8px', textTransform:'uppercase',fontWeight:'lighter',fontSize:40}}>{data.namatoko}</h3>
                                 <h4>Store Location: <i>{data.alamattoko}</i> </h4>
@@ -133,16 +149,11 @@ const StoreProfile=(props)=>{
                             <div style={{width:'100%', marginTop:'5%'}}>
                             </div>
                           
-                         
-                  
-                            
-                        </Grid.Column>
-                        <Grid.Column >
-                          
-                        {
+                            {
                                renderProduct()
                            }
                         </Grid.Column>
+                       
                     </Grid.Row>
                 </Grid>
             </div>
