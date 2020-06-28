@@ -15,9 +15,13 @@ import {
     TextArea,
     Checkbox,
     Icon,
-    Divider
+    Divider,
+    Dimmer,
+    Loader
 } from 'semantic-ui-react'
+import {idr} from '../../supports/services'
 import {Redirect} from 'react-router-dom'
+import { connect } from 'react-redux'
 
 
 
@@ -26,7 +30,12 @@ class ProductItems extends Component {
         coverloading:true,
         itemloading:true,
 
+        access:true,
+
+        idseller:0,
+
         // Product
+        pageloading:true,
         product:{
             isdeleted: false
         },
@@ -69,8 +78,13 @@ class ProductItems extends Component {
         
         Axios.get(`${APIURL}/products/get/${this.props.match.params.idproduct}`)
         .then((res)=>{
-            console.log(res.data)
-            this.setState({product:res.data,coverloading:false})
+            console.log('product data',res.data)
+            // CHECK ACCESS
+            if(this.props.Seller.idseller==res.data.idseller){
+                this.setState({product:res.data,coverloading:false})
+            }else{
+                this.setState({product:res.data,coverloading:false,access:false})
+            }
         }).catch((err)=>{
             console.log(err)
         })
@@ -82,7 +96,7 @@ class ProductItems extends Component {
         Axios.get(`${APIURL}/items?idproduct=${this.props.match.params.idproduct}`)
         .then((res)=>{
             console.log(res.data)
-            this.setState({items:res.data,itemloading:false})
+            this.setState({items:res.data,itemloading:false,pageloading:false})
         }).catch((err)=>{
             console.log(err)
         })
@@ -950,7 +964,7 @@ class ProductItems extends Component {
                                     </Grid.Column>
                                     <Grid.Column width={16} style={{marginBottom:'1em'}}>
                                         <span >Harga:</span>
-                                        <span style={{fontWeight:600,marginLeft:'.5em'}}>{item.price?item.price:'Not Yet'}</span>
+                                        <span style={{fontWeight:600,marginLeft:'.5em'}}>{item.price?idr(item.price):'Not Yet'}</span>
                                     </Grid.Column>
                                     <Grid.Column width={16} style={{marginBottom:'1em'}}>
                                         <span >Stock:</span>
@@ -987,7 +1001,7 @@ class ProductItems extends Component {
                 isnew=false
             }
         })
-        if(isnew){
+        if(isnew&&!this.state.pageloading){
             return (
                 <Message>Set Up Your Product's Price And Stock</Message>
             )
@@ -996,39 +1010,64 @@ class ProductItems extends Component {
 
     render() { 
 
-        return ( 
-            <Container style={{paddingTop:'2em',width:'650px'}}>
+        if(this.props.Seller.idseller==this.state.product.idseller){
+            return ( 
+                <Container style={{paddingTop:'2em',width:'650px'}}>
+    
+                <Header 
+                    as={'h1'}
+                    style={{marginBottom:'1em',position:'relative',height:'36px'}}
+                >
+                    {this.state.items[0]?this.state.items[0].product_name:''}
+                    <Dimmer active={this.state.pageloading} inverted>
+                        <Loader inverted/>
+                    </Dimmer>
+                </Header>
+    
+                {this.renderAfterAdd()}
+    
+                {
+                    this.state.product.isdeleted?
+                    this.renderProductIsDeleted()
+                    :
+                    <>
+                    {this.renderProduct()}
+                    {this.renderItems()}
+                    </>
+                }
+    
+                    
+                <Grid style={{marginBottom:'3em'}}>
+    
+                </Grid>
+                </Container>
+             );
 
-            <Header 
-                as={'h1'}
-                style={{marginBottom:'1em'}}
-            >
-                {this.state.items[0]?this.state.items[0].product_name:'Product Name'}
-            </Header>
+        }else{
+            return (
+                // <Container style={{paddingTop:'2em',width:'650px',height:'80%'}}>
+                    <Segment 
+                        style={{
+                            width:'650px',
+                            position:'absolute',
+                            top:'50%',
+                            left:'50%',
+                            transform:'translate(-50%,-50%)',
+                            textAlign:'center',
+                        }}
+                    >
+                        You have no Access to this page
+                    </Segment>
+                // </Container>
+            )
+        }
+    }
+}
 
-            {this.renderAfterAdd()}
-
-            {
-                this.state.product.isdeleted?
-                this.renderProductIsDeleted()
-                :
-                <>
-                {this.renderProduct()}
-                {this.renderItems()}
-                </>
-            }
-
-
-
-            
-                
-            <Grid style={{marginBottom:'3em'}}>
-
-
-            </Grid>
-            </Container>
-         );
+const MapstatetoProps=(state)=>{
+    return {
+        Seller: state.Seller
     }
 }
  
-export default ProductItems;
+export default connect(MapstatetoProps) (ProductItems);

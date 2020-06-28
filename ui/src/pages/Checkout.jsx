@@ -326,7 +326,7 @@ class Checkout extends Component {
                                                 onClick={()=>{
                                                     this.props.CountTotalCharge()
                                                     console.log(this.props.Cart)
-                                                    // this.props.CountTotalPayment()
+                                                    this.props.CountTotalPayment()
                                                 }}
                                             >
                                                 Payment

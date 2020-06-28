@@ -16,9 +16,11 @@ import {
     Icon,
     Divider,
     Rating,
+    Dimmer,
+    Loader,
 } from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
-import {titleConstruct} from '../supports/services'
+import {titleConstruct,idr} from '../supports/services'
 import {LoadCart} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -30,6 +32,7 @@ const slidercount=4
 
 class Product extends Component {
     state = { 
+        pageloading:true,
         product:{},
         items:[],
 
@@ -52,8 +55,13 @@ class Product extends Component {
         buy:false,
         qtymessage:'',
 
+        loading:false,
+
         // timeout
-        timeout:''
+        timeout:'',
+
+        //flashsale
+        flashsaleprice:0
 
      }
 
@@ -81,16 +89,22 @@ class Product extends Component {
 
         Axios.get(`${APIURL}/products/get/${this.props.match.params.idproduct}`)
         .then((res)=>{
-            console.log(res.data)
+            console.log('product details',res.data)
             this.setState({
                 product:res.data,
+                pageloading:false,
                 // imageshow:this.isJson(res.data.imagecover)[0],
                 // imageselectorder:0,
             })
             this.constructImageList()
             this.selectImage(0)
+            // IF FLASHSALE
+            if(res.data.isflashsale){
+                this.getFlashsalePrice()
+            }
         }).catch((err)=>{
             console.log(err)
+            this.setState({pageloading:false})
         })
 
     }
@@ -118,7 +132,11 @@ class Product extends Component {
         // if item is selected
         console.log(this.state.itemselect)
 
-        if(this.state.itemselect.iduser==this.props.User.iduser){
+        if(!this.props.User.isverified){
+
+            this.setState({err:'Please Verify Your Account'})
+
+        }else if(this.state.itemselect.iduser==this.props.User.iduser){
 
             this.setState({err:'You cannot buy your own product'})
 
@@ -148,6 +166,8 @@ class Product extends Component {
             // ADDING ITEM TO CART, WILL NOT CREATE TRANSACTION, ONLY CREATE TRANSACTION DETAIL
             // STATUS WILL BE IN TRANSACTION DETAIL COLUMN, NOT IN TRANSACTION
 
+            this.setState({loading:true})
+
             var td={
                 // idtransaction: res.data.idtransaction,
                 iduser: this.props.User.iduser,
@@ -160,7 +180,7 @@ class Product extends Component {
                 if(res.data.status){
                     console.log('item added to cart')
                     this.props.LoadCart(this.props.User.iduser)
-                    this.setState({buy:true})
+                    this.setState({buy:true,loading:false})
 
                     var delay = setTimeout(()=>{
                         this.setState({buy:false})
@@ -174,6 +194,7 @@ class Product extends Component {
                 }
             }).catch((err)=>{
                 console.log(err)
+                this.setState({loading:false})
             })
 
 
@@ -220,8 +241,16 @@ class Product extends Component {
 
         }
 
+    }
 
-
+    getFlashsalePrice=()=>{
+        console.log('get product flashsale price')
+        Axios.get(`${APIURL}/flashsales/product/active/approved?idproduct=${this.state.product.idproduct}`)
+        .then((product)=>{
+            this.setState({flashsaleprice:product.data.flashsale_price})
+        }).catch((err)=>{
+            console.log(err)
+        })
     }
 
     constructImageList=()=>{
@@ -434,12 +463,33 @@ class Product extends Component {
         
         return (
             <Grid.Row>
-                <Grid.Column width={3} style={{display:'flex',alignItems:'center'}}>
+                <Grid.Column width={3} style={{display:'flex'}}>
                     <Header as={'span'} style={styles.detail}>Harga</Header>
                 </Grid.Column>
                 <Grid.Column width={13}>
-                    <Header as={'span'} style={{fontSize:'18px',opacity:this.state.itemselect.price?'1':'.7'}}>
-                        Rp{this.state.itemselect.price?this.state.itemselect.price:Math.max(...priceList)},00
+                    {
+                        this.state.flashsaleprice?
+                        <Header as={'span'} color='blue' style={{fontSize:'18px',display:'block',margin:'0 0 .2em'}}>
+                            {idr(this.state.flashsaleprice)} 
+                            <span style={{color:'black',marginLeft:'1em',fontSize:'14px'}}>flashsale</span>
+                        </Header>
+                        : null
+                    }
+                    <Header as={'span'} style={{fontSize:'18px',opacity:this.state.itemselect.price?'1':'.7',position:'relative'}}>
+                        {this.state.itemselect.price?idr(this.state.itemselect.price):idr(Math.max(...priceList))}
+                        {
+                            this.state.flashsaleprice?
+                            <div
+                                style={{
+                                    width:'100%',
+                                    height:'1.5px',
+                                    backgroundColor:'rgba(0,0,0,.8)',
+                                    position:'absolute',
+                                    top:'50%',
+                                }}
+                            />
+                            : null
+                        }
                     </Header>
                 </Grid.Column>
             </Grid.Row>
@@ -456,7 +506,17 @@ class Product extends Component {
                     <Grid>
                         <Grid.Row style={{position:'relative'}}>
                             <Grid.Column width={16} style={{marginBottom:'1em'}}>
-                                <Header as={'h2'} style={{letterSpacing:'1px'}}>{titleConstruct(this.state.product.product_name)}</Header>
+                                <Header as={'h2'} style={{letterSpacing:'1px'}}>
+                                    {titleConstruct(this.state.product.product_name)}
+                                    <Dimmer active={this.state.pageloading} inverted>
+                                        <Loader inverted/>
+                                    </Dimmer>
+
+                                    {/* {this.state.items[0]?this.state.items[0].product_name:''}
+                                    <Dimmer active={this.state.pageloading} inverted>
+                                        <Loader inverted/>
+                                    </Dimmer> */}
+                                </Header>
                             </Grid.Column>
                             <Grid.Column width={16}>
                                 <div
@@ -678,6 +738,8 @@ class Product extends Component {
                                         primary
                                         style={{marginLeft:'1em',height:'100%'}}
                                         onClick={this.onAddToCart}
+                                        loading={this.state.loading}
+                                        disabled={this.state.loading}
                                     >
                                         Add to Cart
                                     </Button>

@@ -215,6 +215,7 @@ module.exports={
         var sql=`select * from users where iduser=${req.user.id}`
         db.query(sql,(err,result)=>{
             console.log('ini keeplogin')
+            console.log(result)
             if(err){
                 return res.status(500).send(err)
             }
@@ -266,6 +267,29 @@ module.exports={
         db.query(sql,(err,sellers)=>{
             if(err) return res.status(500).send(err)
             res.status(200).send(sellers[0])
+        })
+    },
+
+
+    // TOPUP POPCOIN
+    topupPopcoin:(req,res)=>{
+        console.log('top up popcoin')
+        console.log(req.user)
+        console.log(req.body)
+        const{popcoin}=req.body
+        
+        var sql=`update users set popcoin = popcoin + ${popcoin} where iduser=${req.user.id}`
+        db.query(sql,(err,result)=>{
+            if(err) return res.status(500).send(err)
+
+            var sql=`select * from users where iduser=${req.user.id}`
+            db.query(sql,(err,result)=>{
+                if(err) return res.status(500).send(err)
+
+                const token=createJWTToken({id:result[0].iduser,username:result[0].username})
+                return res.status(200).send({...result[0],token})
+            })
+            // res.status(200).send(result)
         })
     },
 }

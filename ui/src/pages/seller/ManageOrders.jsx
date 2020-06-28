@@ -48,7 +48,7 @@ class Transactions extends Component {
                   <Menu.Item key='payment'>
                     Orders
                     {
-                        this.props.Invoices.total?
+                        this.props.Store.total?
                         <Label color='blue'>{this.props.Store.total}</Label>
                         : null
                     }

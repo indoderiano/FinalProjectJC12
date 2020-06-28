@@ -187,3 +187,111 @@ export const ListByStoreTransaction=(list)=>{
 
     return listByTransaction
 }
+
+
+export const listItemsByProduct=(list)=>{
+
+    var listByProduct=[]
+    list.forEach((item)=>{
+        var isexist=false
+        for(var i=0;i<listByProduct.length;i++){
+            if(listByProduct[i].idproduct==item.idproduct){
+                isexist=true
+                listByProduct[i].itemlist.push(item)
+
+                // TO KEEP PRODUCT PRICE LABEL IS THE HIGHEST PRICE OF ITS ITEMS
+                // IF ITEM PRICE IS BIGGER THAN PRODUCT PRICE
+                if(listByProduct[i].productprice<item.price){
+                    listByProduct[i].productprice=item.price
+                }
+            }
+        }
+
+        if(!isexist){
+            const{
+                idproduct,
+                product_name,
+                imagecover,
+                description,
+                product_rating,
+                product_rating_count,
+                sold,
+                seen,
+                
+                price,
+            }=item
+            var productdata={
+                idproduct,
+                product_name,
+                imagecover,
+                description,
+                product_rating,
+                product_rating_count,
+                sold,
+                seen,
+
+                productprice:price,
+                itemlist:[item]
+            }
+            listByProduct.push(productdata)
+        }
+    })
+    return listByProduct
+}
+
+
+export const listFlashsaleItemsByProduct=(list)=>{
+
+    var listByProduct=[]
+    list.forEach((item)=>{
+        var isexist=false
+        for(var i=0;i<listByProduct.length;i++){
+            if(listByProduct[i].idproduct==item.idproduct){
+                isexist=true
+                listByProduct[i].itemlist.push(item)
+
+                // TO KEEP PRODUCT PRICE LABEL IS THE HIGHEST PRICE OF ITS ITEMS
+                // IF ITEM PRICE IS BIGGER THAN PRODUCT PRICE
+                if(listByProduct[i].productprice<item.price){
+                    listByProduct[i].productprice=item.price
+                }
+            }
+        }
+
+        if(!isexist){
+            const{
+                idproduct,
+                product_name,
+                imagecover,
+                description,
+                product_rating,
+                product_rating_count,
+                sold,
+                seen,
+                idflashsaleproduct,
+                flashsale_price,
+                isapproved,
+                
+                price,
+            }=item
+            var productdata={
+                idproduct,
+                product_name,
+                imagecover,
+                description,
+                product_rating,
+                product_rating_count,
+                sold,
+                seen,
+                idflashsaleproduct,
+                flashsale_price,
+                isapproved,
+
+                productprice:price,
+                itemlist:[item]
+            }
+            listByProduct.push(productdata)
+        }
+    })
+    return listByProduct
+}

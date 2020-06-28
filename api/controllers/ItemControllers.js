@@ -274,8 +274,13 @@ module.exports={
             if(err) return res.status(500).send(err)
 
             // console.log('stock',item[0])
-            var stock=item[0].stock-qty
-            res.status(200).send({stock})
+            if(item.length){
+                var stock=item[0].stock-qty
+                res.status(200).send({stock})
+            }else{
+                console.log('checking failed')
+                return res.status(500)
+            }
 
         })
 

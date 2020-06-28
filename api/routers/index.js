@@ -7,6 +7,7 @@ const SellerRouters=require('./SellerRouters')
 const AdminRouters=require('./AdminRouters')
 const WishlistRouters=require('./WishlistRouters')
 const TransactionSellerRouters=require('./TransactionSellerRouters')
+const FlashsaleRouters=require('./FlashsaleRouters')
 
 module.exports={
     UserRouters,
@@ -18,4 +19,5 @@ module.exports={
     AdminRouters,
     WishlistRouters,
     TransactionSellerRouters,
+    FlashsaleRouters
 }

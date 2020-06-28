@@ -51,7 +51,7 @@ class DeliveryList extends Component {
             console.log(res.data)
 
             // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
-            var listByTransaction=ListByStoreTransaction(res.data,'store').reverse()
+            var listByTransaction=ListByStoreTransaction(res.data,'store')
             // console.log('transaction history',listByTransaction)
             this.setState({deliveryList:listByTransaction})
 

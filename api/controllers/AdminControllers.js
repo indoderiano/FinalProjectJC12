@@ -144,5 +144,48 @@ module.exports={
 
             res.status(200).send(result)
         })
+    },
+
+    // GET FLASHSALES
+    getFlashsales:(req,res)=>{
+        console.log('get flashsales')
+
+        var sql=`select * from flashsales`
+        db.query(sql,(err,list)=>{
+            if(err) return res.status(500).send(err)
+
+            res.status(200).send(list)
+        })
+    },
+
+    createFlashsales:(req,res)=>{
+        console.log('create flashsale')
+        const {date}=req.body
+        
+        var time=new Date()
+        // console.log(time.getDate())
+        // console.log(date)
+
+        if(time.getDate()==date){
+            console.log('asdfadsf')
+            return res.status(200).send({status:false,message:'today flashsale already created'})
+        }
+
+        var startat=new Date(time.getFullYear(),time.getMonth(),time.getDate(),17,0,0)
+        var finishat=new Date(time.getFullYear(),time.getMonth(),time.getDate(),18,0,0)
+
+        var create={
+            startat,
+            finishat
+        }
+        // console.log(create)
+
+        var sql=`insert into flashsales set ?`
+        db.query(sql,create,(err,created)=>{
+            if(err) return res.status(500).send(err)
+
+            res.status(200).send({status:true})
+        })
+
     }
 }
