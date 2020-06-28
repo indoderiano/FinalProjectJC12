@@ -10,6 +10,7 @@ Router.put('/unblocked/:idseller',AdminControllers.UnblockSeller)
 Router.put('/verifyseller/:idseller',AdminControllers.VerifySeller)
 // INDO
 Router.get('/sales/count',AdminControllers.getSalesCount)
+Router.get('/sales/growth',AdminControllers.getSalesGrowth)
 
 module.exports=Router
 

@@ -42,7 +42,7 @@ export const getDate=(date)=>{
     }
 
     var dateParts = date.split("-");
-    // console.log(dateParts)
+    // console.log('datepart',dateParts)
     // console.log(dateParts[2])
     var jsDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2].substr(0,2));
     // return jsDate
@@ -156,5 +156,21 @@ export const idr=(number)=>{
     var price='Rp'+newnumber+'.00'
 
     return price
+
+}
+
+export const dateLabel=(date)=>{
+     console(date)
+    // PROTECTION, IF DATE IS EMPTY
+    if(typeof date == 'undefined'){
+        return 'no date found'
+    }
+
+    var dateParts = date.split(" ");
+    console.log(dateParts)
+    // console.log(dateParts[2])
+    console.log(dateParts[2].substr(0,2))
+    
+    return dateParts[0]
 
 }

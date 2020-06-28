@@ -21,6 +21,7 @@ import {
     Label
 } from 'semantic-ui-react'
 import TotalSales from './ChartsTotal'
+import GrowthSales from './SalesGrowth'
 import {Link} from 'react-router-dom'
 import {titleConstruct,isJson} from '../../supports/services'
 import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../../redux/actions'
@@ -44,7 +45,7 @@ class Transactions extends Component {
             {
                 menuItem: (
                   <Menu.Item key='create'>
-                    Flashsale Data
+                    Total Sales
                     {/* {
                         this.props.Invoices.total?
                         <Label color='blue'>{this.props.Invoices.total}</Label>
@@ -52,28 +53,20 @@ class Transactions extends Component {
                     } */}
                   </Menu.Item>
                 ),
-                // render: () => <Tab.Pane><FlashsalesData/></Tab.Pane>,
+                render: () => <Tab.Pane><TotalSales/></Tab.Pane>,
             },
             {
                 menuItem: (
                     <Menu.Item key='add'>
-                        Forms Request
+                        Store Sales
                     </Menu.Item>
                 ),
-                // render: () => <Tab.Pane><FlashsaleRequest/></Tab.Pane>,
-            },
-            {
-                menuItem: (
-                    <Menu.Item key='show'>
-                        Active Flashsale
-                    </Menu.Item>
-                ),
-                // render: () => <Tab.Pane><FlashsaleActive/></Tab.Pane>,
+                render: () => <Tab.Pane><GrowthSales/></Tab.Pane>,
             },
           ]
 
         return ( 
-            <Container style={{paddingTop:'2em',width:'900px',marginBottom:'4em'}}>
+            <Container style={{padding:'2em 4em',width:'100%',minWidth:'1100px',marginBottom:'4em'}}>
 
                 <Tab panes={panes} />
                 

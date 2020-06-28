@@ -30,7 +30,7 @@ import Admintable from './pages/Admin'
 import Testimage from './pages/aaaaa'
 import WishlistPage from './pages/Wishlist'
 import CommentSection from './component/Comment'
-import Chart from './pages/admin/ChartsTotal'
+import Sales from './pages/admin/SalesCharts'
 import ManageFlashsales from './pages/admin/ManageFlashsales'
 import FlashsaleSellerManage from './pages/seller/FlashsaleSellerManage'
 import Flashsale from './pages/Flashsale'
@@ -199,7 +199,7 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/managetransactions' exact component={adminAccess?ManageTransactions:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>
         <Route path='/manageorders' exact component={sellerAccess?ManageOrders:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         
-        <Route path='/admin/sales' exact component={Chart}/>
+        <Route path='/admin/sales' exact component={adminAccess?Sales:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>
 
         <Route path='/admin/flashsales' exact component={adminAccess?ManageFlashsales:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>
         <Route path='/seller/flashsales' exact component={sellerAccess?FlashsaleSellerManage:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>

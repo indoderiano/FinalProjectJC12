@@ -146,46 +146,27 @@ module.exports={
         })
     },
 
-    // GET FLASHSALES
-    getFlashsales:(req,res)=>{
-        console.log('get flashsales')
+    getSalesGrowth:(req,res)=>{
+        console.log('get list sales growth')
+        // console.log('get sales',req.query)
+        const {method}=req.query
 
-        var sql=`select * from flashsales`
-        db.query(sql,(err,list)=>{
+        var total=`
+        select checkout_price,qty,order_updateat
+        from transactiondetails td
+        join items i on i.iditem=td.iditem
+        join products p on p.idproduct=i.idproduct
+        join transactionsellers ts on ts.idtransactionseller=td.idtransactionseller
+        join transactions t on t.idtransaction=ts.idtransaction
+        where idorderstatus=4
+        order by order_updateat`
+
+
+        db.query(total,(err,list)=>{
             if(err) return res.status(500).send(err)
 
             res.status(200).send(list)
         })
     },
-
-    createFlashsales:(req,res)=>{
-        console.log('create flashsale')
-        const {date}=req.body
-        
-        var time=new Date()
-        // console.log(time.getDate())
-        // console.log(date)
-
-        if(time.getDate()==date){
-            console.log('asdfadsf')
-            return res.status(200).send({status:false,message:'today flashsale already created'})
-        }
-
-        var startat=new Date(time.getFullYear(),time.getMonth(),time.getDate(),17,0,0)
-        var finishat=new Date(time.getFullYear(),time.getMonth(),time.getDate(),18,0,0)
-
-        var create={
-            startat,
-            finishat
-        }
-        // console.log(create)
-
-        var sql=`insert into flashsales set ?`
-        db.query(sql,create,(err,created)=>{
-            if(err) return res.status(500).send(err)
-
-            res.status(200).send({status:true})
-        })
-
-    }
+    
 }

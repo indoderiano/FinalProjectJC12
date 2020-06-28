@@ -36,10 +36,20 @@ class MainHeader extends Component {
             >
               <Container style={{display:'block'}}>
                 <Menu.Item as={Link} to='/' style={style.menu} active>
-                  Home                 
+                  POPSTORE
                 </Menu.Item>
-                <Menu.Item as={Link} to='/seller' style={style.menu}>Seller</Menu.Item>
+                {
+                  this.props.isseller?
+                  <Menu.Item as={Link} to='/seller' style={style.menu}>Seller</Menu.Item>
+                  : null
+                }
         {/* <span style={{color:'white'}}>{this.props.Seller.idseller}</span> */}
+                {/* SALES */}
+                {
+                  this.props.User.isadmin?
+                  <Menu.Item as={Link} to='/admin/sales' style={style.menu}>Sales</Menu.Item>
+                  : null
+                }
                 {
                   this.props.User.isseller?
                   <Menu.Item as={Link} to='/seller/flashsales' style={style.menu}>Flashsale</Menu.Item>

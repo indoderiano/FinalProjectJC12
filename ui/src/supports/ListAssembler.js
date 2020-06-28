@@ -295,3 +295,94 @@ export const listFlashsaleItemsByProduct=(list)=>{
     })
     return listByProduct
 }
+
+
+export const listSalesByTime=(list)=>{
+
+    // var secondstostart=(-Date.parse(this.state.now)+Date.parse(flashsale.startat))/1000
+
+    var firsthour=Date.parse(list[0].order_updateat)/1000/60/60
+    var lasthour
+
+    //  ADD VALUE HOUR IN EACH ORDER
+    var listAddHour=list.map((order,index)=>{
+
+        var hour=Date.parse(order.order_updateat)/1000/60/60
+        hour=Math.ceil(hour-firsthour)
+
+        var milliseconds=Date.parse(order.order_updateat)
+        // ROUND UP
+        milliseconds=milliseconds-(milliseconds%3600)+3600
+
+        // GET LAST HOUR
+        if(index==list.length-1){
+            lasthour=hour
+        }
+
+        return {
+            ...order,
+            hour,
+            milliseconds,
+        }
+        
+    })
+
+    // LOOP HOURLY FROM FIRSTHOUR
+    var listByHours=[]
+    for(var i=0;i<=lasthour;i++){
+        // MERGE ORDERS WITH SAME HOUR
+        var checkout_price=0
+        var qty=0
+        var milliseconds=listAddHour[0].milliseconds+i*1000*60*60
+        var subhour=i-lasthour
+        // var order_updateat=
+        for(var j=0;j<listAddHour.length;j++){
+            if(listAddHour[j].hour==i){
+                checkout_price+=listAddHour[j].checkout_price
+                qty+=listAddHour[j].qty
+                // order_updateat=listAddHour[j].order_updateat
+            }
+        }
+        var data={
+            checkout_price,
+            qty,
+            milliseconds,
+            subhour
+
+        }
+        listByHours.push(data)
+    }
+
+    return listByHours
+
+
+    // MERGE AND SUM ORDERS WITH THE SAME HOUR VALUE
+    var listByHour=[]
+    
+    listAddHour.forEach((order,index)=>{
+        // CHECK IF HOUR ALREADY EXIST
+        var isexist=false
+        for(var i=0;i<listByHour.length;i++){
+            if(order.hour==listByHour[i].hour){
+                isexist=true
+                // MERGE AND SUM
+                listByHour[i].checkout_price+=order.checkout_price
+                listByHour[i].qty+=order.qty
+            }
+
+        }
+        if(!isexist){
+            listByHour.push(order)
+        }else{
+            var orderzero={
+                checkout_price:0,
+                qty:0,
+                hour:order.hour
+            }
+            listByHour.push(orderzero)
+        }
+    })
+    
+
+    return listByHour
+}

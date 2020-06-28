@@ -108,6 +108,8 @@ class FlashsalesData extends Component {
 
         if(!this.state.idflashsale){
             this.setState({errormessage:'Pick Flashsale Start Time'})
+        }else if(!this.state.flashsaleprice){
+            this.setState({errormessage:'State Product Flashsale Price'})
         }else{
             var product={
                 idproduct:this.state.idproductadd,
