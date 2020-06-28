@@ -247,7 +247,7 @@ module.exports={
                 
                 const imagePath= image ? path + '/' + image[0].filename : null
                 const data = JSON.parse(req.body.data);
-                data.image=imagePath
+                // data.image=imagePath
                 const {username,address,iduser}=data
                 
             var sql=`update users set ? where iduser=${iduser}`

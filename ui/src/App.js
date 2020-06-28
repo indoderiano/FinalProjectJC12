@@ -153,35 +153,28 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/forgotpassword' exact component={Forgotpass}/>
         <Route path='/forgotpassword/:token' exact component={ChangePass}/>
-        <Route path='/profile' exact component={Profile}/>
-        <Route path='/Sellerregister' exact component={Sellerregis }/>
-        <Route path='/admin' exact component={Admintable}/>
-        {/* <Route path='/forgotpassword' exact component={memberAccess?Forgotpass:Loading?Home:()=><Redirect to='/'/>}/>
-        <Route path='/forgotpassword/:token' exact component={memberAccess?ChangePass:Loading?Home:()=><Redirect to='/'/>}/> */}
-        <Route path='/verifyseller' exact component={VerifyTable}/>
-        <Route path='/testimage' exact component={Testimage}/>
-        <Route path='/wishlist' exact component={WishlistPage}/>
-        <Route path='/comment' exact component={CommentSection}/>
+        <Route path='/profile' exact component={User.islogin? Profile :Loading? Home : ()=><Redirect to='/'/>}/>
+        <Route path='/Sellerregister' exact component={User.isseller?()=><Redirect to ='/seller'/>:User.isverified? Sellerregis : Loading?Home:()=><Redirect to='/' /> }/>
+        <Route path='/admin' exact component={adminAccess?Admintable:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
+        <Route path='/verifyseller' exact component={adminAccess?VerifyTable:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
+        <Route path='/wishlist' exact component={User.isverified?WishlistPage:Loading?Home:User.islogin?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         
         {/* SELY */}
         <Route path='/allproducts' exact component={AllProducts}/>
         <Route path='/search/:keyword' exact component={SearchProducts}/>
-        <Route path='/seller/product' exact component={MyProducts}/>
-        <Route path='/seller/myorder' exact component={MyOrders}/>
-        <Route path='/seller/profile' exact component={StoreProfile}/>
+        <Route path='/seller/product' exact component={sellerAccess?MyProducts:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
+        {/* <Route path='/seller/myorder' exact component={MyOrders}/> */}
+        <Route path='/seller/profile' exact component={sellerAccess?StoreProfile:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
                
         {/*  */}
-        <Route path='/seller' exact component={StoreProfile}/>
+        <Route path='/seller' exact component={sellerAccess?StoreProfile:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         <Route path='/allproducts/women' exact component={WomenProducts}/>
         <Route path='/allproducts/men' exact component={MenProducts}/>
         {/*  */}
         {/* <Route path='/seller/product' exact component={sellerAccess?ManageProduct:Loading?Home:()=><Redirect to='/'/>}/> */}
         
-        
-        
-        
-
+      
 
         {/* INDO */}
         

@@ -124,6 +124,9 @@ class Home extends Component {
                   </Grid.Row>
                   <div style={{width:'100%', borderWidth:'2px', borderColor:'black', padding:20, justifyContent: 'center', alignItems:'center', display: 'flex', flexDirection:'column' ,}}>
                     <div style={{width:'100%', textAlign:'center', marginBottom:20}}>
+                      <Link to='allproducts'><h2>Showing All Products</h2></Link>
+                    </div> 
+                    <div style={{width:'100%', textAlign:'center', marginBottom:20}}>
                       <Link to='search/recommended'><h2>Recommended Products</h2></Link>
                     </div> 
                     <div style={{width:'70%', textAlign:'center',display:'flex',justifyContent:'space-between'}}>

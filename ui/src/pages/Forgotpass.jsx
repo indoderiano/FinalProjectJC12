@@ -43,7 +43,7 @@ const ForgotPass =(props)=>{
           <Form onSubmit={sendChangePass} >
           <Form.Group style={{flexDirection: 'column', justifyContent: 'center'}} >
           <Form.Input
-           placeholder='Insert Username'
+           placeholder='Insert email'
            name='email'
            value={emailaddress.email}
            onChange={forgotChange}/> 

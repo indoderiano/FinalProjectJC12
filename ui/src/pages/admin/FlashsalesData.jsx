@@ -203,7 +203,7 @@ class FlashsalesData extends Component {
     }
 
     render() {
-        var hourlist=[9,10,11,12,13,14,15,16,17,18,19,20,21]
+        var hourlist=[9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
         return (
             <Container style={{paddingTop:'2em',width:'1000px',marginBottom:'4em'}}>
 
@@ -211,9 +211,10 @@ class FlashsalesData extends Component {
                     <Header as={'h3'}>Create Flashsale</Header>
                     <Message>These Buttons only allow to make flashsale schedules on today's date</Message>
                     {
-                        hourlist.map((hour)=>{
+                        hourlist.map((hour,index)=>{
                             return (
                                 <Button
+                                    key={index}
                                     color='blue'
                                     basic
                                     style={{margin:'0 1em 1em 0'}}
