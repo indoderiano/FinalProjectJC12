@@ -265,18 +265,46 @@ module.exports={
     },                    
                     ///////////////// GET PRODUCT BY SEARCH KEYWORD ///////////////// ==> NOT YET FINISHED
     searchproduct:(req,res)=>{
-        const {keyword, filter, page}=req.query
-        var offset=(page*limit)-limit
-        var limit=4
-        if(keyword){
-            var sql= `  SELECT p.*,c.id AS idcat,c.name AS namecategory
+        const {search,category, pmin, pmax, sort, page}=req.query
+        const {keyword} =req.params
+        console.log(req.params.keyword)
+        console.log(search,'search160',page, 'page162',pmin, 'hargamin',pmax, 'hargamax', sort, 'sortinglala')
+        const pricemin=parseInt(pmin)
+        const pricemax=parseInt(pmax)
+        const sortby=(keyword==='best-seller'?`a`: `b`)
+        const limit=8       //ini jumlah produk per page
+        const offset=page
+        console.log(offset, 'dipsy', sort)
+        if(search||pricemin||pricemax||category||sort){
+            var sql=`SELECT p.* ,i.iditem, i.price as price, c.namecategory as maincategory
                         FROM products p 
-                            JOIN categories c 
-                            ON p.idcategory=c.idcategory
-                        WHERE p.isdeleted=0 AND p.product_name LIKE '%${keyword}%'`
-                        // LIMIT ${offset},${limit}`
-            db.query(sql,(err,result)=>{
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                    WHERE p.isdeleted=0 AND p.isblocked=0 
+                        ${search? `AND p.product_name LIKE '%${search}%' ` : ''}
+                        ${category?`AND p.category LIKE '%${category}%' ` : '' }
+                        ${pricemin? `AND price >=${pricemin}` : ''}
+                        ${pricemax? `AND price <=${pricemax}` : ''}
+                    GROUP BY i.idproduct
+                    ${sort?(sort === 'priceasc'? `ORDER BY price ASC`: sort ==='pricedesc'? `ORDER BY price DESC`: sort==='most-viewed'?`ORDER BY seen DESC`: sort==='rating'?`ORDER BY rating DESC`:`ORDER BY sold DESC`):''}
+                    LIMIT ${offset},${limit}`
+                db.query(sql,(err,result)=>{
+                console.log(sql)
                 if(err) res.status(500).send({err,message:'error get product search'})
+                return res.send(result)
+            })
+        }else{
+            var sql=`SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                    WHERE p.isdeleted=0 AND p.isblocked=0
+                    GROUP BY i.idproduct
+                    ORDER BY ${keyword==='recommended'?`sold`:keyword==='mostviewed'?`seen`:`rating`} DESC
+                    LIMIT ${offset},${limit}`
+            db.query(sql,(err,result)=>{
+                console.log(sql, 'searchpage')
+                if(err) res.status(500).send({err,message:'error get total product'})
                 return res.send(result)
             })
         }
@@ -311,11 +339,22 @@ module.exports={
                         JOIN categories c ON p.idcategory=c.idcategory
                         WHERE p.isdeleted=0 AND p.isblocked=0
                     GROUP BY i.idproduct  
-                    ORDER BY seen desc
+                    ORDER BY seen DESC
                     LIMIT 0,4;`
-        db.query(sql,(err,homepageRes)=>{
+        db.query(sql,(err,mostviewed)=>{
             if(err) res.status(500).send({err,message:'error get product search'})
-            return res.send(homepageRes)
+            sql= `  SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+                        FROM products p 
+                        JOIN items i ON i.idproduct=p.idproduct
+                        JOIN categories c ON p.idcategory=c.idcategory
+                        WHERE p.isdeleted=0 AND p.isblocked=0
+                    GROUP BY i.idproduct  
+                    ORDER BY sold DESC
+                    LIMIT 0,4;`
+            db.query(sql,(err,recommended)=>{
+            if(err) res.status(500).send({err,message:'error get product search'})
+            return res.status(200).send({mostviewed, recommended})
+            })
         })
     },
 

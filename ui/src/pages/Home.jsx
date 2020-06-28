@@ -6,14 +6,16 @@ import { APIURL } from '../supports/ApiUrl';
 
 class Home extends Component {
   state = {
-      mostViewedProducts:[]
+      mostViewedProducts:[],
+      recommendedProducts:[]
   }
 
   componentDidMount(){
       Axios.get(`${APIURL}/products/mostviewed`)
       .then((res)=>{
         this.setState({
-          mostViewedProducts:res.data
+          mostViewedProducts:res.data.mostviewed,
+          recommendedProducts:res.data.recommended
         })
       }).catch((err)=>{
         console.log(err)
@@ -27,6 +29,38 @@ class Home extends Component {
     if(this.state.mostViewedProducts.length){
       return this.state.mostViewedProducts.map((val,index)=>{
           return (                  
+            <div key={index} style={{width:'22%', marginLeft:12, marginRight:12, marginBottom:20}}>
+                <Link to={`/product/${val.idproduct}`}>
+                    <Card raised style={{ paddingTop:5, height:'100%'}}>
+                        <a style={{alignSelf:'center'}}>
+                            <Image src={APIURL+ JSON.parse(val.imagecover)[0]} style={{height:'150px' }}/>
+                        </a>
+                        <Card.Content style={{borderColor: 'transparent',}} >
+                        <Card.Header style={{display:'block', overflow: 'hidden',}}>{val.product_name}</Card.Header>
+                        <Card.Meta>{val.maincategory}</Card.Meta>
+                        <Card.Description >
+                            Rp.{val.price} <br/>
+                            <Rating icon='star' defaultRating={0} rating={val.product_rating} maxRating={5} />
+                        </Card.Description>
+                        </Card.Content>
+                        <Card.Content style={{textAlign:'center',alignSelf:'center'}} extra>
+                        <a style={{fontSize:'20px', width:'100%'}} >
+                            <Icon name='cart' />
+                            Detail
+                        </a>
+                        </Card.Content>
+                    </Card>
+                </Link>
+            </div>
+          ) 
+      })
+    }
+  }
+
+  renderRecommended=()=>{
+    if(this.state.recommendedProducts.length){
+      return this.state.recommendedProducts.map((val,index)=>{
+            return (                  
               <div key={index} style={{width:'22%', marginLeft:12, marginRight:12, marginBottom:20}}>
                   <Link to={`/product/${val.idproduct}`}>
                       <Card raised style={{ paddingTop:5, height:'100%'}}>
@@ -50,9 +84,9 @@ class Home extends Component {
                       </Card>
                   </Link>
               </div>
-          )
+           ) 
       })
-  }
+    }
   }
   
 
@@ -87,19 +121,18 @@ class Home extends Component {
                         </center>
                       </div>
                   </Grid.Row>
-                  <div style={{width:'100%', padding:20, justifyContent: 'center', alignItems:'center', display: 'flex', flexDirection:'column' ,}}>
-                    <div style={{width:'100%', textAlign:'center'}}><h2>Category</h2></div> <br/>
-                    <div style={{width:'70%', textAlign:'center',display:'flex',justifyContent:'space-between'}}>
-                        <Button color='red'>Men Clothes</Button>
-                        <Button style={{backgroundColor:'#feda09'}}>Women Clothes</Button>
-                        <Button color='red'>Men Shoes</Button>
-                        <Button style={{backgroundColor:'#feda09'}}>Women Shoes</Button>
-                        <Button color='red'>Men Bag</Button>
-                        <Button style={{backgroundColor:'#feda09'}}>Women Bag</Button>
-                    </div>  
-                  </div>
                   <div style={{width:'100%', borderWidth:'2px', borderColor:'black', padding:20, justifyContent: 'center', alignItems:'center', display: 'flex', flexDirection:'column' ,}}>
-                    <div style={{width:'100%', textAlign:'center'}}><h2>Most Viewed Products</h2></div> <br/>
+                    <div style={{width:'100%', textAlign:'center', marginBottom:20}}>
+                      <Link to='search/recommended'><h2>Recommended Products</h2></Link>
+                    </div> 
+                    <div style={{width:'70%', textAlign:'center',display:'flex',justifyContent:'space-between'}}>
+                        {this.renderRecommended()}
+                    </div>
+                  </div>
+                  <div style={{width:'100%', borderWidth:'20px', borderColor:'black', padding:20, justifyContent: 'center', alignItems:'center', display: 'flex', flexDirection:'column' ,}}>
+                    <div style={{width:'100%', textAlign:'center', marginBottom:20}}>
+                    <Link to='search/mostviewed'><h2>Most Viewed Products</h2></Link>
+                    </div>
                     <div style={{width:'70%', textAlign:'center',display:'flex',justifyContent:'space-between'}}>
                         {this.renderMostViewed()}
                     </div>
