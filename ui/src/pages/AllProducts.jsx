@@ -123,6 +123,7 @@ class AllProducts extends Component {
 
     render() { 
         const {search, searchCategory, minprice, maxprice, cardperPage, page, totalProduct}=this.state
+        const {currentPage, search, searchCategory, minprice, maxprice, cardperPage, page, totalProduct}=this.state
         return ( 
             <Grid padded style={{padding:20}}>
                 <Grid.Column width={4} style={{backgroundColor:'BC9E82', padding:10}}>
