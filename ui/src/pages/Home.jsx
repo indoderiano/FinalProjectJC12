@@ -97,7 +97,7 @@ class Home extends Component {
                       <Grid.Column style={{marginRight:0, paddingRight: 0,}}>
                           <Image src='/images/men.jpg'/>
                       </Grid.Column>
-                      <Grid.Column style={{marginLeft:0, paddingLeft: 0}}>
+                      <Grid.Column style={{marginLeft:0, paddingLeft: 0,}}>
                         <Image src='/images/women.jpg' />
                       </Grid.Column>
                       <div style={{position:"absolute",width:'100%',alignSelf:'center', fontFamily:'muli,sans-serif', fontWeight:'100'}}>
