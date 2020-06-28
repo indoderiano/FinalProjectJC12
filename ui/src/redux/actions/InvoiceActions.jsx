@@ -14,17 +14,17 @@ export const LoadInvoices=(iduser)=>{
         Axios.get(`${APIURL}/transactions/admin?idstatus=2`)
         .then((res)=>{
             // console.log(res.data)
-
-
+            
             // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
             var listByTransaction=ListByTransaction(res.data).reverse()
-
-
+            
+            
             var data={
                 list: listByTransaction,
                 total: listByTransaction.length
             }
             dispatch({type:INVOICE_LIST,payload:data})
+            console.log('invoices loaded')
         }).catch((err)=>{
             console.log(err)
         })

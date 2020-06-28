@@ -2,7 +2,7 @@ const encrypt=require('./crypto')
 
 
 
-const text='maungapain'
+const text='12345'
 
 
 console.log(encrypt(text))

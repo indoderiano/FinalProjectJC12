@@ -405,7 +405,7 @@ class TransactionList extends Component {
                                 <div style={{textAlign:'center'}}>
                                     {
                                         isexpired?
-                                        <div><span style={{fontWeight:'800'}}>Transaction Is Expired</span></div>
+                                        <div><span style={{fontWeight:'800'}}>Transaction Is Completed</span></div>
                                         :
                                         <div style={{display:'inline-flex',padding:'0em 0em',border:'0px solid rgba(255,0,0,.5)',color:'rgb(178,34,34)',background:'rgba(255,0,0,.0)'}}>
                                             Expire in 

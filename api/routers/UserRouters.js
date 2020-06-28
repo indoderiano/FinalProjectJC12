@@ -14,5 +14,7 @@ Router.post('/forgotpassword',UserControllers.forgotpassverify)
 Router.put('/changepassword',UserControllers.changepassword)
 Router.get('/profile',UserControllers.showProfile)
 Router.put('/editprofile',UserControllers.editProfile)
-Router.get('/seller',UserControllers.getSeller) // supposed to be in seller router
+Router.get('/seller',UserControllers.getSeller) // supposed to be in seller router // doesn't matter
+Router.put('/popcoin',Auth,UserControllers.topupPopcoin)
+
 module.exports=Router

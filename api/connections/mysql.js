@@ -1,4 +1,5 @@
 
+
 // LOCALHOST
 const mysql=require('mysql')
 const db=mysql.createConnection({
@@ -8,17 +9,6 @@ const db=mysql.createConnection({
     database:'finalproject-lastdayv1',
     port:'3306'
 })
-
-
-// DB4FREE
-// const mysql=require('mysql')
-// const db=mysql.createConnection({
-//     host:'localhost',
-//     user:'root',
-//     password:'maungapain',
-//     database:'final_project_jc12',
-//     port:'3306'
-// })
 
 
 // DB4FREE

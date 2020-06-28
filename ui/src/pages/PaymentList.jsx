@@ -23,7 +23,7 @@ import {
 } from 'semantic-ui-react'
 import Payment from './Payment'
 import {Link} from 'react-router-dom'
-import {titleConstruct,isJson} from '../supports/services'
+import {titleConstruct,isJson, idr} from '../supports/services'
 import {LoadPayment,LoadCart} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -337,49 +337,53 @@ class PaymentList extends Component {
                                     </div>
                                 }
                             </Grid.Column>
-                                {
-                                    transaction.idtransaction==this.state.uploadid?
-                                    <Grid.Column width={16} style={{marginTop:'1em',textAlign:'center'}}>
-                                        <Input 
-                                            type='file'
-                                            // multiple
-                                            style={{marginRight:'1em'}}
-                                            onChange={(e)=>{
-                                                if(e.target.files){
-                                                    // console.log(e.target.files)
-                                                    this.setState({filepaymentproof:e.target.files[0]})
-                                                }
-                                            }}
-                                        />
-                                        <Button primary style={{height:'100%'}} onClick={this.onUpload}><Icon name='upload'/>Upload</Button>
-                                        {
-                                            this.state.errormessage?
-                                            <Label 
-                                                basic 
-                                                color='red' 
-                                                pointing 
-                                                style={{
-                                                    position:'absolute',
-                                                    top:'100%',
-                                                    left:'35%'
-                                                }}>
-                                                {this.state.errormessage}
-                                            </Label>
-                                            : null
-                                        }
-                                    </Grid.Column>
-                                    :
-                                    <Grid.Column width={16} style={{marginTop:'1em',textAlign:'center'}}>
-                                        <Button 
-                                            primary 
-                                            disabled={isexpired}
-                                            style={{width:'100%'}}
-                                            onClick={()=>{this.setState({uploadid:transaction.idtransaction})}}
-                                        >
-                                            Upload Transfer Proof
-                                        </Button>
-                                    </Grid.Column>
-                                }
+                            {
+                                transaction.idtransaction==this.state.uploadid?
+                                <Grid.Column width={16} style={{marginTop:'1em',textAlign:'center'}}>
+                                    <Input 
+                                        type='file'
+                                        // multiple
+                                        style={{marginRight:'1em'}}
+                                        onChange={(e)=>{
+                                            if(e.target.files){
+                                                // console.log(e.target.files)
+                                                this.setState({filepaymentproof:e.target.files[0]})
+                                            }
+                                        }}
+                                    />
+                                    <Button primary style={{height:'100%'}} onClick={this.onUpload}><Icon name='upload'/>Upload</Button>
+                                    {
+                                        this.state.errormessage?
+                                        <Label 
+                                            basic 
+                                            color='red' 
+                                            pointing 
+                                            style={{
+                                                position:'absolute',
+                                                top:'100%',
+                                                left:'35%'
+                                            }}>
+                                            {this.state.errormessage}
+                                        </Label>
+                                        : null
+                                    }
+                                </Grid.Column>
+                                :
+                                <Grid.Column width={16} style={{marginTop:'1em',textAlign:'center'}}>
+                                    <Button 
+                                        primary 
+                                        disabled={isexpired}
+                                        style={{width:'100%'}}
+                                        onClick={()=>{this.setState({uploadid:transaction.idtransaction})}}
+                                    >
+                                        Upload Transfer Proof
+                                    </Button>
+                                </Grid.Column>
+                            }
+                            <Grid.Column width={16} style={{marginTop:'1em',textAlign:'center'}}>
+                                Total Payment : 
+                                <Header as={'h4'} style={{display:'inline-block'}}>{idr(transaction.totalpayment)}</Header>
+                            </Grid.Column>
                             <Divider style={{width:'100%'}}/>
                         </Grid.Row>
                         {this.renderByTransactionSeller(transaction.sellerlist)}

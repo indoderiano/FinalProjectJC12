@@ -30,8 +30,12 @@ import Admintable from './pages/Admin'
 import Testimage from './pages/aaaaa'
 import WishlistPage from './pages/Wishlist'
 import CommentSection from './component/Comment'
+import Chart from './pages/admin/ChartsTotal'
+import ManageFlashsales from './pages/admin/ManageFlashsales'
+import FlashsaleSellerManage from './pages/seller/FlashsaleSellerManage'
+import Flashsale from './pages/Flashsale'
+import Popcoin from './pages/Popcoin'
 import { KeepLogin,KeepSeller, LoadCart, LoadPayment,LoadInvoices, LoadOrders } from './redux/actions'
-import Chart from './pages/admin/Charts'
 import { APIURL } from './supports/ApiUrl';
 import { connect } from 'react-redux';
 import MyProducts from './pages/seller/MyProduct';
@@ -59,15 +63,21 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         }
       })
       .then(res=>{
+        // USER
         KeepLogin(res.data)
-        if(res.data.isseller){
-          KeepSeller(res.data.iduser)
-        }
         LoadCart(res.data.iduser)
         LoadPayment(res.data.iduser)
-        LoadInvoices(res.data.iduser)
+
+        // SELLER
         if(res.data.isseller){
+          KeepSeller(res.data.iduser)
+
           LoadOrders(res.data.iduser)
+        }
+
+        // ADMIN
+        if(res.data.isadmin){
+          LoadInvoices(res.data.iduser)
         }
       }).catch((err)=>{
         console.log(err)
@@ -83,7 +93,7 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
   const visitorAccess=!Loading&&!User.islogin
   const memberAccess=!Loading&&User.islogin&&User.isverified // only true if not loading,islogin,and isverified
   const sellerAccess=!Loading&&User.islogin&&User.isseller&&User.isverified
-  const adminAccess=!Loading&&User.islogin&&User.isseller&&User.isadmin&&User.isverified
+  const adminAccess=!Loading&&User.islogin&&User.isadmin&&User.isverified
   
 
   if(Loading){
@@ -141,13 +151,13 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/register' exact component={Register}/>
         <Route path='/verification' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
-        {/* <Route path='/forgotpassword' exact component={Forgotpass}/>
-        <Route path='/forgotpassword/:token' exact component={ChangePass}/> */}
+        <Route path='/forgotpassword' exact component={Forgotpass}/>
+        <Route path='/forgotpassword/:token' exact component={ChangePass}/>
         <Route path='/profile' exact component={Profile}/>
         <Route path='/Sellerregister' exact component={Sellerregis }/>
         <Route path='/admin' exact component={Admintable}/>
-        <Route path='/forgotpassword' exact component={memberAccess?Forgotpass:Loading?Home:()=><Redirect to='/'/>}/>
-        <Route path='/forgotpassword/:token' exact component={memberAccess?ChangePass:Loading?Home:()=><Redirect to='/'/>}/>
+        {/* <Route path='/forgotpassword' exact component={memberAccess?Forgotpass:Loading?Home:()=><Redirect to='/'/>}/>
+        <Route path='/forgotpassword/:token' exact component={memberAccess?ChangePass:Loading?Home:()=><Redirect to='/'/>}/> */}
         <Route path='/verifyseller' exact component={VerifyTable}/>
         <Route path='/testimage' exact component={Testimage}/>
         <Route path='/wishlist' exact component={WishlistPage}/>
@@ -191,7 +201,11 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         
         <Route path='/admin/sales' exact component={Chart}/>
 
+        <Route path='/admin/flashsales' exact component={adminAccess?ManageFlashsales:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>
+        <Route path='/seller/flashsales' exact component={sellerAccess?FlashsaleSellerManage:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/login'/>}/>
+        <Route path='/flashsale' exact component={Flashsale}/>
 
+        <Route path='/popcoin' exact component={memberAccess?Popcoin:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:<Redirect to='/'/>}/>
 
 
         <Route path='/*' exact component={()=><Redirect to='/'/>}/>

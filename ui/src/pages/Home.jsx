@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Grid, Image, Button, Segment, Header, Card, Icon, Rating } from 'semantic-ui-react';
+import Flashsale from '../component/FlashsaleHome'
 import { NavLink, Link } from 'react-router-dom';
 import Axios from 'axios';
 import { APIURL } from '../supports/ApiUrl';
@@ -23,31 +24,31 @@ class Home extends Component {
   }
 
   renderMostViewed=()=>{
-    console.log(this.state.mostViewedProducts)
-    console.log(this.state.mostViewedProducts[0])
-    console.log( this.state.mostViewedProducts[0])
+    // console.log(this.state.mostViewedProducts)
+    // console.log(this.state.mostViewedProducts[0])
+    // console.log( this.state.mostViewedProducts[0])
     if(this.state.mostViewedProducts.length){
       return this.state.mostViewedProducts.map((val,index)=>{
           return (                  
             <div key={index} style={{width:'22%', marginLeft:12, marginRight:12, marginBottom:20}}>
                 <Link to={`/product/${val.idproduct}`}>
                     <Card raised style={{ paddingTop:5, height:'100%'}}>
-                        <a style={{alignSelf:'center'}}>
                             <Image src={APIURL+ JSON.parse(val.imagecover)[0]} style={{height:'150px' }}/>
-                        </a>
+                        {/* <a style={{alignSelf:'center'}}>
+                        </a> */}
                         <Card.Content style={{borderColor: 'transparent',}} >
                         <Card.Header style={{display:'block', overflow: 'hidden',}}>{val.product_name}</Card.Header>
                         <Card.Meta>{val.maincategory}</Card.Meta>
                         <Card.Description >
                             Rp.{val.price} <br/>
-                            <Rating icon='star' defaultRating={0} rating={val.product_rating} maxRating={5} />
+                            <Rating icon='star' rating={val.product_rating} maxRating={5} />
                         </Card.Description>
                         </Card.Content>
                         <Card.Content style={{textAlign:'center',alignSelf:'center'}} extra>
-                        <a style={{fontSize:'20px', width:'100%'}} >
                             <Icon name='cart' />
                             Detail
-                        </a>
+                        {/* <a style={{fontSize:'20px', width:'100%'}} >
+                        </a> */}
                         </Card.Content>
                     </Card>
                 </Link>
@@ -64,22 +65,22 @@ class Home extends Component {
               <div key={index} style={{width:'22%', marginLeft:12, marginRight:12, marginBottom:20}}>
                   <Link to={`/product/${val.idproduct}`}>
                       <Card raised style={{ paddingTop:5, height:'100%'}}>
-                          <a style={{alignSelf:'center'}}>
                               <Image src={APIURL+ JSON.parse(val.imagecover)[0]} style={{height:'150px' }}/>
-                          </a>
+                          {/* <a style={{alignSelf:'center'}}>
+                          </a> */}
                           <Card.Content style={{borderColor: 'transparent',}} >
                           <Card.Header style={{display:'block', overflow: 'hidden',}}>{val.product_name}</Card.Header>
                           <Card.Meta>{val.maincategory}</Card.Meta>
                           <Card.Description >
                               Rp.{val.price} <br/>
-                              <Rating icon='star' defaultRating={0} rating={val.product_rating} maxRating={5} />
+                              <Rating icon='star' rating={val.product_rating} maxRating={5} />
                           </Card.Description>
                           </Card.Content>
                           <Card.Content style={{textAlign:'center',alignSelf:'center'}} extra>
-                          <a style={{fontSize:'20px', width:'100%'}} >
                               <Icon name='cart' />
                               Detail
-                          </a>
+                          {/* <a style={{fontSize:'20px', width:'100%'}} >
+                          </a> */}
                           </Card.Content>
                       </Card>
                   </Link>
@@ -137,6 +138,10 @@ class Home extends Component {
                         {this.renderMostViewed()}
                     </div>
                   </div>
+
+                  {/* INDO */}
+                  {/* FLASHSALE */}
+                  <Flashsale/>
           </Grid>
     );
   }

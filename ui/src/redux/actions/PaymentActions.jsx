@@ -7,7 +7,7 @@ import {ListByTransaction} from '../../supports/ListAssembler'
 
 
 export const LoadPayment=(iduser)=>{
-    console.log('request payment list')
+    console.log('request payment due list')
     return(dispatch)=>{
         Axios.get(`${APIURL}/transactions/user?iduser=${iduser}&idstatus=1`)
         .then((res)=>{
@@ -23,6 +23,7 @@ export const LoadPayment=(iduser)=>{
                 total: listByTransaction.length
             }
             dispatch({type:PAYMENT_LIST,payload:data})
+            console.log('payment due list loaded')
         }).catch((err)=>{
             console.log(err)
         })

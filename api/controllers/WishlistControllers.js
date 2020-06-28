@@ -81,5 +81,14 @@ module.exports={
             })
         })
     })
+    },
+
+    deleteProduct:(req,res)=>{
+        const {idproduct,iduser}=req.query
+        var sql=`delete from wishlist where idproduct=${idproduct} and iduser=${iduser}`
+        db.query(sql,(err,result)=>{
+            if(err) res.status(500).send(err.message)
+            return res.status(200).send(result)
+        })
     }
 }

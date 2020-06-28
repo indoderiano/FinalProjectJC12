@@ -13,14 +13,40 @@ import { APIURL } from '../../supports/ApiUrl';
 
 export const LoadCart=(iduser)=>{
     console.log('Load Cart')
-    return (dispatch)=>{
+    return async (dispatch)=>{
 
         // GET TRANSACTION DETAILS JOIN ITEMS JOIN PRODUCT
         Axios.get(`${APIURL}/transactiondetails/item/product/seller?iduser=${iduser}`)
-        .then((res)=>{
+        .then(async(res)=>{
             // dispatch({type:CART_LIST,payload:res.data})
 
-            var cartlist=res.data
+            var cartlist=res.data.reverse()
+
+            // CHECK FOR FLASHSALE ITEMS
+            
+            for(var orderitem of cartlist){
+
+                if(orderitem.isflashsale){
+                    // FIND FLASHSALE PRICE
+                    // console.log('get product flashsale price')
+
+                    try{
+                        var product=await Axios.get(`${APIURL}/flashsales/product/active/approved?idproduct=${orderitem.idproduct}`)
+                        
+                        orderitem.price=product.data.flashsale_price
+                    }catch(err){
+                        console.log(err)
+                    }
+                }
+            }
+
+            console.log('cartlist flashsale checked and update')
+
+            // console.log('cartlist after flashcheck',cartlist)
+
+
+
+
             // CHECK ITEMS STOCK
         
             var stock=true
@@ -37,7 +63,7 @@ export const LoadCart=(iduser)=>{
                 // qty
 
                 Axios.put(`${APIURL}/items/checkstock/${td.iditem}`,{qty:td.qty})
-                .then((newstock)=>{
+                .then(async(newstock)=>{
                     // console.log(`item id ${td.iditem} newstock is ${newstock.data.stock}`)
                     if(newstock.data.stock<0){
                         stock=false
@@ -141,15 +167,34 @@ export const LoadCart=(iduser)=>{
                         for(var order of res.data){
                             if(order.isselected){
                                 totalqty+=order.qty
-                                totalprice+=order.qty*order.price
+
+                                // FLASHSALE
+                                // CHECK IF FLASHSALE
+                                // NO NEED , BEC ALREADY UPDATED WITH FLASHSALE PRICE
+                                if(false){
+                                    // FIND FLASHSALE PRICE
+                                    console.log('get product flashsale price')
+
+                                    try{
+                                        var product=await Axios.get(`${APIURL}/flashsales/product/active/approved?idproduct=${order.idproduct}`)
+                                        
+                                        totalprice+=order.qty*product.data.flashsale_price
+                                    }catch(err){
+                                        console.log(err)
+                                    }
+
+                                }else{
+                                    totalprice+=order.qty*order.price
+                                }
                             }
                             totalitems+=1
+                            
                         }
             
             
                         dispatch({type:CART_DATA,payload:{totalqty,totalprice,totalitems}})
 
-
+                        console.log('cart finish loaded')
 
                         
 

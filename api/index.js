@@ -28,6 +28,8 @@ const {
     AdminRouters,
     WishlistRouters,
     TransactionSellerRouters,
+    FlashsaleRouters,
+    CommentRouters,
 }=require('./routers')
 const { db } = require('./connections/mysql')
 
@@ -39,7 +41,9 @@ app.use('/transactiondetails',TransactionDetailsRouters)
 app.use('/sellers', SellerRouters)
 app.use('/admin',AdminRouters)
 app.use('/wishlist',WishlistRouters)
+app.use('/flashsales',FlashsaleRouters)
 
+app.use('/comments',CommentRouters)
 
 app.use('/transactionstores',TransactionSellerRouters)
 

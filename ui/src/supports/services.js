@@ -113,3 +113,48 @@ export const getDate=(date)=>{
     
     return tanggal
 }
+
+
+export const date=(date)=>{
+
+    // PROTECTION, IF DATE IS EMPTY
+    if(typeof date == 'undefined'){
+        return 'no date found'
+    }
+
+    var dateParts = date.split("-");
+    console.log(dateParts)
+    // console.log(dateParts[2])
+    console.log(dateParts[2].substr(0,2))
+    
+    return dateParts[2].substr(0,2)
+
+}
+
+export const idr=(number)=>{
+
+    if(number==undefined||number==null){
+        return 'Rp0,00'
+    }
+
+    var price='Rp'
+
+    var newnumber=number.toString().split('').reverse()
+
+    var loopnumber=newnumber
+
+    var count=0
+    newnumber.forEach((val,index)=>{
+        if(index%3==0&&index>0){
+            newnumber.splice(index+count,0,',')
+            count++
+        }
+    })
+
+    var newnumber=newnumber.reverse().join('')
+
+    var price='Rp'+newnumber+'.00'
+
+    return price
+
+}

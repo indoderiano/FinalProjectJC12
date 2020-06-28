@@ -16,11 +16,12 @@ import {
     Icon,
     Divider,
     Dropdown,
-    Modal
+    Modal,
+    Dimmer
 } from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
-import {titleConstruct,isJson} from '../supports/services'
-import {LoadCart,UpdateCheckout,CountTotalPayment,LoadPayment} from '../redux/actions'
+import {titleConstruct,isJson, idr} from '../supports/services'
+import {LoadCart,UpdateCheckout,CountTotalPayment,LoadPayment,KeepLogin} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -30,7 +31,10 @@ class Payment extends Component {
         idpayment:0,
 
         loading:false,
-        isfinish:false,
+        redirect:false,
+        ispaid:false,
+        tohome:false
+
      }
 
 
@@ -54,36 +58,62 @@ class Payment extends Component {
 
     }
     
+    // CASE, WHEN ANOTHER TAB IS OPEN, AND TRANSACTION WAS MADE
     // TRANSACTION DETAIL STATUS MUST BE FROM 'ON CART' TO UPDATE TO NEXT STATUS
-    checkStatus=()=>{
+    checkStatus=async ()=>{
         var status=true
-        this.props.Cart.checkout.forEach((seller,checkoutindex)=>{
-            seller.itemlist.forEach((order,sellerindex)=>{
+        this.props.Cart.checkout.forEach(async(seller,checkoutindex)=>{
+            // seller.itemlist.forEach((order,sellerindex)=>{
+            for(var order of seller.itemlist){
                 // iditem
                 // qty
-                Axios.get(`${APIURL}/transactiondetails/order/${order.idtransactiondetail}`)
-                .then((ordernow)=>{
+                try{
+                    var ordernow= await Axios.get(`${APIURL}/transactiondetails/order/${order.idtransactiondetail}`)
                     if(ordernow.data.idorderstatus!==1){
                         status=false
                     }
-                    
-                    // last cycle
-                    if(this.props.Cart.checkout.length-1==checkoutindex&&seller.itemlist.length-1==sellerindex){
-                        console.log('last cycle')
-                        if(status){
-                            console.log('status is checked')
-                            this.checkStock()
-                        }else{
-                            console.log('item is not on cart')
-                            this.setState({loading:false})
-                        }
-                    }
 
-                }).catch((err)=>{
+                }catch(err){
                     console.log(err)
-                })
+                    this.setState({loading:false})
+                }
+                
+                
+                
+                // Axios.get(`${APIURL}/transactiondetails/order/${order.idtransactiondetail}`)
+                // .then((ordernow)=>{
+                //     if(ordernow.data.idorderstatus!==1){
+                //         status=false
+                //     }
+                    
+                //     // last cycle
+                //     if(this.props.Cart.checkout.length-1==checkoutindex&&seller.itemlist.length-1==sellerindex){
+                //         console.log('last cycle')
+                //         if(status){
+                //             console.log('status is checked')
+                //             this.checkStock()
+                //         }else{
+                //             console.log('item is not on cart')
+                //             this.setState({loading:false})
+                //         }
+                //     }
 
-            })
+                // }).catch((err)=>{
+                //     console.log(err)
+                // })
+
+            }
+
+            if(this.props.Cart.checkout.length-1==checkoutindex){
+                // console.log('last cycle')
+                if(status){
+                    console.log('status is checked')
+                    this.checkStock()
+                }else{
+                    console.log('item is not on cart')
+                    this.setState({loading:false})
+                }
+            }
         })
     } 
 
@@ -174,11 +204,42 @@ class Payment extends Component {
         .then((paymentcreated)=>{
             this.props.LoadCart(this.props.User.iduser)
             this.props.LoadPayment(this.props.User.iduser)
-            this.setState({isfinish:true,loading:false})
+            // IF USING POPCOIN
+            if(this.state.idpayment==4){
+                this.setState({ispaid:true})
+                setTimeout(() => {
+                    this.setState({ispaid:false,tohome:true})
+                }, 2500);
+            }else{
+                this.setState({redirect:true,loading:false})
+            }
         }).catch((err)=>{
             console.log(err)
             this.setState({loading:false})
         })
+
+        // IF USING POPCOIN
+        if(this.state.idpayment==4){
+            const token=localStorage.getItem('token')
+            if(token){
+                var topup={
+                    popcoin: -this.props.Cart.totalpayment
+                }
+                Axios.put(`${APIURL}/users/popcoin`,topup,{
+                    headers:{
+                        'Authorization':`Bearer ${token}`
+                    }
+                }).then((res)=>{
+                    console.log('popcoin payment succeed')
+                    this.props.KeepLogin(res.data)
+                }).catch((err)=>{
+                    console.log(err)
+                })
+    
+            }else{
+                console.log('user is not logged in')
+            }
+        }
     }
 
     createTransactionByFrontEnd=()=>{
@@ -249,7 +310,7 @@ class Payment extends Component {
 
                             this.props.LoadCart(this.props.User.iduser)
                             this.props.LoadPayment(this.props.User.iduser)
-                            this.setState({isfinish:true})
+                            this.setState({redirect:true})
                         }catch(err){
                             console.log(err)
                         }
@@ -344,6 +405,8 @@ class Payment extends Component {
     
     render() { 
         // console.log(this.state.deliveryselect)
+        // POPCOIN
+        var remainingcredit=this.props.User.popcoin-this.props.Cart.totalpayment
         return ( 
 
             <Modal trigger={this.props.trigger} style={{width:'500px'}}>
@@ -351,7 +414,7 @@ class Payment extends Component {
                 <Modal.Content>
                     <Grid>
                         <Grid.Row>
-                            <Grid.Column width={8}>
+                            <Grid.Column width={12}>
                                 <Grid>
                                     <Grid.Row>
                                         <Grid.Column>
@@ -359,14 +422,39 @@ class Payment extends Component {
                                         </Grid.Column>
                                         <Grid.Column>
                                             <Header as={'span'} color='blue'>Popcoin</Header>
-                                            <div style={{fontSize:'13px',whiteSpace:'nowrap'}}>
-                                                Rp 100000,00
-                                            </div>
+                                            {
+                                                this.state.idpayment==4?
+                                                <div style={{fontSize:'13px',whiteSpace:'nowrap'}}>
+                                                    {idr(this.props.User.popcoin)} - <span style={{fontWeight:'800'}}>{idr(this.props.Cart.totalpayment)}</span>
+                                                    {
+                                                        remainingcredit>0?
+                                                        <div style={{marginTop:'.5em'}}>{idr(this.props.User.popcoin-this.props.Cart.totalpayment)} (remains)</div>
+                                                        :
+                                                        <div style={{marginTop:'.5em',color:'red'}}>
+                                                            Insufficient Credit, please top up
+                                                            <Button 
+                                                                basic 
+                                                                color='blue' 
+                                                                style={{marginLeft:'.5em'}} 
+                                                                as={Link} 
+                                                                to='/popcoin'
+                                                            >
+                                                                Top Up
+                                                                <Icon name='long arrow alternate right'/>
+                                                            </Button>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                :
+                                                <div style={{fontSize:'13px',whiteSpace:'nowrap'}}>
+                                                    {idr(this.props.User.popcoin)}
+                                                </div>
+                                            }
                                         </Grid.Column>
                                     </Grid.Row>
                                 </Grid>
                             </Grid.Column>
-                            <Grid.Column width={8} style={{display:'flex',alignItems:'center',justifyContent:'flex-end'}}>
+                            <Grid.Column width={4} style={{display:'flex',alignItems:'center',justifyContent:'flex-end'}}>
                                 <Checkbox 
                                     toggle 
                                     checked={this.state.idpayment==4}
@@ -392,13 +480,13 @@ class Payment extends Component {
                                 checked={this.state.idpayment==1}
                                 onClick={()=>{
                                     this.setState({idpayment:1})
-                                    this.props.CountTotalPayment()
+                                    // this.props.CountTotalPayment()
                                 }}
                             />
                         </div>
                         <p style={{fontSize:'16px'}}>Guide</p>
                         <Message>
-                            <p style={{color:'red'}}>Important</p>
+                            <p style={{color:'red',marginBottom:'.5em'}}>Important</p>
                             Upload your proof of payment within an hour
                         </Message>
                         <p>
@@ -419,13 +507,13 @@ class Payment extends Component {
                                 checked={this.state.idpayment==2}
                                 onClick={()=>{
                                     this.setState({idpayment:2})
-                                    this.props.CountTotalPayment()
+                                    // this.props.CountTotalPayment()
                                 }}
                             />
                         </div>
                         <p style={{fontSize:'16px'}}>Guide</p>
                         <Message>
-                            <p style={{color:'red'}}>Important</p>
+                            <p style={{color:'red',marginBottom:'.5em'}}>Important</p>
                             Upload your proof of payment within an hour
                         </Message>
                         <p>
@@ -436,21 +524,46 @@ class Payment extends Component {
 
                 <Divider/>
 
-                <Container style={{padding:'1em'}}>
+                <Container style={{padding:'0 1em 1em 1em'}}>
+                    <Header as={'h2'} style={{textAlign:'center',marginBottom:'1rem'}}>
+                        {idr(this.props.Cart.totalpayment)}
+                    </Header>
                     <Button
                         primary
                         loading={this.state.loading}
                         style={{width:'100%'}}
-                        disabled={(this.props.Cart.totalpayment&&this.state.idpayment?false:true) || this.state.loading}
+                        disabled={(this.props.Cart.totalpayment&&this.state.idpayment?false:true) || this.state.idpayment==4&&remainingcredit<0 || this.state.loading}
                         onClick={this.submitPayment}
                     >
                         Pay
                     </Button>
                 </Container>
 
+                {/* MESSAGE AFTER UPLOAD */}
                 {
-                    this.state.isfinish?
+                    this.state.ispaid?
+                    <Dimmer active={this.state.ispaid} inverted>
+                        <div style={{color:'rgba(0,0,0,.7)',fontSize:'18px'}}>
+                            <p>
+                                <Icon name='check'/>
+                                Your Payment Is Verified
+                            </p>
+                            {/* <p>
+                                Your Order Is Processed
+                            </p> */}
+                        </div>
+                    </Dimmer>
+                    : null
+                }
+
+                {
+                    this.state.redirect?
                     <Redirect to='/transactions'/>
+                    : null
+                }
+                {
+                    this.state.tohome?
+                    <Redirect to='/'/>
                     : null
                 }
                 
@@ -470,4 +583,4 @@ const MapstatetoProps=(state)=>{
 }
 
  
-export default connect(MapstatetoProps,{CountTotalPayment,LoadCart,LoadPayment}) (Payment);
+export default connect(MapstatetoProps,{CountTotalPayment,LoadCart,LoadPayment,KeepLogin}) (Payment);

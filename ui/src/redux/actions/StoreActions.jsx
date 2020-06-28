@@ -30,6 +30,7 @@ export const LoadOrders=(iduser)=>{
                     total: listByTransaction.length
                 }
                 dispatch({type:ORDERS_LIST,payload:data})
+                console.log('orders list loaded')
             }).catch((err)=>{
                 console.log(err)
             })
