@@ -232,6 +232,21 @@ class Product extends Component {
 
     }
 
+    onAddToWishlist=()=>{
+        
+        var update={
+            idproduct:this.state.product.idproduct,
+            iduser:this.props.User.iduser
+        }
+        console.log(update)
+        Axios.post(`${APIURL}/wishlist/postproduct`,update)
+        .then((added)=>{
+            console.log('product added to wishlist')
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+
     getFlashsalePrice=()=>{
         console.log('get product flashsale price')
         Axios.get(`${APIURL}/flashsales/product/active/approved?idproduct=${this.state.product.idproduct}`)
@@ -711,6 +726,7 @@ class Product extends Component {
                                         icon 
                                         basic
                                         // style={{padding:'0',width:'',height:''}}
+                                        onClick={this.onAddToWishlist}
                                     >
                                         <Icon 
                                             name='heart outline' 
