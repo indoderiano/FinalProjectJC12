@@ -122,7 +122,6 @@ class AllProducts extends Component {
 
 
     render() { 
-        const {search, searchCategory, minprice, maxprice, cardperPage, page, totalProduct}=this.state
         const {currentPage, search, searchCategory, minprice, maxprice, cardperPage, page, totalProduct}=this.state
         return ( 
             <Grid padded style={{padding:20}}>
