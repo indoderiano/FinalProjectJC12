@@ -197,7 +197,7 @@ module.exports={
         const offset=page
         console.log(offset, 'dipsy', sort)
         if(search||pricemin||pricemax||category||sort){
-            var sql=`SELECT p.* ,i.iditem, i.price as price, c.namecategory as maincategory
+            var sql=`SELECT p.* ,i.iditem, i.price as price, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -215,7 +215,7 @@ module.exports={
                 return res.send(result)
             })
         }else{
-            var sql=`SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+            var sql=`SELECT p.* ,i.iditem, i.price, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -276,7 +276,7 @@ module.exports={
         const offset=page
         console.log(offset, 'dipsy', sort)
         if(search||pricemin||pricemax||category||sort){
-            var sql=`SELECT p.* ,i.iditem, i.price as price, c.namecategory as maincategory
+            var sql=`SELECT p.* ,i.iditem, i.price as price, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -294,7 +294,7 @@ module.exports={
                 return res.send(result)
             })
         }else{
-            var sql=`SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+            var sql=`SELECT p.* ,i.iditem, i.price, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -333,7 +333,7 @@ module.exports={
     },
                     ///////////////// GET MOST VIEWED PRODUCT FOR HOMEPAGE /////////////////
     mostviewed:(req,res)=>{
-        var sql= `  SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+        var sql= `  SELECT p.* ,i.iditem, i.price, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -342,8 +342,8 @@ module.exports={
                     ORDER BY seen DESC
                     LIMIT 0,4;`
         db.query(sql,(err,mostviewed)=>{
-            if(err) res.status(500).send({err,message:'error get product search'})
-            sql= `  SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+            if(err) return res.status(500).send({err,message:'error get product search'})
+            sql= `  SELECT p.* ,i.iditem, i.price, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -392,7 +392,7 @@ module.exports={
         const offset=page
         console.log(offset, 'dipsy', sort)
         if(search||pricemin||pricemax||category||sort){
-            var sql=`SELECT p.* ,i.iditem, i.price as price, c.namecategory as maincategory
+            var sql=`SELECT p.* ,i.iditem, i.price as price, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -410,7 +410,7 @@ module.exports={
                 return res.send(result)
             })
         }else{
-            var sql=`SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+            var sql=`SELECT p.* ,i.iditem, i.price, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -469,7 +469,7 @@ module.exports={
         const offset=page
         console.log(offset, 'dipsy', sort)
         if(search||pricemin||pricemax||category||sort){
-            var sql=`SELECT p.* ,i.iditem, i.price as price, c.namecategory as maincategory
+            var sql=`SELECT p.* ,i.iditem, i.price as price, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -487,7 +487,7 @@ module.exports={
                 return res.send(result)
             })
         }else{
-            var sql=`SELECT p.* ,i.iditem, i.price, c.namecategory as maincategory
+            var sql=`SELECT p.* ,i.iditem, i.price, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -546,7 +546,7 @@ module.exports={
         const offset=page
         console.log(offset, 'dipsy', sort)
         if(search||pricemin||pricemax||category||sort){
-            var sql=`SELECT p.* ,i.iditem, i.price as price, i.stock as stock,  c.namecategory as maincategory
+            var sql=`SELECT p.* ,i.iditem, i.price as price, i.stock as stock,  c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
@@ -565,7 +565,7 @@ module.exports={
                 return res.send(result)
             })
         }else{
-            var sql=`SELECT p.* ,i.iditem, i.price, i.stock as stock, c.namecategory as maincategory
+            var sql=`SELECT p.* ,i.iditem, i.price, i.stock as stock, c.category_name as maincategory
                         FROM products p 
                         JOIN items i ON i.idproduct=p.idproduct
                         JOIN categories c ON p.idcategory=c.idcategory
