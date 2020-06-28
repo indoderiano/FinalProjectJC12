@@ -10,7 +10,7 @@ class AllProducts extends Component {
         products:[],
         page:0,
         totalProduct:0,
-        cardperPage:4,                   //jumlah card per page
+        cardperPage:8,                   //jumlah card per page
         currentPage:0,
         search:'',
         minprice:null,
@@ -122,7 +122,7 @@ class AllProducts extends Component {
 
 
     render() { 
-        const {search, searchCategory, minprice, maxprice, cardperPage, page, totalProduct}=this.state
+        const {currentPage, search, searchCategory, minprice, maxprice, cardperPage, page, totalProduct}=this.state
         return ( 
             <Grid padded style={{padding:20}}>
                 <Grid.Column width={4} style={{backgroundColor:'BC9E82', padding:10}}>

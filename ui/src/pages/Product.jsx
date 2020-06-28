@@ -24,7 +24,7 @@ import {titleConstruct,idr} from '../supports/services'
 import {LoadCart} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
-
+import CommentSection from '../component/Comment'
 
 // how many number of images in slider
 const slidercount=4
@@ -66,12 +66,23 @@ class Product extends Component {
      }
 
      componentDidMount=()=>{
+        this.handleseen()
         this.getProduct()
         this.getItems()
     }
 
     componentWillUnmount=()=>{
         clearTimeout(this.state.timeout)
+    }
+
+    handleseen=()=>{
+        console.log(this.props.match.params.idproduct)
+        Axios.get(`${APIURL}/products/getseen/${this.props.match.params.idproduct}`)
+        .then((res)=>{
+            console.log(res)
+        }).catch((err)=>{
+            console.log(err)
+        })
     }
 
     getProduct=()=>{
@@ -91,6 +102,7 @@ class Product extends Component {
             if(res.data.isflashsale){
                 this.getFlashsalePrice()
             }
+            // console.log(res.data)
         }).catch((err)=>{
             console.log(err)
             this.setState({pageloading:false})
@@ -762,7 +774,7 @@ class Product extends Component {
                             </Grid.Column>
                         </Grid.Row>
 
-
+<CommentSection idproduct={this.state.product.idproduct}/>
                     </Grid>
                 </Segment>
                 
