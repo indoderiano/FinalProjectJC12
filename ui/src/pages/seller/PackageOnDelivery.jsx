@@ -47,7 +47,7 @@ class DeliveryList extends Component {
             const {idseller}=seller.data
 
             // GET LIST DATA WHERE IDSELLER AND STATUSPACKAGE
-            Axios.get(`${APIURL}/transactions/seller?idseller=${idseller}&idpackagestatus=3`)
+            Axios.get(`${APIURL}/transactions/seller?idseller=${idseller}&idpackagestatus=${3}`)
             .then((res)=>{
                 console.log('orders list loaded')
                 console.log(res.data)

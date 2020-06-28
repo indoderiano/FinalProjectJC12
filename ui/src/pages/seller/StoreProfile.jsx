@@ -115,7 +115,7 @@ const StoreProfile=(props)=>{
             <div style={{paddingTop:'50px'}}>
                 <Grid columns={3} style={{paddingLeft: 10, paddingRight: 10,}}>
                     <Grid.Row stretched widht={5}>
-                        <Grid.Column style={{backgroundColor:'black', height:'20%'}}>
+                        <Grid.Column style={{height:'20%'}}>
                           <div>
                                 {
                                     data.imageprofile?  <Image src={APIURL+data.imageprofile}/> :  <Image src='https://react.semantic-ui.com/images/wireframe/image.png' size='large' disabled />
