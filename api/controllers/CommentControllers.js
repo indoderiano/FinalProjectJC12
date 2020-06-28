@@ -2,8 +2,8 @@ const {db}=require('../connections/mysql')
 
 module.exports={
     allComments:(req,res)=>{
-        const {idproduct}=req.params
-        var sql=`select c.*, u.username,u.image from comments c join users u on c.iduser=u.iduser join products p on c.idproduct = p.idproduct where c.idproduct=${idproduct}`
+        const {idproduct}=req.query
+        var sql=`select c.*, u.username from comments c join users u on c.iduser=u.iduser join products p on c.idproduct = p.idproduct where c.idproduct=${idproduct}`
         db.query(sql,(err,result)=>{
             if(err) res.status(500).send(err)
             return res.status(200).send(result)

@@ -182,7 +182,7 @@ module.exports={
         const {password,username}=req.query
         console.log(req.query)
         const hashpass=encrypt(password)
-        var sql=`select * from users where username='${username}'`
+        var sql=`select * from users where username='${username}' and password='${hashpass}'`
         db.query(sql,(err,result)=>{
             if(err){
                 return res.status(500).send(err)

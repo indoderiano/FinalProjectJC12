@@ -7,14 +7,16 @@ import {connect} from 'react-redux'
 import { isJson } from './../supports/services'
 const CommentSection = (props) => {
     const [commentdata,setcomment]=useState([])
+    
     const [newcomment,setnewcomment]=useState({
       comment:'',
       iduser:props.iduser
     })
     
+   
+    
     useEffect(()=>{
-      console.log('iduser',props.idproduct)
-      Axios.get(`${APIURL}/comments/comment/${props.idproduct}`)
+      Axios.get(`${APIURL}/comments/comment?idproduct=${props.idproduct}`)
       .then((res)=>{
         setcomment(res.data)
         console.log(res);
@@ -23,13 +25,13 @@ const CommentSection = (props) => {
       })
     },[])
 
-    console.log(props.idproduct);
+    console.log(props.idproduct)
     
     const postComment=()=>{
       Axios.post(`${APIURL}/comments/newcomment/${props.idproduct}`,newcomment)
       .then((res)=>{
         console.log(res.data);
-        Axios.get(`${APIURL}/comments/comment/${props.idproduct}`)
+        Axios.get(`${APIURL}/comments/comment?idproduct=${props.idproduct}`)
         .then((res)=>{
           setcomment(res.data)
           console.log(res);
