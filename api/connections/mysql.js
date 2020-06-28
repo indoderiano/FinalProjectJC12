@@ -9,6 +9,8 @@ const db=mysql.createConnection({
     // database:'finalfinal',
     password:'abcde12345',
     database:'finalproject-lastdayv1',
+    // password:'maungapain',
+    // database:'final_project_jc12',
     port:'3306'
 })
 

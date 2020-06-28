@@ -18,18 +18,25 @@ const ForgotPass =(props)=>{
 
     
     const sendChangePass=()=>{
-      /////////////// SEARCH EMAIL DAN USERNAME /////////////
-      // props.ForgotUser(emailaddress)
-      // console.log(props.email)
-      // console.log(props.username)
-      /////////////// KIRIM EMAIL ////////////////////
-        Axios.post(`${APIURL}/users/forgotpassword`,emailaddress)
-        .then((res)=>{
-          console.log(res.data)
-          setmessage({...message,message:'Your recovery Email has been sent'})
-        }).catch((Err)=>{
-          console.log(Err)
+      if(!emailaddress.username || !emailaddress.email){
+        setmessage({
+          ...message,
+          message:'Fill All Columns'
         })
+      }else{
+        /////////////// SEARCH EMAIL DAN USERNAME /////////////
+        // props.ForgotUser(emailaddress)
+        // console.log(props.email)
+        // console.log(props.username)
+        /////////////// KIRIM EMAIL ////////////////////
+          Axios.post(`${APIURL}/users/forgotpassword`,emailaddress)
+          .then((res)=>{
+            console.log(res.data)
+            setmessage({...message,message:'Your recovery Email has been sent'})
+          }).catch((Err)=>{
+            console.log(Err)
+          })
+      }
     }
     
     const forgotChange = (e, { name, value }) => setemail({...emailaddress, [name]: value })
@@ -43,7 +50,7 @@ const ForgotPass =(props)=>{
           <Form onSubmit={sendChangePass} >
           <Form.Group style={{flexDirection: 'column', justifyContent: 'center'}} >
           <Form.Input
-           placeholder='Insert email'
+           placeholder='E-mail'
            name='email'
            value={emailaddress.email}
            onChange={forgotChange}/> 
@@ -58,8 +65,14 @@ const ForgotPass =(props)=>{
         <Button color='teal' fluid-size='large'>
             Submit
         </Button>
+        {
+          message.message?
+          <div style={{color:'red'}}>{message.message}</div>
+          : null
+        }
           </Form>
         </div>
+
       </div>
     )
 }

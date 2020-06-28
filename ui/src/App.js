@@ -45,6 +45,7 @@ import StoreProfile from './pages/seller/StoreProfile';
 import SearchProducts from './pages/SearchProducts';
 import WomenProducts from './pages/WomenProducts';
 import MenProducts from './pages/MenProducts';
+import MyProduct from './pages/seller/MyProduct';
 
 
 function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSeller}) {
@@ -153,9 +154,10 @@ function App({KeepLogin,LoadCart,LoadPayment,LoadInvoices,LoadOrders,User,KeepSe
         <Route path='/verification/:token' exact component={User.islogin?Verification:()=><Redirect to='/'/>}/>
         <Route path='/forgotpassword' exact component={Forgotpass}/>
         <Route path='/forgotpassword/:token' exact component={ChangePass}/>
-        <Route path='/profile' exact component={User.islogin? Profile :Loading? Home : ()=><Redirect to='/'/>}/>
-        <Route path='/Sellerregister' exact component={User.isseller?()=><Redirect to ='/seller'/>:User.isverified? Sellerregis : Loading?Home:()=><Redirect to='/' /> }/>
+        <Route path='/profile' exact component={User.islogin?Profile:Loading?Home:()=><Redirect to='/'/>}/>
+        <Route path='/Sellerregister' exact component={User.isseller?()=><Redirect to='/seller'/>:User.isverified?Sellerregis:Loading?Home:()=><Redirect to='/'/>}/>
         <Route path='/admin' exact component={adminAccess?Admintable:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
+        
         <Route path='/verifyseller' exact component={adminAccess?VerifyTable:Loading?Home:!User.isverified?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         <Route path='/wishlist' exact component={User.isverified?WishlistPage:Loading?Home:User.islogin?()=><Redirect to='/verification'/>:()=><Redirect to='/'/>}/>
         
