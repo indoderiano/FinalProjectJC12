@@ -64,7 +64,7 @@ module.exports={
     },
     //////////// GET PRODUCT SELLER ////////
     productSeller:(req,res)=>{
-        const {idseller}=req.query
+        const {idseller}=req.params
         var sql=`select * from products where idseller=${idseller}`
         db.query(sql,(err,result)=>{
             if(err) res.status(500).send(err)

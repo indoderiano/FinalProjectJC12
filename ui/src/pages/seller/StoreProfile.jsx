@@ -9,22 +9,24 @@ import { APIURL } from '../../supports/ApiUrl';
 import { useState } from 'react';
 import {connect} from 'react-redux'
 import { useEffect } from 'react';
-
-
+import Slide from 'react-reveal/Fade'
+import { isJson } from './../../supports/services'
 const StoreProfile=(props)=>{
     const [data,setdata]=useState({})
-    const [product,setproduct]=useState({})
+    const [product,setproduct]=useState([])
     const [imagedata,setimagedata]=useState({
         imageprofile:undefined
     })
     const [editpicture,setpicture]=useState(true)
+
+
     useEffect(()=>{
         Axios.get(`${APIURL}/sellers/getseller?iduser=${props.auth.iduser}`)
         .then((res)=>{
             setdata(res.data[0])
             console.log(res.data[0].idseller);
-            
-            Axios.get(`${APIURL}/sellers/productseller?idseller=${res.data[0].idseller}`)
+            var idsellers=res.data[0].idseller
+            Axios.get(`${APIURL}/sellers/productseller/${idsellers}`)
             .then((res)=>{
                 setproduct(res.data)
             }).catch((err)=>{
@@ -35,8 +37,34 @@ const StoreProfile=(props)=>{
         })
     },[])
 
+   
+    
 
-    console.log(product);
+    const renderProduct=()=>{
+        console.log(product)
+        
+        return product.map((val,index)=>{
+            return(
+            <div key={index} style={{marginLeft:'20%', }}>
+                
+                <Slide>
+                <Card style={{height:'100%',display:'flex', flexDirection:'column'}}>
+                                    <Image src={APIURL+isJson(val.imagecover)[0]} style={{height:'40%'}} wrapped ui={false} />
+                                <Card.Content>
+                                    <Card.Header style={{ fontFamily:'muli,sans-serif', fontWeight: 400}}>{val.product_name}</Card.Header>
+                                    <Card.Meta>{val.category}</Card.Meta>
+                                    <Card.Description>
+                                        {val.description}
+                                    </Card.Description>
+                                        <br/>
+                                    <Card.Header>Rp.{val.price },00 </Card.Header>
+                                </Card.Content>
+                            </Card>
+                </Slide>
+            </div>
+            )
+        })
+    }
     
     
     const uploadImage=()=>{
@@ -103,25 +131,17 @@ const StoreProfile=(props)=>{
                             <br/>
                             <br/>
                             <div style={{width:'100%', marginTop:'5%'}}>
-                            <h2 style={{letterSpacing:'8px', textTransform:'uppercase',fontWeight:'lighter',fontSize:20}}>Top 3 Picks</h2>
-
                             </div>
-                            <div style={{height:'50%'}}>
-                            <Card style={{height:'50%'}}>
-                                <Card.Content>
-                                    <Card.Header>
-                                        HELLO
-                                    </Card.Header>
-                                    <Card.Meta>
-                                        World
-                                    </Card.Meta>
-                                </Card.Content>
-                            </Card>
-                            </div>
+                          
+                         
+                  
                             
                         </Grid.Column>
-                        <Grid.Column>
+                        <Grid.Column >
                           
+                        {
+                               renderProduct()
+                           }
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
