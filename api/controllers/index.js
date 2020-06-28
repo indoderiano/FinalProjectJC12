@@ -7,6 +7,7 @@ const SellerControllers=require('./SellerControllers')
 const AdminControllers=require('./AdminControllers')
 const WishlistControllers=require('./WishlistControllers')
 const TransactionSellerControllers=require('./TransactionSellerControllers')
+const CommentControllers=require('./CommentControllers')
 
 module.exports={
     UserControllers,
@@ -17,5 +18,6 @@ module.exports={
     SellerControllers,
     AdminControllers,
     WishlistControllers,
-    TransactionSellerControllers
+    TransactionSellerControllers,
+    CommentControllers
 }

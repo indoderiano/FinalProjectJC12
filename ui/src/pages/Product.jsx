@@ -22,7 +22,7 @@ import {titleConstruct} from '../supports/services'
 import {LoadCart} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
-
+import CommentSection from '../component/Comment'
 
 // how many number of images in slider
 const slidercount=4
@@ -89,6 +89,7 @@ class Product extends Component {
             })
             this.constructImageList()
             this.selectImage(0)
+            console.log(res.data)
         }).catch((err)=>{
             console.log(err)
         })
@@ -695,7 +696,7 @@ class Product extends Component {
                             </Grid.Column>
                         </Grid.Row>
 
-
+<CommentSection idproduct={this.state.product.idproduct}/>
                     </Grid>
                 </Segment>
                 
