@@ -5,7 +5,7 @@ import { useEffect,useState } from 'react';
 import { APIURL } from './../supports/ApiUrl';
 import {connect} from 'react-redux'
 import { isJson } from './../supports/services'
-const CommentSection = (props,state) => {
+const CommentSection = (props) => {
     const [commentdata,setcomment]=useState([])
     const [newcomment,setnewcomment]=useState({
       comment:'',
@@ -13,6 +13,7 @@ const CommentSection = (props,state) => {
     })
     
     useEffect(()=>{
+      console.log('iduser',props.idproduct)
       Axios.get(`${APIURL}/comments/comment/${props.idproduct}`)
       .then((res)=>{
         setcomment(res.data)

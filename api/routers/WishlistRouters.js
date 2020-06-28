@@ -12,6 +12,8 @@ Router.post('/getproduct',WishlistControllers.getidProduct)
 ////////////////////////////////
 Router.delete('/deletewishlist',WishlistControllers.deleteWishlist)
 
+Router.delete('/product',WishlistControllers.deleteProduct)
+
 
 
 Router.post('/postwishlist',WishlistControllers.postimage)

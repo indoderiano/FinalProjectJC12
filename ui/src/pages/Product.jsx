@@ -69,6 +69,8 @@ class Product extends Component {
         this.handleseen()
         this.getProduct()
         this.getItems()
+
+        this.checkWishlist()
     }
 
     componentWillUnmount=()=>{
@@ -245,15 +247,44 @@ class Product extends Component {
     }
 
     onAddToWishlist=()=>{
-        
-        var update={
-            idproduct:this.state.product.idproduct,
-            iduser:this.props.User.iduser
+
+        if(this.state.iswishlist){
+            Axios.delete(`${APIURL}/wishlist/product?iduser=${this.props.User.iduser}&idproduct=${this.state.product.idproduct}`)
+            .then((deleted)=>{
+                console.log('product deleted from wishlist')
+                this.checkWishlist()
+                this.getProduct()
+            }).catch((err)=>{
+                console.log(err)
+            })
+        }else{
+            var update={
+                idproduct:this.state.product.idproduct,
+                iduser:this.props.User.iduser
+            }
+            console.log(update)
+            Axios.post(`${APIURL}/wishlist/getproduct`,update)
+            .then((added)=>{
+                console.log('product added to wishlist')
+                this.checkWishlist()
+                this.getProduct()
+            }).catch((err)=>{
+                console.log(err)
+            })
         }
-        console.log(update)
-        Axios.post(`${APIURL}/wishlist/postproduct`,update)
-        .then((added)=>{
-            console.log('product added to wishlist')
+        
+    }
+
+    checkWishlist=()=>{
+        console.log('check wishlist',this.props.User.iduser)
+        Axios.get(`${APIURL}/wishlist/getallwishlist?iduser=${this.props.User.iduser}`)
+        .then((res)=>{
+            this.setState({iswishlist:false})
+            res.data.forEach((val,index)=>{
+                if(val.idproduct==this.state.product.idproduct){
+                    this.setState({iswishlist:true})
+                }
+            })
         }).catch((err)=>{
             console.log(err)
         })
@@ -741,7 +772,8 @@ class Product extends Component {
                                         onClick={this.onAddToWishlist}
                                     >
                                         <Icon 
-                                            name='heart outline' 
+                                            name={this.state.iswishlist?'heart':'heart outline'}
+                                            color={this.state.iswishlist?'red':'grey'}
                                             size='large'
                                             // style={{fontSize:'21px',verticalAlign:'-5px'}}
                                             style={{marginLeft:'2em'}}
