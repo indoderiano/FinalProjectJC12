@@ -98,7 +98,7 @@ class PaymentList extends Component {
         console.log(this.props.Invoices)
         if(!this.props.Invoices.list.length){
             return (
-                <div style={{textAlign:'center'}}>There is no payment due</div>
+                <div style={{textAlign:'center'}}>There is no Invoices</div>
             )
         }
 
@@ -151,7 +151,8 @@ class PaymentList extends Component {
                                     <Modal 
                                         trigger={
                                             <Button
-                                                inverted
+                                                basic
+                                                // inverted
                                                 style={{
                                                     position:'absolute',
                                                     bottom:'1em',

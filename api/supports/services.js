@@ -22,13 +22,54 @@ const titleConstruct=(string)=>{
 // console.log(number)
 
 
-Date.prototype.addHours = function(h) {
-    this.setTime(this.getTime() + (h*60*60*1000));
-    return this;
+// Date.prototype.addHours = function(h) {
+//     this.setTime(this.getTime() + (h*60*60*1000));
+//     return this;
+// }
+
+// var time=new Date().addHours(4)
+
+
+// console.log(new Date())
+// console.log(time)
+
+
+
+const idr=(number)=>{
+
+    if(number==undefined||number==null){
+        return 'Rp0,00'
+    }
+
+    var price='Rp'
+
+    var newnumber=number.toString().split('').reverse()
+
+    // newnumber.splice(3,0,',')
+    // console.log(newnumber)
+
+    var loopnumber=newnumber
+
+    var count=0
+    newnumber.forEach((val,index)=>{
+        // console.log('val',val,' index',index)
+        if(index%3==0&&index>0){
+            // console.log(index)
+            newnumber.splice(index+count,0,',')
+            count++
+        }
+    })
+
+    var newnumber=newnumber.reverse().join('')
+
+    var price='Rp'+newnumber+'.00'
+
+    return price
+
 }
 
-var time=new Date().addHours(4)
+console.log(idr(200))
 
 
-console.log(new Date())
-console.log(time)
+// var abc=['5',',','4','0','0',',','3','0','0']
+// console.log(abc.join(''))

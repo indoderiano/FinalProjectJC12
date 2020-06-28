@@ -324,7 +324,9 @@ module.exports={
 
         const {idproduct}=req.params
 
-        var sql=`select avg(td.rating) as product_rating from transactiondetails td
+        var sql=`select avg(td.rating) as product_rating,
+        count(td.rating) as product_rating_count
+        from transactiondetails td
         join items i on i.iditem=td.iditem
         join products p on p.idproduct=i.idproduct
         where p.idproduct=${idproduct} and td.rating is not null`
@@ -578,4 +580,22 @@ module.exports={
             })
         }
     },
+
+    getStoreProducts:(req,res)=>{
+        console.log('get seller products')
+        console.log(req.query)
+        const {idseller}=req.query
+
+        var sql=`
+        select * from items i
+        join products p on p.idproduct=i.idproduct
+        join seller s on s.idseller=p.idseller
+        where p.idseller=${idseller} and p.isdeleted=0 and p.isblocked=0`
+        db.query(sql,(err,items)=>{
+            if(err) return res.status(500).send(err)
+
+            console.log(items)
+            res.status(200).send(items)
+        })
+    }
 }

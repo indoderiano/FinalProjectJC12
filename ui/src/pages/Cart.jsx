@@ -17,7 +17,7 @@ import {
     Divider,
 } from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
-import {titleConstruct,isJson} from '../supports/services'
+import {titleConstruct,isJson, idr} from '../supports/services'
 import {LoadCart} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -101,7 +101,11 @@ class Cart extends Component {
         .then((res)=>{
             console.log('details updated')
             this.props.LoadCart(this.props.User.iduser)
-            this.setState({editid:0,editmessage:''})
+
+            // TO AVOID UNLIMITED LOOP
+            if(this.state.editid!==0||this.state.editmessage!==''){
+                this.setState({editid:0,editmessage:''})
+            }
         }).catch((err)=>{
             console.log(err)
         })
@@ -192,6 +196,12 @@ class Cart extends Component {
                                     }
                                 }
 
+                                // MAX FLASHSALE ITEM QTY IS 1
+                                // UNSELECT ORDER
+                                if(item.isflashsale && item.qty>1 && item.isselected){
+                                    this.updateDetails(item.idtransactiondetail,{isselected:false})
+                                }
+
                                 return (
                                     <Grid.Row key={i} style={{paddingTop:'0'}}>
                                         <Grid.Column width={16}>
@@ -247,6 +257,12 @@ class Cart extends Component {
                                                 :
                                                 <p style={{color:'red',margin:'0'}}>Quantity is short by {-item.qtyshort}</p>
                                             }
+                                            {/* MAX FLASHSALE ITEM */}
+                                            {
+                                                item.isflashsale&&item.qty>1?
+                                                <p style={{color:'red',margin:'0'}}>Maximum Flahsale Item is 1 per product</p>
+                                                : null
+                                            }
                                             <Header as={'h4'} style={{marginBottom:'0em',flexBasis:'1em',opacity:item.isselected?'1':'.8'}}>{item.product_name}</Header>
                                             <p style={{margin:'0 0 .5em',fontSize:'12px',flexBasis:'.8em',opacity:item.isselected?'1':'.8'}}>
                                                 {
@@ -260,16 +276,35 @@ class Cart extends Component {
                                                 }
                                                 {/* <span style={{display:'inline-block'}}></span> */}
                                             </p>
-                                            <Header 
-                                                as={'h5'} 
-                                                style={{
-                                                    margin:'0 0 1em',
-                                                    flexBasis:'1em',
-                                                    opacity:item.isselected?'1':'.8'
-                                                }}
-                                            >
-                                                Rp {item.price},00
-                                            </Header>
+                                            {
+                                                item.isflashsale?
+                                                <Header 
+                                                    as={'h5'} 
+                                                    color={item.isflashsale?'blue':'black'}
+                                                    style={{
+                                                        margin:'0 0 1em',
+                                                        flexBasis:'1em',
+                                                        opacity:item.isselected?'1':'.8'
+                                                    }}
+                                                >
+                                                    {idr(item.price)}
+                                                    <span style={{fontSize:'12px',color:'gray',marginLeft:'.5em'}}>
+                                                        <Icon name='long arrow alternate left' style={{margin:'0'}}/>flashsale
+                                                    </span>
+                                                </Header>
+                                                :
+                                                <Header 
+                                                    as={'h5'} 
+                                                    color={item.isflashsale?'blue':'black'}
+                                                    style={{
+                                                        margin:'0 0 1em',
+                                                        flexBasis:'1em',
+                                                        opacity:item.isselected?'1':'.8'
+                                                    }}
+                                                >
+                                                    {idr(item.price)}
+                                                </Header>
+                                            }
                                             {
                                                 this.state.editid==item.idtransactiondetail?
                                                 <div>

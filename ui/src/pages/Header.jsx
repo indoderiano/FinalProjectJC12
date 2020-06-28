@@ -11,7 +11,7 @@ import {
 import { connect } from "react-redux";
 import {Link} from 'react-router-dom'
 import {isLogout} from './../redux/actions'
-import {titleConstruct} from '../supports/services'
+import {titleConstruct,idr} from '../supports/services'
 import Axios from 'axios';
 import { APIURL } from '../supports/ApiUrl';
 
@@ -40,8 +40,16 @@ class MainHeader extends Component {
                 </Menu.Item>
                 <Menu.Item as={Link} to='/seller' style={style.menu}>Seller</Menu.Item>
         {/* <span style={{color:'white'}}>{this.props.Seller.idseller}</span> */}
-                <Menu.Item as='a' style={style.menu}>Company</Menu.Item>
-                {/* <Menu.Item as='a' style={style.menu}>Careers</Menu.Item> */}
+                {
+                  this.props.User.isseller?
+                  <Menu.Item as={Link} to='/seller/flashsales' style={style.menu}>Flashsale</Menu.Item>
+                  : null
+                }
+                {
+                  this.props.User.isadmin?
+                  <Menu.Item as={Link} to='/admin/flashsales' style={style.menu}>Manage Flashsale</Menu.Item>
+                  : null
+                }
                 
 
                 <Menu.Item style={{float:'right',padding:'16px 0 18px'}}>
@@ -112,6 +120,19 @@ class MainHeader extends Component {
                           </Label>
                           : null
                         }
+                      </Menu.Item>
+                      : null
+                    }
+                    {
+                      this.props.User.isverified?
+                      <Menu.Item 
+                        as={Link}
+                        to='/popcoin'
+                        style={style.menuRight}
+                        // icon='cart'
+                      >
+                        <Icon name='bitcoin' color='blue'/>
+                        {idr(this.props.User.popcoin)}
                       </Menu.Item>
                       : null
                     }

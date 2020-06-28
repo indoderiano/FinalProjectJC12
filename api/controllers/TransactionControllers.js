@@ -89,7 +89,7 @@ module.exports={
 
         var datatransaction={
             iduser,
-            idstatus:1,
+            idstatus:idpayment==4?3:1, // IF USING POPCOIN
             totalprice,
             totaldeliverycost,
             totalworth,
@@ -100,6 +100,9 @@ module.exports={
             idpayment,
             payat
         }
+
+        
+
         console.log(datatransaction)
         var sql=`insert into transactions set ?`
         db.query(sql,datatransaction,(err,transaction)=>{
@@ -124,6 +127,7 @@ module.exports={
 
                 var datasellertransaction={
                     idtransaction:transaction.insertId,
+                    idpackagestatus:idpayment==4?2:1, // IF USING POPCOINT, THEN STATUS 2
                     idseller,
                     iddelivery,
                     totalqty,

@@ -23,7 +23,7 @@ import {
 } from 'semantic-ui-react'
 import Payment from './Payment'
 import {Link} from 'react-router-dom'
-import {titleConstruct,isJson,getDate} from '../supports/services'
+import {titleConstruct,isJson,getDate, idr} from '../supports/services'
 import {ListByTransaction} from '../supports/ListAssembler'
 import {LoadCart,UpdateCheckout,CountTotalCharge,CountTotalPayment} from '../redux/actions'
 import {Redirect} from 'react-router-dom'
@@ -48,7 +48,7 @@ class TransactionList extends Component {
         // GET LIST WHERE IDUSER, AND 
         Axios.get(`${APIURL}/transactions/user?iduser=${this.props.User.iduser}&idstatus=${[2,3,4,5,6]}`)
         .then((res)=>{
-            // console.log('get list',res.data)
+            console.log('get list',res.data)
 
             // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
             var listByTransaction=ListByTransaction(res.data).reverse()
@@ -161,10 +161,14 @@ class TransactionList extends Component {
                                     style={{
                                         margin:'0 0 0em',
                                         flexBasis:'1em',
-                                        opacity:item.isselected?'1':'.8'
                                     }}
                                 >
-                                    Rp {item.checkout_price},00
+                                    {idr(item.checkout_price)}
+                                    {
+                                        item.isflashsale?
+                                        <span style={{fontWeight:'100',marginLeft:'.5em'}}>(flashsale)</span>
+                                        : null
+                                    }
                                 </Header>
                                 <p style={{margin:'0 0 .5em',flexBasis:'1em',fontSize:'13px',opacity:'.7'}}>{item.weight} gram</p>
                                 <p style={{margin:'0 0 .5em',flexBasis:'1em'}}>qty: {item.qty}</p>
@@ -229,7 +233,7 @@ class TransactionList extends Component {
                                     delivery cost
                                 </span>
                                 <span style={{float:'right'}}>
-                                    Rp {seller.seller_delivery_cost},00
+                                    {idr(seller.seller_delivery_cost)}
                                 </span>
                             </div>
                             : null
@@ -378,7 +382,12 @@ class TransactionList extends Component {
                                         opacity:item.isselected?'1':'.8'
                                     }}
                                 >
-                                    Rp {item.checkout_price},00
+                                    {idr(item.checkout_price)}
+                                    {
+                                        item.isflashsale?
+                                        <span style={{fontWeight:'100',marginLeft:'.5em'}}>(flashsale)</span>
+                                        : null
+                                    }
                                 </Header>
                                 {/* <p style={{margin:'0 0 .5em',flexBasis:'1em',fontSize:'13px',opacity:'.7'}}>{item.weight} gram</p> */}
                                 <p style={{margin:'0 0 .5em',flexBasis:'1em'}}>qty {item.qty}</p>
@@ -516,7 +525,7 @@ class TransactionList extends Component {
                                 <div style={{display:'inline-block',textAlign:'left'}}>
                                     <span style={{display:'block'}}>Total Payment</span>
                                     <Header as={'span'} color='blue' style={{fontSize:'15px'}}>
-                                        Rp {transaction.totalpayment},00
+                                        {idr(transaction.totalpayment)}
                                     </Header>
                                 </div>
                             </Grid.Column>
