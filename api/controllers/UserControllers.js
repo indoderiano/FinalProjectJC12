@@ -292,6 +292,20 @@ module.exports={
             // res.status(200).send(result)
         })
     },
+
+
+    getAddress:(req,res)=>{
+        console.log('get user addresses')
+        const{iduser}=req.query
+
+        var sql=`select * from address where iduser=${iduser}`
+        db.query(sql,(err,address)=>{
+            if(err) return res.status(500).send(err)
+
+            res.status(200).send(address)
+        })
+    }
+
 }
                    
 

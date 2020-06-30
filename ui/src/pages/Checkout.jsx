@@ -29,6 +29,7 @@ import { connect } from 'react-redux'
 class Checkout extends Component {
     state = { 
         delivery: [],
+        address:[]
      }
 
     componentDidMount=()=>{
@@ -49,6 +50,32 @@ class Checkout extends Component {
         }).catch((err)=>{
             console.log(err)
         })
+
+
+        // GET ADDRESS
+        Axios.get(`${APIURL}/users/address?iduser=${this.props.User.iduser}`)
+        .then((res)=>{
+            console.log('user address',res.data)
+
+            // const stateOptions = _.map(addressDefinitions.state, (state, index) => ({
+            //     key: addressDefinitions.state_abbr[index],
+            //     text: state,
+            //     value: addressDefinitions.state_abbr[index],
+            //   }))
+
+            var address=res.data.map((val,index)=>{
+                return {
+                    key:index,
+                    text: val.address_details,
+                    value: val.address_details
+                }
+            })
+            this.setState({address})
+
+        }).catch((err)=>{
+            console.log(err)
+        })
+
     }
 
     
@@ -266,12 +293,18 @@ class Checkout extends Component {
 
                             <Segment style={{width:'100%'}}>
                                 <Grid>
-                                    <Grid.Row>
+                                    {/* <Grid.Row>
                                         <Grid.Column width={16}>
                                             <Header as={'h4'}>
                                                 Address
                                             </Header>
                                             <p style={{margin:'0'}}>{this.props.User.address}</p>
+                                        </Grid.Column>
+                                    </Grid.Row> */}
+
+                                    <Grid.Row>
+                                        <Grid.Column width={16}>
+                                            <Dropdown placeholder='Pick Address' search selection options={this.state.address} />
                                         </Grid.Column>
                                     </Grid.Row>
 

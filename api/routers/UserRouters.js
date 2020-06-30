@@ -17,4 +17,6 @@ Router.put('/editprofile',UserControllers.editProfile)
 Router.get('/seller',UserControllers.getSeller) // supposed to be in seller router // doesn't matter
 Router.put('/popcoin',Auth,UserControllers.topupPopcoin)
 
+Router.get('/address',UserControllers.getAddress)
+
 module.exports=Router

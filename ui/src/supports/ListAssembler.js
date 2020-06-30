@@ -86,7 +86,7 @@ export const ListByTransaction=(list,method)=>{
                 payment_method,
                 paymentproof,
                 payat,
-                createat,
+                transactioncreateat,
                 updateat
             }=ts.itemlist[0]
             var transactiondata={
@@ -106,7 +106,7 @@ export const ListByTransaction=(list,method)=>{
                 payment_method,
                 paymentproof,
                 payat,
-                createat,
+                transactioncreateat,
                 updateat,
                 sellerlist:[ts]
             }
@@ -129,7 +129,7 @@ export const ListByStoreTransaction=(list)=>{
     list.forEach((item)=>{
         var isexist=false
         for(var i=0;i<listByTransaction.length;i++){
-            if(listByTransaction[i].idtransaction==item.idtransaction){
+            if(listByTransaction[i].idtransactionseller==item.idtransactionseller){
                 isexist=true
                 listByTransaction[i].itemlist.push(item)
             }
@@ -303,6 +303,7 @@ export const listSalesByTime=(list)=>{
 
     var firsthour=Date.parse(list[0].order_updateat)/1000/60/60
     var lasthour
+    var nowhour=Math.ceil(Date.parse(new Date())/1000/60/60-firsthour)
 
     //  ADD VALUE HOUR IN EACH ORDER
     var listAddHour=list.map((order,index)=>{
@@ -319,6 +320,7 @@ export const listSalesByTime=(list)=>{
             lasthour=hour
         }
 
+
         return {
             ...order,
             hour,
@@ -329,12 +331,12 @@ export const listSalesByTime=(list)=>{
 
     // LOOP HOURLY FROM FIRSTHOUR
     var listByHours=[]
-    for(var i=0;i<=lasthour;i++){
+    for(var i=0;i<=nowhour;i++){
         // MERGE ORDERS WITH SAME HOUR
         var checkout_price=0
         var qty=0
         var milliseconds=listAddHour[0].milliseconds+i*1000*60*60
-        var subhour=i-lasthour
+        var subhour=i-nowhour
         // var order_updateat=
         for(var j=0;j<listAddHour.length;j++){
             if(listAddHour[j].hour==i){

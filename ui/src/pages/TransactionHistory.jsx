@@ -48,11 +48,11 @@ class TransactionList extends Component {
         // GET LIST WHERE IDUSER, AND 
         Axios.get(`${APIURL}/transactions/user?iduser=${this.props.User.iduser}&idstatus=${[2,3,4,5,6]}`)
         .then((res)=>{
-            console.log('get list',res.data)
+            // console.log('get list',res.data)
 
             // RECONSTRUCT LIST , BY TRANSACTION BY TRANSACTION SELLER
             var listByTransaction=ListByTransaction(res.data).reverse()
-            // console.log('transaction history',listByTransaction)
+            console.log('transaction history',listByTransaction)
             this.setState({historyList:listByTransaction})
 
         }).catch((err)=>{
@@ -509,7 +509,7 @@ class TransactionList extends Component {
                     <Grid>
                         <Grid.Row style={{paddingBottom:'0'}}>
                             <Grid.Column width={7}>
-                                {getDate(transaction.createat)}
+                                {getDate(transaction.transactioncreateat)}
                             </Grid.Column>
                             <Grid.Column width={5}>
                                 <span style={{display:'block'}}>Status</span>

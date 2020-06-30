@@ -295,6 +295,7 @@ class Product extends Component {
         console.log('get product flashsale price')
         Axios.get(`${APIURL}/flashsales/product/active/approved?idproduct=${this.state.product.idproduct}`)
         .then((product)=>{
+            console.log(product.data)
             this.setState({flashsaleprice:product.data.flashsale_price})
         }).catch((err)=>{
             console.log(err)
